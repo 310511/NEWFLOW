@@ -57,7 +57,7 @@ const HotelDetails = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="w-full px-6 lg:px-8 py-8 pt-header-plus-25">
+      <main className="w-full px-6 lg:px-8 py-8 pt-header-plus-25" style={{ paddingTop: 'calc(var(--header-height-default) + 25px + 9px)' }}>
         {/* Back Button */}
         <div className="mb-6">
           <Link to="/search">

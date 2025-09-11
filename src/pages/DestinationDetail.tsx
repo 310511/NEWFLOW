@@ -124,7 +124,7 @@ const DestinationDetail = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-header-plus-20">
+      <main className="pt-header-plus-20" style={{ paddingTop: 'calc(var(--header-height-default) + 20px + 9px)' }}>
         {/* Hero Section */}
         <section className="relative h-96 overflow-hidden">
           <img 
