@@ -271,7 +271,7 @@ const DestinationDynamic = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="w-full px-6 lg:px-8 py-12 pt-header-plus-20" style={{ paddingTop: 'calc(var(--header-height-default) + 20px + 14px)' }}>
+      <main className="w-full px-6 lg:px-8 py-12 pt-header-plus-20" style={{ paddingTop: 'calc(var(--header-height-default) + 20px + 20px)' }}>
         {/* Back Navigation */}
         <div className="mb-8">
           <Link to="/destinations" className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors">

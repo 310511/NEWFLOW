@@ -99,7 +99,7 @@ const NewSearchResults = () => {
       
 
       {/* Main Content */}
-      <main className="w-full pt-header" style={{ paddingTop: 'calc(var(--header-height-default) + 14px)' }}>
+      <main className="w-full pt-header" style={{ paddingTop: 'calc(var(--header-height-default) + 20px)' }}>
         {/* Search Controls Bar */}
         <div className="px-6 py-4 bg-white border-b border-border/30 sticky sticky-below-header z-50">
           <div className="flex items-center justify-between">
