@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 
 import Footer from "@/components/Footer";
 import ChatBot from "@/components/ChatBot";
+import ReviewsSection from "@/components/ReviewsSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Heart, Search } from "lucide-react";
@@ -276,6 +277,7 @@ const Home = () => {
         </section>
       </main>
 
+      <ReviewsSection />
       <Footer />
       <ChatBot />
     </div>
