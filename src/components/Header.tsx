@@ -216,13 +216,6 @@ const Header = ({ variant = "default" }: HeaderProps) => {
           <div
             className={`flex items-center space-x-4 ${isCompact ? "ml-4" : ""}`}
           >
-            {/* GIF in the blank space */}
-            <img
-              src="/PixVerse_V5_Image_Text_720P_with_same_plain_wh-_2_.gif"
-              alt="Animated Header Element"
-              className="ml-4"
-              style={{ width: "195px", height: "100px", objectFit: "contain" }}
-            />
             {/* Language Selector */}
             <DropdownMenu>
               <Tooltip>
