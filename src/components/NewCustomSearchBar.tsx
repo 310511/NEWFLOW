@@ -179,6 +179,15 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
           <div className="p-1">
             <SearchButton onSearch={handleSearchClick} expanded={isExpanded} />
           </div>
+
+          {/* GIF in the blank space */}
+          <div className="flex items-center ml-2">
+            <img
+              src="/PixVerse_V5_Image_Text_720P_with_same_plain_wh-_2_.gif"
+              alt="Animated Search Element"
+              style={{ width: "110px", height: "85px", objectFit: "contain" }}
+            />
+          </div>
         </div>
       </div>
     </div>
