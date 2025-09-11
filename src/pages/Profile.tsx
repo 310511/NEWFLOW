@@ -100,7 +100,7 @@ const Profile = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="w-full py-8 px-6 pt-header-plus-15" style={{ paddingTop: 'calc(var(--header-height-default) + 15px + 9px)' }}>
+      <main className="w-full py-8 px-6 pt-header-plus-15" style={{ paddingTop: 'calc(var(--header-height-default) + 15px + 14px)' }}>
         {/* Profile Header */}
         <Card className="mb-8">
           <CardContent className="p-8">

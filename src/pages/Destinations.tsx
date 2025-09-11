@@ -93,7 +93,7 @@ const Destinations = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="w-full px-6 lg:px-8 py-12 pt-header-plus-40" style={{ paddingTop: 'calc(var(--header-height-default) + 40px + 9px)' }}>
+      <main className="w-full px-6 lg:px-8 py-12 pt-header-plus-40" style={{ paddingTop: 'calc(var(--header-height-default) + 40px + 14px)' }}>
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">

@@ -38,7 +38,7 @@ const Home = () => {
       <Header />
       
       {/* Add top padding to account for fixed header */}
-      <main className="relative pt-header-home-plus-40" style={{ paddingTop: 'calc(var(--header-height-default) + 37px + 40px + 9px)' }}>
+      <main className="relative pt-header-home-plus-40" style={{ paddingTop: 'calc(var(--header-height-default) + 37px + 40px + 14px)' }}>
         {/* Hotel Categories Quick Access */}
         <section className="py-8 bg-muted/30">
           <div className="w-full max-w-none px-6 lg:px-12 xl:px-16">
