@@ -225,9 +225,10 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="hidden md:flex hover:bg-muted/80 transition-all duration-200 rounded-full shadow-sm hover:shadow-md"
+                      className="hidden md:flex hover:bg-muted/80 transition-all duration-200 rounded-pill shadow-sm hover:shadow-md"
                     >
                       <Globe className="h-5 w-5" />
+                      <span className="ml-1 text-sm font-medium">EN</span>
                     </Button>
                   </DropdownMenuTrigger>
                 </TooltipTrigger>
