@@ -207,26 +207,39 @@ const HotelDetails = () => {
             {/* Price */}
             <Card>
               <CardContent className="p-6">
-                <div className="flex items-baseline space-x-2 mb-4">
-                  {hotel.originalPrice && (
-                    <span className="text-muted-foreground line-through text-lg">
-                      ${hotel.originalPrice}
-                    </span>
-                  )}
-                  <span className="text-3xl font-bold text-foreground">
-                    ${hotel.price}
-                  </span>
-                  <span className="text-muted-foreground">night</span>
-                </div>
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <div className="flex items-baseline space-x-2 mb-2">
+                      {" "}
+                      {/* Adjusted mb-4 to mb-2 */}
+                      {hotel.originalPrice && (
+                        <span className="text-muted-foreground line-through text-lg">
+                          ${hotel.originalPrice}
+                        </span>
+                      )}
+                      <span className="text-3xl font-bold text-foreground">
+                        ${hotel.price}
+                      </span>
+                      <span className="text-muted-foreground">night</span>
+                    </div>
 
-                {hotel.checkIn && hotel.checkOut && (
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
-                    <Calendar className="h-4 w-4" />
-                    <span>
-                      {hotel.checkIn} – {hotel.checkOut}
-                    </span>
+                    {hotel.checkIn && hotel.checkOut && (
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        {" "}
+                        {/* Removed mb-4 */}
+                        <Calendar className="h-4 w-4" />
+                        <span>
+                          {hotel.checkIn} – {hotel.checkOut}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
+                  <img
+                    src="/Couple-Going-On-Vacation.gif"
+                    alt="Couple Going On Vacation"
+                    className="w-28 h-28 object-cover rounded-md"
+                  />
+                </div>
 
                 <Link to={`/booking/${hotel.id}`}>
                   <Button size="lg" className="w-full">
