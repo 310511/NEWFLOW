@@ -214,7 +214,7 @@ export const GuestSelector = ({
         onClick={() => onOpenChange(!isOpen)}
       >
         <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-          Who
+          Guests
         </Label>
         <div
           className={cn(
