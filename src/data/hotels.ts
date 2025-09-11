@@ -11,7 +11,7 @@ export interface Hotel {
   distance: string;
   availability: string;
   isNew?: boolean;
-  
+
   checkIn?: string;
   checkOut?: string;
   coordinates: {
@@ -34,7 +34,7 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
     ],
     amenities: ["Wifi", "Pool", "Kitchen", "Parking", "AC", "TV", "Gym"],
     distance: "2.5 km from center",
@@ -42,7 +42,7 @@ export const hotels: Hotel[] = [
     isNew: true,
     checkIn: "Dec 3",
     checkOut: "Dec 8",
-    coordinates: { lat: 24.7136, lng: 46.6753 }
+    coordinates: { lat: 24.7136, lng: 46.6753 },
   },
   {
     id: "2",
@@ -56,14 +56,14 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
     ],
     amenities: ["Wifi", "AC", "Kitchen", "Gym", "Concierge", "Security"],
     distance: "1.2 km from center",
     availability: "Available",
     checkIn: "Dec 5",
     checkOut: "Dec 10",
-    coordinates: { lat: 24.6877, lng: 46.7219 }
+    coordinates: { lat: 24.6877, lng: 46.7219 },
   },
   {
     id: "3",
@@ -77,14 +77,14 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
     ],
     amenities: ["Wifi", "Kitchen", "Workspace", "TV", "Laundry"],
     distance: "800m from center",
     availability: "2 left at this price",
     checkIn: "Dec 1",
     checkOut: "Dec 6",
-    coordinates: { lat: 24.6408, lng: 46.7728 }
+    coordinates: { lat: 24.6408, lng: 46.7728 },
   },
   {
     id: "4",
@@ -98,15 +98,24 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
     ],
-    amenities: ["Pool", "Spa", "Concierge", "Parking", "Gym", "Restaurant", "AC", "Wifi"],
+    amenities: [
+      "Pool",
+      "Spa",
+      "Concierge",
+      "Parking",
+      "Gym",
+      "Restaurant",
+      "AC",
+      "Wifi",
+    ],
     distance: "3.2 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "Dec 7",
     checkOut: "Dec 14",
-    coordinates: { lat: 24.7119, lng: 46.6758 }
+    coordinates: { lat: 24.7119, lng: 46.6758 },
   },
   {
     id: "5",
@@ -120,14 +129,14 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
     ],
     amenities: ["Wifi", "Kitchen", "Parking", "AC", "TV", "Laundry"],
     distance: "5.1 km from center",
     availability: "Available",
     checkIn: "Dec 12",
     checkOut: "Dec 19",
-    coordinates: { lat: 24.8247, lng: 46.6441 }
+    coordinates: { lat: 24.8247, lng: 46.6441 },
   },
   {
     id: "6",
@@ -141,14 +150,14 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
     ],
     amenities: ["Wifi", "Workspace", "Gym", "Transport"],
     distance: "4.7 km from center",
     availability: "Available",
     checkIn: "Dec 15",
     checkOut: "Dec 22",
-    coordinates: { lat: 24.7453, lng: 46.6291 }
+    coordinates: { lat: 24.7453, lng: 46.6291 },
   },
   {
     id: "7",
@@ -162,7 +171,7 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
     ],
     amenities: ["Wifi", "Restaurant", "Spa", "Cultural tours"],
     distance: "25 km from center",
@@ -170,7 +179,7 @@ export const hotels: Hotel[] = [
     isNew: true,
     checkIn: "Dec 20",
     checkOut: "Dec 25",
-    coordinates: { lat: 24.7324, lng: 46.5704 }
+    coordinates: { lat: 24.7324, lng: 46.5704 },
   },
   {
     id: "8",
@@ -184,14 +193,14 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e?w=800&h=600&fit=crop",
     ],
     amenities: ["Pool", "Wifi", "Gym", "Parking"],
     distance: "6.2 km from center",
     availability: "Available",
     checkIn: "Dec 18",
     checkOut: "Dec 23",
-    coordinates: { lat: 24.6204, lng: 46.7186 }
+    coordinates: { lat: 24.6204, lng: 46.7186 },
   },
   {
     id: "9",
@@ -206,7 +215,7 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
     ],
     amenities: ["Desert tours", "Spa", "Restaurant", "Pool"],
     distance: "45 km from center",
@@ -214,7 +223,7 @@ export const hotels: Hotel[] = [
     isNew: true,
     checkIn: "Dec 28",
     checkOut: "Jan 2",
-    coordinates: { lat: 24.5247, lng: 46.4441 }
+    coordinates: { lat: 24.5247, lng: 46.4441 },
   },
   {
     id: "10",
@@ -228,14 +237,14 @@ export const hotels: Hotel[] = [
       "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
     ],
     amenities: ["Airport shuttle", "Wifi", "Kitchen", "Parking"],
     distance: "35 km from center",
     availability: "Available",
     checkIn: "Dec 30",
     checkOut: "Jan 5",
-    coordinates: { lat: 24.9576, lng: 46.6988 }
+    coordinates: { lat: 24.9576, lng: 46.6988 },
   },
   {
     id: "11",
@@ -248,15 +257,23 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
     ],
-    amenities: ["Spa", "Pool", "Restaurant", "Valet parking", "Concierge", "Gym", "Wifi"],
+    amenities: [
+      "Spa",
+      "Pool",
+      "Restaurant",
+      "Valet parking",
+      "Concierge",
+      "Gym",
+      "Wifi",
+    ],
     distance: "28 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "Jan 8",
     checkOut: "Jan 15",
-    coordinates: { lat: 24.8901, lng: 46.4032 }
+    coordinates: { lat: 24.8901, lng: 46.4032 },
   },
   {
     id: "12",
@@ -268,14 +285,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop",
     ],
-    amenities: ["Workspace", "Wifi", "Gym", "Restaurant", "Valet parking", "AC"],
+    amenities: [
+      "Workspace",
+      "Wifi",
+      "Gym",
+      "Restaurant",
+      "Valet parking",
+      "AC",
+    ],
     distance: "15 km from center",
     availability: "Available",
     checkIn: "Jan 12",
     checkOut: "Jan 18",
-    coordinates: { lat: 24.7580, lng: 46.6430 }
+    coordinates: { lat: 24.758, lng: 46.643 },
   },
   {
     id: "13",
@@ -287,14 +311,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop",
     ],
-    amenities: ["Cultural tours", "Traditional design", "Wifi", "AC", "Parking"],
+    amenities: [
+      "Cultural tours",
+      "Traditional design",
+      "Wifi",
+      "AC",
+      "Parking",
+    ],
     distance: "20 km from center",
     availability: "Available",
     checkIn: "Jan 20",
     checkOut: "Jan 25",
-    coordinates: { lat: 24.7324, lng: 46.5704 }
+    coordinates: { lat: 24.7324, lng: 46.5704 },
   },
   {
     id: "14",
@@ -306,14 +336,14 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
     ],
     amenities: ["Minimalist design", "Wifi", "Kitchen", "AC", "Workspace"],
     distance: "12 km from center",
     availability: "Available",
     checkIn: "Feb 1",
     checkOut: "Feb 6",
-    coordinates: { lat: 24.7891, lng: 46.6121 }
+    coordinates: { lat: 24.7891, lng: 46.6121 },
   },
   {
     id: "15",
@@ -325,14 +355,22 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
     ],
-    amenities: ["Pool", "Garden", "BBQ area", "Playground", "Parking", "Wifi", "Kitchen"],
+    amenities: [
+      "Pool",
+      "Garden",
+      "BBQ area",
+      "Playground",
+      "Parking",
+      "Wifi",
+      "Kitchen",
+    ],
     distance: "18 km from center",
     availability: "Available",
     checkIn: "Feb 5",
     checkOut: "Feb 12",
-    coordinates: { lat: 24.6891, lng: 46.5432 }
+    coordinates: { lat: 24.6891, lng: 46.5432 },
   },
   {
     id: "16",
@@ -344,14 +382,14 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
     ],
     amenities: ["Boutique design", "Restaurant", "Wifi", "AC", "Concierge"],
     distance: "3.5 km from center",
     availability: "Available",
     checkIn: "Feb 8",
     checkOut: "Feb 14",
-    coordinates: { lat: 24.6754, lng: 46.7123 }
+    coordinates: { lat: 24.6754, lng: 46.7123 },
   },
   {
     id: "17",
@@ -363,14 +401,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
     ],
-    amenities: ["Diplomatic access", "Security", "Wifi", "Pool", "Gym", "Restaurant"],
+    amenities: [
+      "Diplomatic access",
+      "Security",
+      "Wifi",
+      "Pool",
+      "Gym",
+      "Restaurant",
+    ],
     distance: "8 km from center",
     availability: "Available",
     checkIn: "Feb 15",
     checkOut: "Feb 20",
-    coordinates: { lat: 24.6893, lng: 46.6234 }
+    coordinates: { lat: 24.6893, lng: 46.6234 },
   },
   {
     id: "18",
@@ -382,15 +427,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
     ],
-    amenities: ["Eco-friendly", "Desert tours", "Stargazing", "Restaurant", "Wifi"],
+    amenities: [
+      "Eco-friendly",
+      "Desert tours",
+      "Stargazing",
+      "Restaurant",
+      "Wifi",
+    ],
     distance: "55 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "Feb 22",
     checkOut: "Feb 28",
-    coordinates: { lat: 25.1234, lng: 46.8901 }
+    coordinates: { lat: 25.1234, lng: 46.8901 },
   },
   {
     id: "19",
@@ -402,14 +453,14 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop",
     ],
     amenities: ["Smart home", "Wifi", "AC", "Gym", "Workspace", "EV charging"],
     distance: "22 km from center",
     availability: "Available",
     checkIn: "Mar 1",
     checkOut: "Mar 7",
-    coordinates: { lat: 24.8567, lng: 46.7890 }
+    coordinates: { lat: 24.8567, lng: 46.789 },
   },
   {
     id: "20",
@@ -421,14 +472,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop",
     ],
-    amenities: ["Heritage design", "Cultural tours", "Spa", "Restaurant", "Concierge"],
+    amenities: [
+      "Heritage design",
+      "Cultural tours",
+      "Spa",
+      "Restaurant",
+      "Concierge",
+    ],
     distance: "2 km from center",
     availability: "Available",
     checkIn: "Mar 5",
     checkOut: "Mar 12",
-    coordinates: { lat: 24.6308, lng: 46.7156 }
+    coordinates: { lat: 24.6308, lng: 46.7156 },
   },
   {
     id: "21",
@@ -440,14 +497,14 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
     ],
     amenities: ["Rooftop garden", "City views", "Wifi", "Kitchen", "AC"],
     distance: "7 km from center",
     availability: "Available",
     checkIn: "Mar 10",
     checkOut: "Mar 16",
-    coordinates: { lat: 24.7234, lng: 46.6789 }
+    coordinates: { lat: 24.7234, lng: 46.6789 },
   },
   {
     id: "22",
@@ -459,14 +516,14 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
     ],
     amenities: ["Art studio", "Gallery access", "Wifi", "AC", "Workspace"],
     distance: "4 km from center",
     availability: "Available",
     checkIn: "Mar 15",
     checkOut: "Mar 21",
-    coordinates: { lat: 24.6543, lng: 46.7345 }
+    coordinates: { lat: 24.6543, lng: 46.7345 },
   },
   {
     id: "23",
@@ -478,14 +535,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Spa", "Wellness programs", "Yoga studio", "Healthy restaurant", "Pool"],
+    amenities: [
+      "Spa",
+      "Wellness programs",
+      "Yoga studio",
+      "Healthy restaurant",
+      "Pool",
+    ],
     distance: "16 km from center",
     availability: "Available",
     checkIn: "Mar 20",
     checkOut: "Mar 27",
-    coordinates: { lat: 24.8123, lng: 46.5678 }
+    coordinates: { lat: 24.8123, lng: 46.5678 },
   },
   {
     id: "24",
@@ -497,14 +560,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
     ],
-    amenities: ["Coworking space", "Tech amenities", "Wifi", "Kitchen", "Gaming lounge"],
+    amenities: [
+      "Coworking space",
+      "Tech amenities",
+      "Wifi",
+      "Kitchen",
+      "Gaming lounge",
+    ],
     distance: "25 km from center",
     availability: "Available",
     checkIn: "Mar 25",
     checkOut: "Apr 1",
-    coordinates: { lat: 24.9012, lng: 46.4567 }
+    coordinates: { lat: 24.9012, lng: 46.4567 },
   },
   {
     id: "25",
@@ -517,15 +586,22 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
     ],
-    amenities: ["Skyline views", "Private elevator", "Pool", "Gym", "Concierge", "Valet"],
+    amenities: [
+      "Skyline views",
+      "Private elevator",
+      "Pool",
+      "Gym",
+      "Concierge",
+      "Valet",
+    ],
     distance: "1.5 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "Apr 2",
     checkOut: "Apr 8",
-    coordinates: { lat: 24.6877, lng: 46.7219 }
+    coordinates: { lat: 24.6877, lng: 46.7219 },
   },
   {
     id: "26",
@@ -537,14 +613,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Glamping", "Desert safari", "Stargazing", "Traditional meals", "Camel rides"],
+    amenities: [
+      "Glamping",
+      "Desert safari",
+      "Stargazing",
+      "Traditional meals",
+      "Camel rides",
+    ],
     distance: "78 km from center",
     availability: "Available",
     checkIn: "Apr 10",
     checkOut: "Apr 14",
-    coordinates: { lat: 24.3456, lng: 46.1234 }
+    coordinates: { lat: 24.3456, lng: 46.1234 },
   },
   {
     id: "27",
@@ -556,14 +638,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
     ],
-    amenities: ["Business center", "Meeting rooms", "Wifi", "Restaurant", "Gym"],
+    amenities: [
+      "Business center",
+      "Meeting rooms",
+      "Wifi",
+      "Restaurant",
+      "Gym",
+    ],
     distance: "11 km from center",
     availability: "Available",
     checkIn: "Apr 15",
     checkOut: "Apr 20",
-    coordinates: { lat: 24.7456, lng: 46.6123 }
+    coordinates: { lat: 24.7456, lng: 46.6123 },
   },
   {
     id: "28",
@@ -575,14 +663,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
     ],
-    amenities: ["Botanical garden", "Pool", "BBQ area", "Kitchen", "Parking", "Wifi"],
+    amenities: [
+      "Botanical garden",
+      "Pool",
+      "BBQ area",
+      "Kitchen",
+      "Parking",
+      "Wifi",
+    ],
     distance: "19 km from center",
     availability: "Available",
     checkIn: "Apr 22",
     checkOut: "Apr 28",
-    coordinates: { lat: 24.8234, lng: 46.5789 }
+    coordinates: { lat: 24.8234, lng: 46.5789 },
   },
   {
     id: "29",
@@ -594,14 +689,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
     ],
-    amenities: ["Minimalist design", "Wifi", "Kitchen", "AC", "Workspace", "Balcony"],
+    amenities: [
+      "Minimalist design",
+      "Wifi",
+      "Kitchen",
+      "AC",
+      "Workspace",
+      "Balcony",
+    ],
     distance: "6 km from center",
     availability: "Available",
     checkIn: "May 1",
     checkOut: "May 6",
-    coordinates: { lat: 24.6789, lng: 46.7012 }
+    coordinates: { lat: 24.6789, lng: 46.7012 },
   },
   {
     id: "30",
@@ -614,15 +716,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Royal suite", "Butler service", "Private pool", "Spa", "Michelin restaurant"],
+    amenities: [
+      "Royal suite",
+      "Butler service",
+      "Private pool",
+      "Spa",
+      "Michelin restaurant",
+    ],
     distance: "4 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "May 5",
     checkOut: "May 12",
-    coordinates: { lat: 24.6543, lng: 46.7234 }
+    coordinates: { lat: 24.6543, lng: 46.7234 },
   },
   {
     id: "31",
@@ -634,14 +742,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
     ],
-    amenities: ["Family friendly", "Playground", "Kitchen", "Wifi", "Parking", "Garden"],
+    amenities: [
+      "Family friendly",
+      "Playground",
+      "Kitchen",
+      "Wifi",
+      "Parking",
+      "Garden",
+    ],
     distance: "13 km from center",
     availability: "Available",
     checkIn: "May 10",
     checkOut: "May 17",
-    coordinates: { lat: 24.7890, lng: 46.5432 }
+    coordinates: { lat: 24.789, lng: 46.5432 },
   },
   {
     id: "32",
@@ -653,14 +768,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop",
     ],
-    amenities: ["Coworking space", "High-speed internet", "Kitchen", "AC", "Networking events"],
+    amenities: [
+      "Coworking space",
+      "High-speed internet",
+      "Kitchen",
+      "AC",
+      "Networking events",
+    ],
     distance: "9 km from center",
     availability: "Available",
     checkIn: "May 15",
     checkOut: "May 22",
-    coordinates: { lat: 24.7234, lng: 46.6789 }
+    coordinates: { lat: 24.7234, lng: 46.6789 },
   },
   {
     id: "33",
@@ -672,14 +793,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
     ],
-    amenities: ["Penthouse", "Duplex", "Private terrace", "Pool access", "Concierge", "Valet"],
+    amenities: [
+      "Penthouse",
+      "Duplex",
+      "Private terrace",
+      "Pool access",
+      "Concierge",
+      "Valet",
+    ],
     distance: "5.5 km from center",
     availability: "Available",
     checkIn: "May 20",
     checkOut: "May 27",
-    coordinates: { lat: 24.6204, lng: 46.7186 }
+    coordinates: { lat: 24.6204, lng: 46.7186 },
   },
   {
     id: "34",
@@ -691,14 +819,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop",
     ],
-    amenities: ["Cultural tours", "Traditional architecture", "Wifi", "AC", "Museum access"],
+    amenities: [
+      "Cultural tours",
+      "Traditional architecture",
+      "Wifi",
+      "AC",
+      "Museum access",
+    ],
     distance: "3 km from center",
     availability: "Available",
     checkIn: "May 25",
     checkOut: "Jun 1",
-    coordinates: { lat: 24.6398, lng: 46.7156 }
+    coordinates: { lat: 24.6398, lng: 46.7156 },
   },
   {
     id: "35",
@@ -710,14 +844,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Riverside", "Eco-friendly", "Hiking trails", "Bird watching", "Restaurant"],
+    amenities: [
+      "Riverside",
+      "Eco-friendly",
+      "Hiking trails",
+      "Bird watching",
+      "Restaurant",
+    ],
     distance: "32 km from center",
     availability: "Available",
     checkIn: "Jun 2",
     checkOut: "Jun 8",
-    coordinates: { lat: 24.5678, lng: 46.6234 }
+    coordinates: { lat: 24.5678, lng: 46.6234 },
   },
   {
     id: "36",
@@ -729,14 +869,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
     ],
-    amenities: ["Sports facilities", "Gym", "Pool", "Tennis court", "Wifi", "Restaurant"],
+    amenities: [
+      "Sports facilities",
+      "Gym",
+      "Pool",
+      "Tennis court",
+      "Wifi",
+      "Restaurant",
+    ],
     distance: "14 km from center",
     availability: "Available",
     checkIn: "Jun 5",
     checkOut: "Jun 12",
-    coordinates: { lat: 24.7234, lng: 46.6123 }
+    coordinates: { lat: 24.7234, lng: 46.6123 },
   },
   {
     id: "37",
@@ -748,14 +895,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
     ],
-    amenities: ["Designer interiors", "Shopping access", "Wifi", "Concierge", "Restaurant"],
+    amenities: [
+      "Designer interiors",
+      "Shopping access",
+      "Wifi",
+      "Concierge",
+      "Restaurant",
+    ],
     distance: "2.5 km from center",
     availability: "Available",
     checkIn: "Jun 10",
     checkOut: "Jun 16",
-    coordinates: { lat: 24.6987, lng: 46.6854 }
+    coordinates: { lat: 24.6987, lng: 46.6854 },
   },
   {
     id: "38",
@@ -767,14 +920,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
     ],
-    amenities: ["Mountain views", "Hiking trails", "BBQ area", "Kitchen", "Wifi", "Parking"],
+    amenities: [
+      "Mountain views",
+      "Hiking trails",
+      "BBQ area",
+      "Kitchen",
+      "Wifi",
+      "Parking",
+    ],
     distance: "45 km from center",
     availability: "Available",
     checkIn: "Jun 15",
     checkOut: "Jun 21",
-    coordinates: { lat: 24.9876, lng: 46.2345 }
+    coordinates: { lat: 24.9876, lng: 46.2345 },
   },
   {
     id: "39",
@@ -786,14 +946,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop",
     ],
-    amenities: ["Airport shuttle", "Business center", "Wifi", "Restaurant", "24/7 service"],
+    amenities: [
+      "Airport shuttle",
+      "Business center",
+      "Wifi",
+      "Restaurant",
+      "24/7 service",
+    ],
     distance: "35 km from center",
     availability: "Available",
     checkIn: "Jun 20",
     checkOut: "Jun 25",
-    coordinates: { lat: 24.9576, lng: 46.6988 }
+    coordinates: { lat: 24.9576, lng: 46.6988 },
   },
   {
     id: "40",
@@ -806,15 +972,22 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
     ],
-    amenities: ["Desert resort", "Spa", "Fine dining", "Camel tours", "Stargazing", "Pool"],
+    amenities: [
+      "Desert resort",
+      "Spa",
+      "Fine dining",
+      "Camel tours",
+      "Stargazing",
+      "Pool",
+    ],
     distance: "67 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "Jun 25",
     checkOut: "Jul 2",
-    coordinates: { lat: 24.1456, lng: 47.2345 }
+    coordinates: { lat: 24.1456, lng: 47.2345 },
   },
   {
     id: "41",
@@ -826,14 +999,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
     ],
-    amenities: ["Art galleries", "Creative workshops", "Wifi", "Restaurant", "Exhibition access"],
+    amenities: [
+      "Art galleries",
+      "Creative workshops",
+      "Wifi",
+      "Restaurant",
+      "Exhibition access",
+    ],
     distance: "8 km from center",
     availability: "Available",
     checkIn: "Jul 1",
     checkOut: "Jul 7",
-    coordinates: { lat: 24.7123, lng: 46.6543 }
+    coordinates: { lat: 24.7123, lng: 46.6543 },
   },
   {
     id: "42",
@@ -845,14 +1024,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
     ],
-    amenities: ["Adventure activities", "Family programs", "Restaurant", "Wifi", "Safety gear"],
+    amenities: [
+      "Adventure activities",
+      "Family programs",
+      "Restaurant",
+      "Wifi",
+      "Safety gear",
+    ],
     distance: "28 km from center",
     availability: "Available",
     checkIn: "Jul 5",
     checkOut: "Jul 12",
-    coordinates: { lat: 24.8567, lng: 46.4321 }
+    coordinates: { lat: 24.8567, lng: 46.4321 },
   },
   {
     id: "43",
@@ -864,14 +1049,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Full spa", "Wellness programs", "Meditation gardens", "Healthy cuisine", "Yoga"],
+    amenities: [
+      "Full spa",
+      "Wellness programs",
+      "Meditation gardens",
+      "Healthy cuisine",
+      "Yoga",
+    ],
     distance: "38 km from center",
     availability: "Available",
     checkIn: "Jul 10",
     checkOut: "Jul 17",
-    coordinates: { lat: 25.0234, lng: 46.3456 }
+    coordinates: { lat: 25.0234, lng: 46.3456 },
   },
   {
     id: "44",
@@ -883,14 +1074,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
     ],
-    amenities: ["Urban lifestyle", "Rooftop access", "Wifi", "Gym", "Kitchen", "Coworking"],
+    amenities: [
+      "Urban lifestyle",
+      "Rooftop access",
+      "Wifi",
+      "Gym",
+      "Kitchen",
+      "Coworking",
+    ],
     distance: "4 km from center",
     availability: "Available",
     checkIn: "Jul 15",
     checkOut: "Jul 21",
-    coordinates: { lat: 24.6789, lng: 46.7234 }
+    coordinates: { lat: 24.6789, lng: 46.7234 },
   },
   {
     id: "45",
@@ -902,33 +1100,46 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
     ],
-    amenities: ["Conference facilities", "Business center", "Wifi", "Restaurant", "Valet"],
+    amenities: [
+      "Conference facilities",
+      "Business center",
+      "Wifi",
+      "Restaurant",
+      "Valet",
+    ],
     distance: "12 km from center",
     availability: "Available",
     checkIn: "Jul 20",
     checkOut: "Jul 26",
-    coordinates: { lat: 24.7456, lng: 46.6234 }
+    coordinates: { lat: 24.7456, lng: 46.6234 },
   },
   {
     id: "46",
     name: "Garden Villa Paradise",
     location: "Al Wadi Green District",
     price: 512,
-    rating: 4.90,
+    rating: 4.9,
     reviews: 98,
     images: [
       "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
     ],
-    amenities: ["Botanical gardens", "Pool", "BBQ area", "Kitchen", "Greenhouse", "Parking"],
+    amenities: [
+      "Botanical gardens",
+      "Pool",
+      "BBQ area",
+      "Kitchen",
+      "Greenhouse",
+      "Parking",
+    ],
     distance: "21 km from center",
     availability: "Available",
     checkIn: "Jul 25",
     checkOut: "Aug 1",
-    coordinates: { lat: 24.8234, lng: 46.5678 }
+    coordinates: { lat: 24.8234, lng: 46.5678 },
   },
   {
     id: "47",
@@ -940,14 +1151,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
     ],
-    amenities: ["Smart home tech", "Research facilities", "Wifi", "Lab access", "Kitchen"],
+    amenities: [
+      "Smart home tech",
+      "Research facilities",
+      "Wifi",
+      "Lab access",
+      "Kitchen",
+    ],
     distance: "27 km from center",
     availability: "Available",
     checkIn: "Aug 1",
     checkOut: "Aug 7",
-    coordinates: { lat: 24.8901, lng: 46.4123 }
+    coordinates: { lat: 24.8901, lng: 46.4123 },
   },
   {
     id: "48",
@@ -959,14 +1176,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop",
     ],
-    amenities: ["Historical architecture", "Courtyard", "Cultural tours", "Wifi", "Traditional meals"],
+    amenities: [
+      "Historical architecture",
+      "Courtyard",
+      "Cultural tours",
+      "Wifi",
+      "Traditional meals",
+    ],
     distance: "5 km from center",
     availability: "Available",
     checkIn: "Aug 5",
     checkOut: "Aug 12",
-    coordinates: { lat: 24.6543, lng: 46.7123 }
+    coordinates: { lat: 24.6543, lng: 46.7123 },
   },
   {
     id: "49",
@@ -978,14 +1201,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Riverside location", "Luxury spa", "Fine dining", "Water sports", "Concierge"],
+    amenities: [
+      "Riverside location",
+      "Luxury spa",
+      "Fine dining",
+      "Water sports",
+      "Concierge",
+    ],
     distance: "15 km from center",
     availability: "Available",
     checkIn: "Aug 10",
     checkOut: "Aug 17",
-    coordinates: { lat: 24.7234, lng: 46.6789 }
+    coordinates: { lat: 24.7234, lng: 46.6789 },
   },
   {
     id: "50",
@@ -997,14 +1226,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
     ],
-    amenities: ["Architectural design", "City views", "Business center", "Wifi", "Restaurant"],
+    amenities: [
+      "Architectural design",
+      "City views",
+      "Business center",
+      "Wifi",
+      "Restaurant",
+    ],
     distance: "15 km from center",
     availability: "Available",
     checkIn: "Aug 15",
     checkOut: "Aug 21",
-    coordinates: { lat: 24.7580, lng: 46.6430 }
+    coordinates: { lat: 24.758, lng: 46.643 },
   },
   {
     id: "51",
@@ -1017,15 +1252,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Eco-friendly", "Solar power", "Organic gardens", "Desert tours", "Stargazing"],
+    amenities: [
+      "Eco-friendly",
+      "Solar power",
+      "Organic gardens",
+      "Desert tours",
+      "Stargazing",
+    ],
     distance: "52 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "Aug 20",
     checkOut: "Aug 27",
-    coordinates: { lat: 24.2345, lng: 46.8901 }
+    coordinates: { lat: 24.2345, lng: 46.8901 },
   },
   {
     id: "52",
@@ -1037,14 +1278,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
     ],
-    amenities: ["Penthouse suite", "360° city views", "Private elevator", "Pool", "Concierge"],
+    amenities: [
+      "Penthouse suite",
+      "360° city views",
+      "Private elevator",
+      "Pool",
+      "Concierge",
+    ],
     distance: "1 km from center",
     availability: "Available",
     checkIn: "Aug 25",
     checkOut: "Sep 1",
-    coordinates: { lat: 24.6877, lng: 46.7219 }
+    coordinates: { lat: 24.6877, lng: 46.7219 },
   },
   {
     id: "53",
@@ -1056,14 +1303,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
     ],
-    amenities: ["Entertainment access", "Family activities", "Arcade", "Restaurant", "Wifi"],
+    amenities: [
+      "Entertainment access",
+      "Family activities",
+      "Arcade",
+      "Restaurant",
+      "Wifi",
+    ],
     distance: "22 km from center",
     availability: "Available",
     checkIn: "Sep 1",
     checkOut: "Sep 7",
-    coordinates: { lat: 24.8456, lng: 46.4567 }
+    coordinates: { lat: 24.8456, lng: 46.4567 },
   },
   {
     id: "54",
@@ -1075,14 +1328,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Mountain retreat", "Spa treatments", "Hiking", "Meditation", "Organic meals"],
+    amenities: [
+      "Mountain retreat",
+      "Spa treatments",
+      "Hiking",
+      "Meditation",
+      "Organic meals",
+    ],
     distance: "48 km from center",
     availability: "Available",
     checkIn: "Sep 5",
     checkOut: "Sep 12",
-    coordinates: { lat: 24.9876, lng: 46.2123 }
+    coordinates: { lat: 24.9876, lng: 46.2123 },
   },
   {
     id: "55",
@@ -1094,14 +1353,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
     ],
-    amenities: ["Business facilities", "High-speed internet", "Meeting rooms", "Restaurant", "Gym"],
+    amenities: [
+      "Business facilities",
+      "High-speed internet",
+      "Meeting rooms",
+      "Restaurant",
+      "Gym",
+    ],
     distance: "3 km from center",
     availability: "Available",
     checkIn: "Sep 10",
     checkOut: "Sep 16",
-    coordinates: { lat: 24.6754, lng: 46.7023 }
+    coordinates: { lat: 24.6754, lng: 46.7023 },
   },
   {
     id: "56",
@@ -1113,14 +1378,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
     ],
-    amenities: ["Art studios", "Gallery access", "Creative workshops", "Wifi", "Cultural events"],
+    amenities: [
+      "Art studios",
+      "Gallery access",
+      "Creative workshops",
+      "Wifi",
+      "Cultural events",
+    ],
     distance: "6 km from center",
     availability: "Available",
     checkIn: "Sep 15",
     checkOut: "Sep 21",
-    coordinates: { lat: 24.7123, lng: 46.6543 }
+    coordinates: { lat: 24.7123, lng: 46.6543 },
   },
   {
     id: "57",
@@ -1132,14 +1403,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
     ],
-    amenities: ["Safari tours", "Wildlife viewing", "Luxury tents", "Fine dining", "Guided tours"],
+    amenities: [
+      "Safari tours",
+      "Wildlife viewing",
+      "Luxury tents",
+      "Fine dining",
+      "Guided tours",
+    ],
     distance: "85 km from center",
     availability: "Available",
     checkIn: "Sep 20",
     checkOut: "Sep 26",
-    coordinates: { lat: 24.1234, lng: 47.5678 }
+    coordinates: { lat: 24.1234, lng: 47.5678 },
   },
   {
     id: "58",
@@ -1151,14 +1428,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
     ],
-    amenities: ["Innovation labs", "Tech facilities", "Coworking", "Wifi", "Research access"],
+    amenities: [
+      "Innovation labs",
+      "Tech facilities",
+      "Coworking",
+      "Wifi",
+      "Research access",
+    ],
     distance: "29 km from center",
     availability: "Available",
     checkIn: "Sep 25",
     checkOut: "Oct 1",
-    coordinates: { lat: 24.8901, lng: 46.4234 }
+    coordinates: { lat: 24.8901, lng: 46.4234 },
   },
   {
     id: "59",
@@ -1171,15 +1454,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
     ],
-    amenities: ["Royal gardens", "Private pool", "Butler service", "Spa", "Fine dining"],
+    amenities: [
+      "Royal gardens",
+      "Private pool",
+      "Butler service",
+      "Spa",
+      "Fine dining",
+    ],
     distance: "12 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "Oct 1",
     checkOut: "Oct 8",
-    coordinates: { lat: 24.7890, lng: 46.6123 }
+    coordinates: { lat: 24.789, lng: 46.6123 },
   },
   {
     id: "60",
@@ -1191,14 +1480,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
     ],
-    amenities: ["Sustainable design", "Solar power", "Green roof", "Organic gardens", "Wifi"],
+    amenities: [
+      "Sustainable design",
+      "Solar power",
+      "Green roof",
+      "Organic gardens",
+      "Wifi",
+    ],
     distance: "18 km from center",
     availability: "Available",
     checkIn: "Oct 5",
     checkOut: "Oct 12",
-    coordinates: { lat: 24.8123, lng: 46.5789 }
+    coordinates: { lat: 24.8123, lng: 46.5789 },
   },
   {
     id: "61",
@@ -1210,14 +1505,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
     ],
-    amenities: ["Hilltop views", "Infinity pool", "Spa", "Fine dining", "Helicopter pad"],
+    amenities: [
+      "Hilltop views",
+      "Infinity pool",
+      "Spa",
+      "Fine dining",
+      "Helicopter pad",
+    ],
     distance: "35 km from center",
     availability: "Available",
     checkIn: "Oct 10",
     checkOut: "Oct 17",
-    coordinates: { lat: 25.0234, lng: 46.3456 }
+    coordinates: { lat: 25.0234, lng: 46.3456 },
   },
   {
     id: "62",
@@ -1229,14 +1530,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1574691250077-03a929faece5?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?w=800&h=600&fit=crop",
     ],
-    amenities: ["Shopping access", "Urban lifestyle", "Wifi", "Gym", "Restaurant", "Rooftop"],
+    amenities: [
+      "Shopping access",
+      "Urban lifestyle",
+      "Wifi",
+      "Gym",
+      "Restaurant",
+      "Rooftop",
+    ],
     distance: "4 km from center",
     availability: "Available",
     checkIn: "Oct 15",
     checkOut: "Oct 21",
-    coordinates: { lat: 24.6987, lng: 46.6854 }
+    coordinates: { lat: 24.6987, lng: 46.6854 },
   },
   {
     id: "63",
@@ -1248,14 +1556,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
     ],
-    amenities: ["Diplomatic services", "Security", "Business center", "Wifi", "Concierge"],
+    amenities: [
+      "Diplomatic services",
+      "Security",
+      "Business center",
+      "Wifi",
+      "Concierge",
+    ],
     distance: "8 km from center",
     availability: "Available",
     checkIn: "Oct 20",
     checkOut: "Oct 26",
-    coordinates: { lat: 24.6893, lng: 46.6234 }
+    coordinates: { lat: 24.6893, lng: 46.6234 },
   },
   {
     id: "64",
@@ -1267,14 +1581,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
     ],
-    amenities: ["Adventure sports", "Rock climbing", "Skydiving access", "Equipment rental", "Wifi"],
+    amenities: [
+      "Adventure sports",
+      "Rock climbing",
+      "Skydiving access",
+      "Equipment rental",
+      "Wifi",
+    ],
     distance: "31 km from center",
     availability: "Available",
     checkIn: "Oct 25",
     checkOut: "Nov 1",
-    coordinates: { lat: 24.8567, lng: 46.4321 }
+    coordinates: { lat: 24.8567, lng: 46.4321 },
   },
   {
     id: "65",
@@ -1286,14 +1606,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
     ],
-    amenities: ["Thermal springs", "Spa treatments", "Wellness programs", "Healthy cuisine", "Yoga"],
+    amenities: [
+      "Thermal springs",
+      "Spa treatments",
+      "Wellness programs",
+      "Healthy cuisine",
+      "Yoga",
+    ],
     distance: "42 km from center",
     availability: "Available",
     checkIn: "Nov 1",
     checkOut: "Nov 7",
-    coordinates: { lat: 25.0123, lng: 46.3789 }
+    coordinates: { lat: 25.0123, lng: 46.3789 },
   },
   {
     id: "66",
@@ -1305,14 +1631,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
     ],
-    amenities: ["Contemporary design", "City views", "Wifi", "Gym", "Restaurant", "Smart home"],
+    amenities: [
+      "Contemporary design",
+      "City views",
+      "Wifi",
+      "Gym",
+      "Restaurant",
+      "Smart home",
+    ],
     distance: "6 km from center",
     availability: "Available",
     checkIn: "Nov 5",
     checkOut: "Nov 12",
-    coordinates: { lat: 24.7234, lng: 46.6789 }
+    coordinates: { lat: 24.7234, lng: 46.6789 },
   },
   {
     id: "67",
@@ -1325,15 +1658,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359854-d4b7b0b4e33a?w=800&h=600&fit=crop",
     ],
-    amenities: ["UNESCO site", "Heritage tours", "Traditional architecture", "Cultural programs", "Spa"],
+    amenities: [
+      "UNESCO site",
+      "Heritage tours",
+      "Traditional architecture",
+      "Cultural programs",
+      "Spa",
+    ],
     distance: "20 km from center",
     availability: "Available",
     isNew: true,
     checkIn: "Nov 10",
     checkOut: "Nov 17",
-    coordinates: { lat: 24.7324, lng: 46.5704 }
+    coordinates: { lat: 24.7324, lng: 46.5704 },
   },
   {
     id: "68",
@@ -1345,14 +1684,21 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&h=600&fit=crop",
     ],
-    amenities: ["Family compound", "Pool", "Playground", "Kitchen", "Parking", "Garden"],
+    amenities: [
+      "Family compound",
+      "Pool",
+      "Playground",
+      "Kitchen",
+      "Parking",
+      "Garden",
+    ],
     distance: "14 km from center",
     availability: "Available",
     checkIn: "Nov 15",
     checkOut: "Nov 22",
-    coordinates: { lat: 24.7890, lng: 46.6234 }
+    coordinates: { lat: 24.789, lng: 46.6234 },
   },
   {
     id: "69",
@@ -1364,14 +1710,20 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
     ],
-    amenities: ["Luxury desert resort", "Camel tours", "Stargazing", "Fine dining", "Spa"],
+    amenities: [
+      "Luxury desert resort",
+      "Camel tours",
+      "Stargazing",
+      "Fine dining",
+      "Spa",
+    ],
     distance: "72 km from center",
     availability: "Available",
     checkIn: "Nov 20",
     checkOut: "Nov 27",
-    coordinates: { lat: 24.2123, lng: 47.3456 }
+    coordinates: { lat: 24.2123, lng: 47.3456 },
   },
   {
     id: "70",
@@ -1383,76 +1735,92 @@ export const hotels: Hotel[] = [
     images: [
       "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&h=600&fit=crop",
     ],
-    amenities: ["Executive floors", "Business center", "Conference rooms", "Wifi", "Concierge"],
+    amenities: [
+      "Executive floors",
+      "Business center",
+      "Conference rooms",
+      "Wifi",
+      "Concierge",
+    ],
     distance: "15 km from center",
     availability: "Available",
     checkIn: "Nov 25",
     checkOut: "Dec 2",
-    coordinates: { lat: 24.7580, lng: 46.6430 }
-  }
+    coordinates: { lat: 24.758, lng: 46.643 },
+  },
 ];
 
 export const popularDestinations = [
   {
     id: "riyadh",
     name: "Riyadh",
-    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-    properties: "300+ properties"
+    image:
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+    properties: "300+ properties",
   },
   {
-    id: "jeddah", 
+    id: "jeddah",
     name: "Jeddah",
-    image: "https://images.unsplash.com/photo-1539650116574-75c0c6d73c0e?w=400&h=300&fit=crop",
-    properties: "250+ properties"
+    image:
+      "https://tse3.mm.bing.net/th/id/OIP.koqoS6v2ls3pVIuqLyWZgAHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+    properties: "250+ properties",
   },
   {
     id: "dubai",
     name: "Dubai",
-    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&h=300&fit=crop",
-    properties: "450+ properties"
+    image:
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&h=300&fit=crop",
+    properties: "450+ properties",
   },
   {
     id: "abu-dhabi",
     name: "Abu Dhabi",
-    image: "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=400&h=300&fit=crop",
-    properties: "280+ properties"
+    image:
+      "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=400&h=300&fit=crop",
+    properties: "280+ properties",
   },
   {
     id: "doha",
     name: "Doha",
-    image: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=400&h=300&fit=crop",
-    properties: "200+ properties"
+    image:
+      "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=400&h=300&fit=crop",
+    properties: "200+ properties",
   },
   {
     id: "kuwait-city",
     name: "Kuwait City",
-    image: "https://images.unsplash.com/photo-1591604129277-59e94d0f9fa6?w=400&h=300&fit=crop",
-    properties: "150+ properties"
+    image:
+      "https://images.unsplash.com/photo-1591604129277-59e94d0f9fa6?w=400&h=300&fit=crop",
+    properties: "150+ properties",
   },
   {
     id: "mecca",
     name: "Mecca",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
-    properties: "120+ properties"
+    image:
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
+    properties: "120+ properties",
   },
   {
     id: "medina",
-    name: "Medina", 
-    image: "https://images.unsplash.com/photo-1580192225370-ad0c5b6f5ebc?w=400&h=300&fit=crop",
-    properties: "95+ properties"
+    name: "Medina",
+    image:
+      "https://images.unsplash.com/photo-1580192225370-ad0c5b6f5ebc?w=400&h=300&fit=crop",
+    properties: "95+ properties",
   },
   {
     id: "dammam",
     name: "Dammam",
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop",
-    properties: "180+ properties"
+    image:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop",
+    properties: "180+ properties",
   },
   {
     id: "taif",
     name: "Taif",
-    image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop",
-    properties: "65+ properties"
-  }
+    image:
+      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop",
+    properties: "65+ properties",
+  },
 ];

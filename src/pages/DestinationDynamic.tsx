@@ -60,7 +60,7 @@ const DestinationDynamic = () => {
       id: 2,
       name: "Jeddah",
       image:
-        "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=800&h=600&fit=crop",
+        "https://tse3.mm.bing.net/th/id/OIP.koqoS6v2ls3pVIuqLyWZgAHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
       description:
         "Gateway to Mecca with beautiful Red Sea coastline. Experience the historic charm and vibrant culture of this coastal gem.",
       properties: "300+ properties",
@@ -178,7 +178,7 @@ const DestinationDynamic = () => {
       id: 6,
       name: "Kuwait City",
       image:
-        "https://images.unsplash.com/photo-1591604129277-59e94d0f9fa6?w=800&h=600&fit=crop",
+        "https://tse4.mm.bing.net/th/id/OIP.8sYh-l-VuCsue09Mdck5sAHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
       description:
         "Historic trading hub with modern amenities. Explore the rich history and vibrant culture of this Gulf pearl.",
       properties: "150+ properties",
@@ -222,7 +222,7 @@ const DestinationDynamic = () => {
       id: 8,
       name: "Medina",
       image:
-        "https://images.unsplash.com/photo-1580192225370-ad0c5b6f5ebc?w=800&h=600&fit=crop",
+        "https://travelsetu.com/apps/uploads/new_destinations_photos/destination/2024/07/02/2d6fa30789443a03920f8c4374cda018_1000x1000.jpg",
       description:
         "The Prophet's city with profound Islamic heritage. Connect with the sacred history and peaceful atmosphere.",
       properties: "95+ properties",
