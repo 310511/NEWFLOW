@@ -3,9 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { MapPin, Calendar as CalendarIcon, Users, Search, Plus, Minus } from "lucide-react";
+import {
+  MapPin,
+  Calendar as CalendarIcon,
+  Users,
+  Search,
+  Plus,
+  Minus,
+} from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +27,12 @@ interface DestinationPickerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const DestinationPicker = ({ value, onChange, isOpen, onOpenChange }: DestinationPickerProps) => {
+export const DestinationPicker = ({
+  value,
+  onChange,
+  isOpen,
+  onOpenChange,
+}: DestinationPickerProps) => {
   const popularDestinations = [
     { name: "Riyadh", country: "Saudi Arabia" },
     { name: "Jeddah", country: "Saudi Arabia" },
@@ -30,16 +46,24 @@ export const DestinationPicker = ({ value, onChange, isOpen, onOpenChange }: Des
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <div className="flex flex-col items-start space-y-1 cursor-pointer p-4 hover:bg-muted/50 rounded-lg transition-all duration-200 min-w-[200px] group">
-          <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Where</Label>
-          <div className={cn(
-            "text-base font-normal transition-colors",
-            value ? "text-foreground font-medium" : "text-muted-foreground"
-          )}>
+          <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+            Where
+          </Label>
+          <div
+            className={cn(
+              "text-base font-normal transition-colors",
+              value ? "text-foreground font-medium" : "text-muted-foreground"
+            )}
+          >
             {value || "Search destinations"}
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-80 p-0 pointer-events-auto z-50" side="bottom">
+      <PopoverContent
+        align="start"
+        className="w-80 p-0 pointer-events-auto z-50"
+        side="bottom"
+      >
         <Card className="border-0 shadow-lg">
           <CardContent className="p-4 max-h-80 overflow-y-auto">
             <div className="space-y-3">
@@ -68,7 +92,9 @@ export const DestinationPicker = ({ value, onChange, isOpen, onOpenChange }: Des
                     </div>
                     <div className="flex-1">
                       <div className="text-base font-medium">{dest.name}</div>
-                      <div className="text-sm text-muted-foreground">{dest.country}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {dest.country}
+                      </div>
                     </div>
                   </button>
                 ))}
@@ -88,36 +114,49 @@ interface DatePickerProps {
   onEndDateChange: (date: Date | undefined) => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  type: 'checkin' | 'checkout';
+  type: "checkin" | "checkout";
 }
 
-export const DatePicker = ({ startDate, endDate, onStartDateChange, onEndDateChange, isOpen, onOpenChange, type }: DatePickerProps) => {
-  const currentDate = type === 'checkin' ? startDate : endDate;
+export const DatePicker = ({
+  startDate,
+  endDate,
+  onStartDateChange,
+  onEndDateChange,
+  isOpen,
+  onOpenChange,
+  type,
+}: DatePickerProps) => {
+  const currentDate = type === "checkin" ? startDate : endDate;
 
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <div className="flex flex-col items-start space-y-1 cursor-pointer p-4 hover:bg-muted/50 rounded-lg transition-all duration-200 min-w-[140px] group">
           <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-            {type === 'checkin' ? 'Check in' : 'Check out'}
+            {type === "checkin" ? "Check in" : "Check out"}
           </Label>
-          <div className={cn(
-            "text-base font-normal transition-colors",
-            currentDate ? "text-foreground font-medium" : "text-muted-foreground"
-          )}>
-            {currentDate 
-              ? format(currentDate, "MMM d") 
-              : "Add dates"
-            }
+          <div
+            className={cn(
+              "text-base font-normal transition-colors",
+              currentDate
+                ? "text-foreground font-medium"
+                : "text-muted-foreground"
+            )}
+          >
+            {currentDate ? format(currentDate, "MMM d") : "Add dates"}
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-auto p-0 pointer-events-auto z-50" side="bottom">
+      <PopoverContent
+        align="start"
+        className="w-auto p-0 pointer-events-auto z-50"
+        side="bottom"
+      >
         <Calendar
           mode="single"
           selected={currentDate}
           onSelect={(date) => {
-            if (type === 'checkin') {
+            if (type === "checkin") {
               onStartDateChange(date);
             } else {
               onEndDateChange(date);
@@ -142,33 +181,51 @@ interface GuestSelectorProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChange, isOpen, onOpenChange }: GuestSelectorProps) => {
+export const GuestSelector = ({
+  adults,
+  children,
+  onAdultsChange,
+  onChildrenChange,
+  isOpen,
+  onOpenChange,
+}: GuestSelectorProps) => {
   const totalGuests = adults + children;
 
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <div className="flex flex-col items-start space-y-1 cursor-pointer p-4 hover:bg-muted/50 rounded-lg transition-all duration-200 min-w-[140px] group">
-          <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Who</Label>
-          <div className={cn(
-            "text-base font-normal transition-colors",
-            totalGuests > 0 ? "text-foreground font-medium" : "text-muted-foreground"
-          )}>
-            {totalGuests > 0 
-              ? `${totalGuests} guest${totalGuests > 1 ? 's' : ''}`
-              : "Add guests"
-            }
+          <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+            Guests
+          </Label>
+          <div
+            className={cn(
+              "text-base font-normal transition-colors",
+              totalGuests > 0
+                ? "text-foreground font-medium"
+                : "text-muted-foreground"
+            )}
+          >
+            {totalGuests > 0
+              ? `${totalGuests} guest${totalGuests > 1 ? "s" : ""}`
+              : "Add guests"}
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 p-0 pointer-events-auto z-50" side="bottom">
+      <PopoverContent
+        align="end"
+        className="w-80 p-0 pointer-events-auto z-50"
+        side="bottom"
+      >
         <Card className="border-0 shadow-lg">
           <CardContent className="p-4">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium text-sm">Adults</div>
-                  <div className="text-xs text-muted-foreground">Ages 13 or above</div>
+                  <div className="text-xs text-muted-foreground">
+                    Ages 13 or above
+                  </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Button
@@ -180,7 +237,9 @@ export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChan
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
-                  <span className="w-8 text-center text-sm font-medium">{adults}</span>
+                  <span className="w-8 text-center text-sm font-medium">
+                    {adults}
+                  </span>
                   <Button
                     variant="outline"
                     size="icon"
@@ -191,7 +250,7 @@ export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChan
                   </Button>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium text-sm">Children</div>
@@ -207,7 +266,9 @@ export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChan
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
-                  <span className="w-8 text-center text-sm font-medium">{children}</span>
+                  <span className="w-8 text-center text-sm font-medium">
+                    {children}
+                  </span>
                   <Button
                     variant="outline"
                     size="icon"
@@ -237,12 +298,14 @@ export const SearchButton = ({ onSearch, expanded }: SearchButtonProps) => {
       onClick={onSearch}
       className={cn(
         "bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-xl rounded-full",
-        expanded 
-          ? "px-12 py-8 text-lg font-semibold h-auto min-w-[120px]" 
+        expanded
+          ? "px-12 py-8 text-lg font-semibold h-auto min-w-[120px]"
           : "p-6 h-auto min-w-[60px] aspect-square"
       )}
     >
-      <Search className={cn("transition-all", expanded ? "h-6 w-6 mr-3" : "h-6 w-6")} />
+      <Search
+        className={cn("transition-all", expanded ? "h-6 w-6 mr-3" : "h-6 w-6")}
+      />
       {expanded && "Search"}
     </Button>
   );
