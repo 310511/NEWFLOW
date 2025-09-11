@@ -95,13 +95,13 @@ const NewSearchResults = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header variant="compact" />
+      <Header />
       
 
       {/* Main Content */}
-      <main className="w-full pt-header-compact" style={{ paddingTop: 'calc(var(--header-height-compact) + 14px)' }}>
+      <main className="w-full pt-header" style={{ paddingTop: 'calc(var(--header-height-default) + 14px)' }}>
         {/* Search Controls Bar */}
-        <div className="px-6 py-4 bg-white border-b border-border/30 sticky sticky-below-header-compact z-50">
+        <div className="px-6 py-4 bg-white border-b border-border/30 sticky sticky-below-header z-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <h1 className="text-lg font-semibold">
