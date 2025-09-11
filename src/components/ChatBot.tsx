@@ -8,29 +8,37 @@ import AnimatedAvatar from "@/components/AnimatedAvatar";
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'bot', content: 'Hi! I\'m here to help you find the perfect hotel. How can I assist you today?' }
+    {
+      role: "bot",
+      content:
+        "Hi! I'm here to help you find the perfect hotel. How can I assist you today?",
+    },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
 
   const handleSend = () => {
     if (!input.trim()) return;
-    
+
     const newMessages = [
       ...messages,
-      { role: 'user', content: input },
-      { role: 'bot', content: 'Thanks for your message! Our AI assistant is coming soon. For now, please use our search to find hotels or contact our support team.' }
+      { role: "user", content: input },
+      {
+        role: "bot",
+        content:
+          "Thanks for your message! Our AI assistant is coming soon. For now, please use our search to find hotels or contact our support team.",
+      },
     ];
-    
+
     setMessages(newMessages);
-    setInput('');
+    setInput("");
   };
 
   return (
     <>
       {/* Chat Interface */}
       {isOpen && (
-        <div className="fixed bottom-28 right-6 z-50">
-          <Card className="w-[500px] h-[85vh] max-h-[90vh] shadow-2xl border-0 animate-scale-in flex flex-col">
+        <div className="fixed bottom-28 right-6 z-[10000]">
+          <Card className="w-[400px] h-[70vh] max-h-[90vh] shadow-2xl border-0 animate-scale-in flex flex-col">
             <CardHeader className="bg-gradient-to-r from-primary to-emerald-600 text-white p-4 rounded-t-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
@@ -52,20 +60,22 @@ const ChatBot = () => {
                 </Button>
               </div>
             </CardHeader>
-            
+
             <CardContent className="p-0 flex flex-col flex-1 min-h-0">
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${
+                      message.role === "user" ? "justify-end" : "justify-start"
+                    }`}
                   >
                     <div
                       className={`max-w-[80%] p-3 rounded-2xl text-sm ${
-                        message.role === 'user'
-                          ? 'bg-primary text-white rounded-br-sm'
-                          : 'bg-muted text-foreground rounded-bl-sm'
+                        message.role === "user"
+                          ? "bg-primary text-white rounded-br-sm"
+                          : "bg-muted text-foreground rounded-bl-sm"
                       }`}
                     >
                       {message.content}
@@ -73,7 +83,7 @@ const ChatBot = () => {
                   </div>
                 ))}
               </div>
-              
+
               {/* Input */}
               <div className="mt-auto p-4 border-t bg-gray-50">
                 <div className="flex space-x-2">
@@ -81,10 +91,10 @@ const ChatBot = () => {
                     placeholder="Type your message..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
                     className="flex-1 rounded-full border-2 focus:border-primary"
                   />
-                  <Button 
+                  <Button
                     onClick={handleSend}
                     size="sm"
                     className="rounded-full w-10 h-10 p-0 bg-primary hover:bg-primary/90"

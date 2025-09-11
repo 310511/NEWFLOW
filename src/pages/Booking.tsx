@@ -7,10 +7,30 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ArrowLeft, Star, MapPin, Calendar, Users, CreditCard, Shield, Clock, CheckCircle } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  ArrowLeft,
+  Star,
+  MapPin,
+  Calendar,
+  Users,
+  CreditCard,
+  Shield,
+  Clock,
+  CheckCircle,
+} from "lucide-react";
 import { format } from "date-fns";
 import { hotels } from "@/data/hotels";
 import Header from "@/components/Header";
@@ -21,7 +41,7 @@ const BookingPage = () => {
   const navigate = useNavigate();
   const [hotel, setHotel] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  
+
   // Booking form state
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
@@ -36,7 +56,7 @@ const BookingPage = () => {
 
   useEffect(() => {
     if (id) {
-      const hotelData = hotels.find(h => h.id === id);
+      const hotelData = hotels.find((h) => h.id === id);
       setHotel(hotelData);
     }
   }, [id]);
@@ -54,14 +74,19 @@ const BookingPage = () => {
     const subtotal = hotel ? hotel.price * nights * rooms : 0;
     const taxes = subtotal * 0.15; // 15% tax
     const serviceFee = 25;
-    return { subtotal, taxes, serviceFee, total: subtotal + taxes + serviceFee };
+    return {
+      subtotal,
+      taxes,
+      serviceFee,
+      total: subtotal + taxes + serviceFee,
+    };
   };
 
   const handleBooking = async () => {
     setLoading(true);
     // Simulate booking API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     // Redirect to confirmation (in real app, would have booking confirmation page)
     alert("Booking successful! You will receive a confirmation email shortly.");
     navigate("/");
@@ -88,8 +113,13 @@ const BookingPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
-      <main className="w-full px-6 lg:px-8 py-8 pt-header-plus-25" style={{ paddingTop: 'calc(var(--header-height-default) + 25px + 19px)' }}>
+
+      <main
+        className="w-full px-6 lg:px-8 py-8 pt-header-plus-25"
+        style={{
+          paddingTop: "calc(var(--header-height-default) + 41px + 19px)",
+        }}
+      >
         {/* Back Button */}
         <Button
           variant="ghost"
@@ -113,7 +143,9 @@ const BookingPage = () => {
                     className="w-24 h-24 rounded-lg object-cover"
                   />
                   <div className="flex-1">
-                    <h1 className="text-2xl font-bold text-foreground">{hotel.name}</h1>
+                    <h1 className="text-2xl font-bold text-foreground">
+                      {hotel.name}
+                    </h1>
                     <div className="flex items-center space-x-2 text-muted-foreground mt-1">
                       <MapPin className="h-4 w-4" />
                       <span>{hotel.location}</span>
@@ -122,7 +154,9 @@ const BookingPage = () => {
                       <div className="flex items-center space-x-1">
                         <Star className="h-4 w-4 fill-primary text-primary" />
                         <span className="font-medium">{hotel.rating}</span>
-                        <span className="text-muted-foreground">({hotel.reviews} reviews)</span>
+                        <span className="text-muted-foreground">
+                          ({hotel.reviews} reviews)
+                        </span>
                       </div>
                       <Badge variant="secondary">Excellent</Badge>
                     </div>
@@ -142,9 +176,14 @@ const BookingPage = () => {
                     <Label>Check-in</Label>
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start">
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start"
+                        >
                           <Calendar className="h-4 w-4 mr-2" />
-                          {checkIn ? format(checkIn, "MMM d, yyyy") : "Select date"}
+                          {checkIn
+                            ? format(checkIn, "MMM d, yyyy")
+                            : "Select date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -162,9 +201,14 @@ const BookingPage = () => {
                     <Label>Check-out</Label>
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start">
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start"
+                        >
                           <Calendar className="h-4 w-4 mr-2" />
-                          {checkOut ? format(checkOut, "MMM d, yyyy") : "Select date"}
+                          {checkOut
+                            ? format(checkOut, "MMM d, yyyy")
+                            : "Select date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -172,7 +216,9 @@ const BookingPage = () => {
                           mode="single"
                           selected={checkOut}
                           onSelect={setCheckOut}
-                          disabled={(date) => date < new Date() || (checkIn && date <= checkIn)}
+                          disabled={(date) =>
+                            date < new Date() || (checkIn && date <= checkIn)
+                          }
                         />
                       </PopoverContent>
                     </Popover>
@@ -181,26 +227,32 @@ const BookingPage = () => {
                   <div className="space-y-2">
                     <Label>Guests & Rooms</Label>
                     <div className="flex space-x-2">
-                      <Select value={guests.toString()} onValueChange={(value) => setGuests(parseInt(value))}>
+                      <Select
+                        value={guests.toString()}
+                        onValueChange={(value) => setGuests(parseInt(value))}
+                      >
                         <SelectTrigger className="flex-1">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {[1,2,3,4,5,6].map(num => (
+                          {[1, 2, 3, 4, 5, 6].map((num) => (
                             <SelectItem key={num} value={num.toString()}>
-                              {num} Guest{num > 1 ? 's' : ''}
+                              {num} Guest{num > 1 ? "s" : ""}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <Select value={rooms.toString()} onValueChange={(value) => setRooms(parseInt(value))}>
+                      <Select
+                        value={rooms.toString()}
+                        onValueChange={(value) => setRooms(parseInt(value))}
+                      >
                         <SelectTrigger className="flex-1">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {[1,2,3,4].map(num => (
+                          {[1, 2, 3, 4].map((num) => (
                             <SelectItem key={num} value={num.toString()}>
-                              {num} Room{num > 1 ? 's' : ''}
+                              {num} Room{num > 1 ? "s" : ""}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -285,13 +337,15 @@ const BookingPage = () => {
                     <SelectValue placeholder="Select payment method" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="credit-card">Credit/Debit Card</SelectItem>
+                    <SelectItem value="credit-card">
+                      Credit/Debit Card
+                    </SelectItem>
                     <SelectItem value="paypal">PayPal</SelectItem>
                     <SelectItem value="apple-pay">Apple Pay</SelectItem>
                     <SelectItem value="google-pay">Google Pay</SelectItem>
                   </SelectContent>
                 </Select>
-                
+
                 {paymentMethod === "credit-card" && (
                   <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -323,7 +377,10 @@ const BookingPage = () => {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span>${hotel.price} x {calculateNights()} nights x {rooms} room{rooms > 1 ? 's' : ''}</span>
+                    <span>
+                      ${hotel.price} x {calculateNights()} nights x {rooms} room
+                      {rooms > 1 ? "s" : ""}
+                    </span>
                     <span>${pricing.subtotal}</span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -356,17 +413,29 @@ const BookingPage = () => {
                   </div>
                 </div>
 
-                <Button 
-                  className="w-full mt-6" 
+                <Button
+                  className="w-full mt-6"
                   size="lg"
                   onClick={handleBooking}
-                  disabled={loading || !checkIn || !checkOut || !firstName || !lastName || !email || !phone || !paymentMethod}
+                  disabled={
+                    loading ||
+                    !checkIn ||
+                    !checkOut ||
+                    !firstName ||
+                    !lastName ||
+                    !email ||
+                    !phone ||
+                    !paymentMethod
+                  }
                 >
-                  {loading ? "Processing..." : `Book Now - $${pricing.total.toFixed(2)}`}
+                  {loading
+                    ? "Processing..."
+                    : `Book Now - $${pricing.total.toFixed(2)}`}
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">
-                  By completing this booking, you agree to our Terms of Service and Privacy Policy
+                  By completing this booking, you agree to our Terms of Service
+                  and Privacy Policy
                 </p>
               </CardContent>
             </Card>
