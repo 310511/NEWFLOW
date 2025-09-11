@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { DestinationPicker, DatePicker, GuestSelector, SearchButton } from "./CustomSearchComponents";
+import {
+  DestinationPicker,
+  DatePicker,
+  GuestSelector,
+  SearchButton,
+} from "./CustomSearchComponents";
 
 interface Props {
   isSticky?: boolean;
@@ -13,6 +18,7 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
+  const [rooms, setRooms] = useState(1); // Initialize rooms state
   const [showDestinations, setShowDestinations] = useState(false);
   const [showCheckinPicker, setShowCheckinPicker] = useState(false);
   const [showCheckoutPicker, setShowCheckoutPicker] = useState(false);
@@ -24,7 +30,8 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
-      const clickedInsideSearch = searchBarRef.current?.contains(target as Node) ?? false;
+      const clickedInsideSearch =
+        searchBarRef.current?.contains(target as Node) ?? false;
 
       if (!clickedInsideSearch) {
         setShowDestinations(false);
@@ -36,48 +43,48 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSearch = () => {
     const params = new URLSearchParams({
-      destination: destination || 'Riyadh',
+      destination: destination || "Riyadh",
       guests: (adults + children).toString(),
     });
-    
+
     if (startDate) {
-      params.set('checkIn', startDate.toISOString());
+      params.set("checkIn", startDate.toISOString());
     }
     if (endDate) {
-      params.set('checkOut', endDate.toISOString());
+      params.set("checkOut", endDate.toISOString());
     }
-    
+
     navigate(`/search?${params.toString()}`);
   };
 
   const handleFieldFocus = (field: string) => {
     setIsExpanded(true);
     setActiveField(field);
-    
+
     // Close all other dropdowns
     setShowDestinations(false);
     setShowCheckinPicker(false);
     setShowCheckoutPicker(false);
     setShowGuests(false);
-    
+
     // Open the relevant dropdown
     switch (field) {
-      case 'destination':
+      case "destination":
         setShowDestinations(true);
         break;
-      case 'checkin':
+      case "checkin":
         setShowCheckinPicker(true);
         break;
-      case 'checkout':
+      case "checkout":
         setShowCheckoutPicker(true);
         break;
-      case 'guests':
+      case "guests":
         setShowGuests(true);
         break;
     }
@@ -85,7 +92,7 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
 
   const handleSearchClick = () => {
     if (!isExpanded) {
-      handleFieldFocus('destination');
+      handleFieldFocus("destination");
     } else {
       handleSearch();
     }
@@ -93,11 +100,11 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
 
   return (
     <div className="w-full">
-      <div 
+      <div
         ref={searchBarRef}
         className={`bg-background border border-border rounded-full shadow-search transition-all duration-300 ${
-          isExpanded ? 'scale-105 shadow-card-hover' : 'hover:shadow-card-hover'
-        } ${isSticky ? 'scale-90' : ''} backdrop-blur-sm mx-0`}
+          isExpanded ? "scale-105 shadow-card-hover" : "hover:shadow-card-hover"
+        } ${isSticky ? "scale-90" : ""} backdrop-blur-sm mx-0`}
       >
         <div className="flex items-center px-6 pr-4">
           {/* Where */}
@@ -108,7 +115,7 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
               isOpen={showDestinations}
               onOpenChange={(open) => {
                 setShowDestinations(open);
-                if (open) handleFieldFocus('destination');
+                if (open) handleFieldFocus("destination");
               }}
             />
           </div>
@@ -124,7 +131,7 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
               isOpen={showCheckinPicker}
               onOpenChange={(open) => {
                 setShowCheckinPicker(open);
-                if (open) handleFieldFocus('checkin');
+                if (open) handleFieldFocus("checkin");
               }}
               type="checkin"
             />
@@ -141,7 +148,7 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
               isOpen={showCheckoutPicker}
               onOpenChange={(open) => {
                 setShowCheckoutPicker(open);
-                if (open) handleFieldFocus('checkout');
+                if (open) handleFieldFocus("checkout");
               }}
               type="checkout"
               minDate={startDate}
@@ -156,22 +163,21 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
             <GuestSelector
               adults={adults}
               children={children}
+              rooms={rooms} // Pass rooms prop
               onAdultsChange={setAdults}
               onChildrenChange={setChildren}
+              onRoomsChange={setRooms} // Pass onRoomsChange handler
               isOpen={showGuests}
               onOpenChange={(open) => {
                 setShowGuests(open);
-                if (open) handleFieldFocus('guests');
+                if (open) handleFieldFocus("guests");
               }}
             />
           </div>
 
           {/* Search Button */}
           <div className="p-1">
-            <SearchButton
-              onSearch={handleSearchClick}
-              expanded={isExpanded}
-            />
+            <SearchButton onSearch={handleSearchClick} expanded={isExpanded} />
           </div>
         </div>
       </div>

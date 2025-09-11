@@ -3,7 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { MapPin, Calendar as CalendarIcon, Users, Search, Plus, Minus } from "lucide-react";
+import {
+  MapPin,
+  Calendar as CalendarIcon,
+  Users,
+  Search,
+  Plus,
+  Minus,
+} from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +21,12 @@ interface DestinationPickerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const DestinationPicker = ({ value, onChange, isOpen, onOpenChange }: DestinationPickerProps) => {
+export const DestinationPicker = ({
+  value,
+  onChange,
+  isOpen,
+  onOpenChange,
+}: DestinationPickerProps) => {
   const [inputValue, setInputValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -41,21 +53,25 @@ export const DestinationPicker = ({ value, onChange, isOpen, onOpenChange }: Des
 
   return (
     <div className="relative">
-      <div 
+      <div
         className="flex flex-col items-start space-y-1 cursor-pointer p-4 hover:bg-muted/50 rounded-lg transition-all duration-200 min-w-[200px] group"
         onClick={() => onOpenChange(!isOpen)}
       >
-        <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Where</Label>
-        <div className={cn(
-          "text-base font-normal transition-colors truncate w-full",
-          value ? "text-foreground font-medium" : "text-muted-foreground"
-        )}>
+        <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+          Where
+        </Label>
+        <div
+          className={cn(
+            "text-base font-normal transition-colors truncate w-full",
+            value ? "text-foreground font-medium" : "text-muted-foreground"
+          )}
+        >
           {value || "Search destinations"}
         </div>
       </div>
-      
+
       {isOpen && (
-        <div 
+        <div
           ref={dropdownRef}
           className="absolute top-full left-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden"
         >
@@ -84,7 +100,9 @@ export const DestinationPicker = ({ value, onChange, isOpen, onOpenChange }: Des
                     </div>
                     <div className="flex-1">
                       <div className="text-base font-medium">{dest.name}</div>
-                      <div className="text-sm text-muted-foreground">{dest.country}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {dest.country}
+                      </div>
                     </div>
                   </button>
                 ))}
@@ -102,11 +120,18 @@ interface DatePickerProps {
   onDateChange: (date: Date | undefined) => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  type: 'checkin' | 'checkout';
+  type: "checkin" | "checkout";
   minDate?: Date;
 }
 
-export const DatePicker = ({ date, onDateChange, isOpen, onOpenChange, type, minDate }: DatePickerProps) => {
+export const DatePicker = ({
+  date,
+  onDateChange,
+  isOpen,
+  onOpenChange,
+  type,
+  minDate,
+}: DatePickerProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
@@ -116,23 +141,25 @@ export const DatePicker = ({ date, onDateChange, isOpen, onOpenChange, type, min
 
   return (
     <div className="relative">
-      <div 
+      <div
         className="flex flex-col items-start space-y-1 cursor-pointer p-4 hover:bg-muted/50 rounded-lg transition-all duration-200 min-w-[140px] group"
         onClick={() => onOpenChange(!isOpen)}
       >
         <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-          {type === 'checkin' ? 'Check in' : 'Check out'}
+          {type === "checkin" ? "Check in" : "Check out"}
         </Label>
-        <div className={cn(
-          "text-base font-normal transition-colors",
-          date ? "text-foreground font-medium" : "text-muted-foreground"
-        )}>
+        <div
+          className={cn(
+            "text-base font-normal transition-colors",
+            date ? "text-foreground font-medium" : "text-muted-foreground"
+          )}
+        >
           {date ? format(date, "MMM d, yyyy") : "Add dates"}
         </div>
       </div>
-      
+
       {isOpen && (
-        <div 
+        <div
           ref={dropdownRef}
           className="absolute top-full left-0 mt-2 bg-background border border-border rounded-xl shadow-xl z-50 overflow-hidden"
         >
@@ -159,36 +186,52 @@ export const DatePicker = ({ date, onDateChange, isOpen, onOpenChange, type, min
 interface GuestSelectorProps {
   adults: number;
   children: number;
+  rooms: number; // New prop for number of rooms
   onAdultsChange: (count: number) => void;
   onChildrenChange: (count: number) => void;
+  onRoomsChange: (count: number) => void; // New prop for changing room count
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChange, isOpen, onOpenChange }: GuestSelectorProps) => {
+export const GuestSelector = ({
+  adults,
+  children,
+  rooms, // Destructure new rooms prop
+  onAdultsChange,
+  onChildrenChange,
+  onRoomsChange, // Destructure new onRoomsChange prop
+  isOpen,
+  onOpenChange,
+}: GuestSelectorProps) => {
   const totalGuests = adults + children;
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="relative">
-      <div 
+      <div
         className="flex flex-col items-start space-y-1 cursor-pointer p-4 hover:bg-muted/50 rounded-lg transition-all duration-200 min-w-[140px] group"
         onClick={() => onOpenChange(!isOpen)}
       >
-        <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Who</Label>
-        <div className={cn(
-          "text-base font-normal transition-colors",
-          totalGuests > 0 ? "text-foreground font-medium" : "text-muted-foreground"
-        )}>
-          {totalGuests > 0 
-            ? `${totalGuests} guest${totalGuests > 1 ? 's' : ''}`
-            : "Add guests"
-          }
+        <Label className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+          Who
+        </Label>
+        <div
+          className={cn(
+            "text-base font-normal transition-colors",
+            totalGuests > 0
+              ? "text-foreground font-medium"
+              : "text-muted-foreground"
+          )}
+        >
+          {totalGuests > 0
+            ? `${totalGuests} guest${totalGuests > 1 ? "s" : ""}`
+            : "Add guests"}
         </div>
       </div>
-      
+
       {isOpen && (
-        <div 
+        <div
           ref={dropdownRef}
           className="absolute top-full right-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden"
         >
@@ -197,7 +240,9 @@ export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChan
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium text-sm">Adults</div>
-                  <div className="text-xs text-muted-foreground">Ages 13 or above</div>
+                  <div className="text-xs text-muted-foreground">
+                    Ages 13 or above
+                  </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Button
@@ -209,7 +254,9 @@ export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChan
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
-                  <span className="w-8 text-center text-sm font-medium">{adults}</span>
+                  <span className="w-8 text-center text-sm font-medium">
+                    {adults}
+                  </span>
                   <Button
                     variant="outline"
                     size="icon"
@@ -220,7 +267,7 @@ export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChan
                   </Button>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium text-sm">Children</div>
@@ -236,12 +283,46 @@ export const GuestSelector = ({ adults, children, onAdultsChange, onChildrenChan
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
-                  <span className="w-8 text-center text-sm font-medium">{children}</span>
+                  <span className="w-8 text-center text-sm font-medium">
+                    {children}
+                  </span>
                   <Button
                     variant="outline"
                     size="icon"
                     className="h-8 w-8 rounded-full hover:scale-110 transition-transform duration-200"
                     onClick={() => onChildrenChange(children + 1)}
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Rooms Selector */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium text-sm">Rooms</div>
+                  <div className="text-xs text-muted-foreground">
+                    Number of rooms
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full hover:scale-110 transition-transform duration-200"
+                    onClick={() => onRoomsChange(Math.max(1, rooms - 1))}
+                    disabled={rooms <= 1}
+                  >
+                    <Minus className="h-3 w-3" />
+                  </Button>
+                  <span className="w-8 text-center text-sm font-medium">
+                    {rooms}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full hover:scale-110 transition-transform duration-200"
+                    onClick={() => onRoomsChange(rooms + 1)}
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
@@ -266,12 +347,14 @@ export const SearchButton = ({ onSearch, expanded }: SearchButtonProps) => {
       onClick={onSearch}
       className={cn(
         "bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105",
-        expanded 
-          ? "px-12 py-4 rounded-full text-lg font-semibold h-auto min-w-[120px]" 
+        expanded
+          ? "px-12 py-4 rounded-full text-lg font-semibold h-auto min-w-[120px]"
           : "p-4 rounded-full h-auto min-w-[60px]"
       )}
     >
-      <Search className={cn("transition-all", expanded ? "h-6 w-6 mr-3" : "h-6 w-6")} />
+      <Search
+        className={cn("transition-all", expanded ? "h-6 w-6 mr-3" : "h-6 w-6")}
+      />
       {expanded && "Search"}
     </Button>
   );
