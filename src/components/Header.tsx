@@ -165,6 +165,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                     navigate(item.href);
                   }}
                 >
+                  {}
                   <img
                     src={item.customIcon}
                     alt={item.name}
