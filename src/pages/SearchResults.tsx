@@ -106,7 +106,7 @@ const NewSearchResults = () => {
       {/* Main Content */}
       <main
         className="w-full pt-header"
-        style={{ paddingTop: "calc(var(--header-height-default) + 36px)" }}
+        style={{ paddingTop: "calc(var(--header-height-default) + 46px)" }}
       >
         {/* Search Controls Bar */}
         <div className="px-6 py-4 bg-white border-b border-border/30 sticky sticky-below-header z-50">
