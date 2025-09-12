@@ -42,7 +42,7 @@ const Home = () => {
       <main
         className="relative pt-header-home-plus-40"
         style={{
-          paddingTop: "calc(var(--header-height-default) + 37px + 56px + 14px)",
+          paddingTop: "calc(var(--header-height-default) + 37px + 56px + 26px)",
         }}
       >
         {/* Hotel Categories Quick Access */}
