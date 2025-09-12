@@ -1,73 +1,69 @@
-# Welcome to your Lovable project
+# Hotel Reservation Booking System Showcase
 
-## Project info
+A modern web application showcasing a hotel reservation and booking system, built with React, TypeScript, and Tailwind CSS. It features hotel listings, search and filtering capabilities, destination pages, and a user-friendly interface.
 
-**URL**: https://lovable.dev/projects/43a0e3a7-a4a8-4c16-9ec8-8a5cf4457300
+## Key Features
 
-## How can I edit this code?
+- Browse and view detailed hotel listings.
+- Search for hotels by various criteria (e.g., location, dates, guests).
+- Filter search results to refine choices.
+- Explore popular destinations with dedicated pages.
+- View hotel details including descriptions, amenities, and reviews.
+- Simulated booking process for selected hotels.
+- Interactive map views for hotel locations.
+- Responsive design for various devices.
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/43a0e3a7-a4a8-4c16-9ec8-8a5cf4457300) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
+## Technologies Used
 
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+- Mapbox GL JS (for interactive maps)
 
-## How can I deploy this project?
+## Getting Started (Local Development)
 
-Simply open [Lovable](https://lovable.dev/projects/43a0e3a7-a4a8-4c16-9ec8-8a5cf4457300) and click on Share -> Publish.
+### Prerequisites
 
-## Can I connect a custom domain to my Lovable project?
+- Node.js (v18 or higher)
+- npm or bun package manager
 
-Yes, you can!
+### Installation
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```bash
+# Clone the repository
+git clone https://github.com/Dap42/hotel-rbs-showcase-58.git
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Navigate into the project directory
+cd hotel-rbs-showcase-58
+
+# Install dependencies
+npm install # or bun install
+
+# Start the development server
+npm run dev # or bun dev
+```
+
+The application will be accessible at `http://localhost:5173` (or another port if 5173 is in use).
+
+## Project Structure (Brief Overview)
+
+- `public/`: Static assets like images and favicons.
+- `src/assets/`: Application-specific images and icons.
+- `src/components/`: Reusable UI components (e.g., `Header`, `Footer`, `HotelCard`, `SearchBar`).
+- `src/components/ui/`: Shadcn-ui components.
+- `src/data/`: Mock data, such as `hotels.ts`.
+- `src/hooks/`: Custom React hooks.
+- `src/lib/`: Utility functions.
+- `src/pages/`: Main application pages (e.g., `Home`, `Destinations`, `HotelDetails`, `Booking`).
+
+## Deployment
+
+To build the project for production:
+
+```bash
+npm run build # or bun build
+```
+
+The optimized build output will be generated in the `dist/` directory.
