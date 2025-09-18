@@ -9,16 +9,13 @@ interface AnimatedAvatarProps {
 
 const AnimatedAvatar = ({ onClick, isOpen }: AnimatedAvatarProps) => {
   const [isWaving, setIsWaving] = useState(false);
-  const [showGreeting, setShowGreeting] = useState(false);
 
   useEffect(() => {
     // Initial wave animation after component mounts
     const waveTimer = setTimeout(() => {
       setIsWaving(true);
-      setShowGreeting(true);
       setTimeout(() => {
         setIsWaving(false);
-        setTimeout(() => setShowGreeting(false), 2000);
       }, 1000);
     }, 1000);
 
@@ -38,17 +35,6 @@ const AnimatedAvatar = ({ onClick, isOpen }: AnimatedAvatarProps) => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {/* Greeting Bubble */}
-      {showGreeting && !isOpen && (
-        <div className="absolute bottom-20 right-0 mb-2 animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-lg p-3 max-w-48 border">
-            <p className="text-sm text-gray-700 font-medium">
-              Hi! I'm here to help you find the perfect hotel! 👋
-            </p>
-            <div className="absolute bottom-[-8px] right-6 w-4 h-4 bg-white border-r border-b border-gray-200 transform rotate-45"></div>
-          </div>
-        </div>
-      )}
 
       {/* Floating indicators */}
       <div className="absolute -top-2 -left-2 animate-pulse">
