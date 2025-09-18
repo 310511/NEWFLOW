@@ -158,13 +158,18 @@ const ChatBot = () => {
         window.n8nChatbot.open();
       }
     }
+    // Also trigger ElevenLabs if available
+    if (window.ElevenLabsConvAI) {
+      if (isOpen) {
+        window.ElevenLabsConvAI.close();
+      } else {
+        window.ElevenLabsConvAI.open();
+      }
+    }
   };
 
   return (
     <>
-      {/* ElevenLabs Voice Assistant Element */}
-      <elevenlabs-convai agent-id="agent_5801k5cfn9gxe2rsnwebn91b94e0"></elevenlabs-convai>
-
       {/* Animated Avatar - triggers n8n chatbot */}
       <AnimatedAvatar onClick={handleToggle} isOpen={isOpen} />
     </>
