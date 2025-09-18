@@ -47,17 +47,6 @@ npm run dev # or bun dev
 
 The application will be accessible at `http://localhost:5173` (or another port if 5173 is in use).
 
-## Project Structure (Brief Overview)
-
-- `public/`: Static assets like images and favicons.
-- `src/assets/`: Application-specific images and icons.
-- `src/components/`: Reusable UI components (e.g., `Header`, `Footer`, `HotelCard`, `SearchBar`).
-- `src/components/ui/`: Shadcn-ui components.
-- `src/data/`: Mock data, such as `hotels.ts`.
-- `src/hooks/`: Custom React hooks.
-- `src/lib/`: Utility functions.
-- `src/pages/`: Main application pages (e.g., `Home`, `Destinations`, `HotelDetails`, `Booking`).
-
 ## Deployment
 
 To build the project for production:
