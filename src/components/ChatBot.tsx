@@ -124,7 +124,7 @@ const ChatBot = () => {
       scriptRef.current = script;
     };
 
-    // Load ElevenLabs voice assistant script
+    // Load ElevenLabs voice assistant script only when needed
     const loadElevenLabsChatbot = () => {
       if (elevenLabsScriptRef.current) return; // Already loaded
 
@@ -138,7 +138,7 @@ const ChatBot = () => {
     };
 
     loadN8nChatbot();
-    loadElevenLabsChatbot();
+    // Don't load ElevenLabs automatically - only when user selects voice mode
 
     // Cleanup function
     return () => {
@@ -176,8 +176,28 @@ const ChatBot = () => {
 
     if (mode === 'text' && window.n8nChatbot) {
       window.n8nChatbot.open();
-    } else if (mode === 'voice' && window.ElevenLabsConvAI) {
-      window.ElevenLabsConvAI.open();
+    } else if (mode === 'voice') {
+      // Load ElevenLabs script only when voice mode is selected
+      const loadElevenLabsChatbot = () => {
+        if (elevenLabsScriptRef.current) return;
+
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
+        script.async = true;
+        script.type = 'text/javascript';
+        
+        document.head.appendChild(script);
+        elevenLabsScriptRef.current = script;
+        
+        // Wait for script to load then open
+        script.onload = () => {
+          if (window.ElevenLabsConvAI) {
+            window.ElevenLabsConvAI.open();
+          }
+        };
+      };
+      
+      loadElevenLabsChatbot();
     }
   };
 
@@ -236,8 +256,6 @@ const ChatBot = () => {
         </div>
       )}
 
-      {/* ElevenLabs Voice Assistant Element */}
-      <elevenlabs-convai agent-id="agent_5801k5cfn9gxe2rsnwebn91b94e0"></elevenlabs-convai>
 
       {/* Animated Avatar - triggers mode selector */}
       <AnimatedAvatar onClick={handleToggle} isOpen={isOpen} />
