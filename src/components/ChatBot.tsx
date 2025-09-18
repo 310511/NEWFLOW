@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { MessageCircle, Mic, MicOff, X } from "lucide-react";
+import { MessageCircle, Mic, X } from "lucide-react";
 import AnimatedAvatar from "@/components/AnimatedAvatar";
 
 // TypeScript declaration for n8n chatbot global object
@@ -20,7 +20,6 @@ declare global {
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [chatMode, setChatMode] = useState<'text' | 'voice'>('text');
   const [showModeSelector, setShowModeSelector] = useState(false);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
@@ -132,7 +131,6 @@ const ChatBot = () => {
 
     loadN8nChatbot();
     loadElevenLabsChatbot();
-    setIsLoaded(true);
 
     // Cleanup function
     return () => {
