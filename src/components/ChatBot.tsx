@@ -1,22 +1,37 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, Mic, X } from "lucide-react";
 import AnimatedAvatar from "@/components/AnimatedAvatar";
 
-// TypeScript declaration for n8n chatbot global object
+// TypeScript declaration for chatbot global objects
 declare global {
   interface Window {
     n8nChatbot?: {
       open: () => void;
       close: () => void;
     };
+    ElevenLabsConvAI?: {
+      open: () => void;
+      close: () => void;
+    };
+  }
+  
+  namespace JSX {
+    interface IntrinsicElements {
+      'elevenlabs-convai': {
+        'agent-id': string;
+      };
+    }
   }
 }
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [chatMode, setChatMode] = useState<'text' | 'voice'>('text');
+  const [showModeSelector, setShowModeSelector] = useState(false);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
+  const elevenLabsScriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
     // Load the n8n chatbot script when component mounts
@@ -109,7 +124,21 @@ const ChatBot = () => {
       scriptRef.current = script;
     };
 
+    // Load ElevenLabs voice assistant script
+    const loadElevenLabsChatbot = () => {
+      if (elevenLabsScriptRef.current) return; // Already loaded
+
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
+      script.async = true;
+      script.type = 'text/javascript';
+      
+      document.head.appendChild(script);
+      elevenLabsScriptRef.current = script;
+    };
+
     loadN8nChatbot();
+    loadElevenLabsChatbot();
 
     // Cleanup function
     return () => {
@@ -117,24 +146,100 @@ const ChatBot = () => {
         document.head.removeChild(scriptRef.current);
         scriptRef.current = null;
       }
+      if (elevenLabsScriptRef.current) {
+        document.head.removeChild(elevenLabsScriptRef.current);
+        elevenLabsScriptRef.current = null;
+      }
     };
   }, []);
 
   const handleToggle = () => {
-    setIsOpen(!isOpen);
-    // Trigger the n8n chatbot to open/close
-    if (window.n8nChatbot) {
-      if (isOpen) {
+    if (!isOpen) {
+      setShowModeSelector(true);
+    } else {
+      setIsOpen(false);
+      setShowModeSelector(false);
+      // Close any open chatbots
+      if (window.n8nChatbot) {
         window.n8nChatbot.close();
-      } else {
-        window.n8nChatbot.open();
       }
+      if (window.ElevenLabsConvAI) {
+        window.ElevenLabsConvAI.close();
+      }
+    }
+  };
+
+  const handleModeSelect = (mode: 'text' | 'voice') => {
+    setChatMode(mode);
+    setShowModeSelector(false);
+    setIsOpen(true);
+
+    if (mode === 'text' && window.n8nChatbot) {
+      window.n8nChatbot.open();
+    } else if (mode === 'voice' && window.ElevenLabsConvAI) {
+      window.ElevenLabsConvAI.open();
     }
   };
 
   return (
     <>
-      {/* Animated Avatar - triggers n8n chatbot */}
+      {/* Mode Selector */}
+      {showModeSelector && (
+        <div className="fixed bottom-28 right-6 z-[10000]">
+          <Card className="w-[300px] shadow-2xl border-0 animate-scale-in">
+            <CardHeader className="bg-gradient-to-r from-primary to-emerald-600 text-white p-4 rounded-t-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <MessageCircle className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Choose Assistant</h3>
+                    <p className="text-xs text-white/80">Select your preferred mode</p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowModeSelector(false)}
+                  className="text-white hover:bg-white/20 h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-4 space-y-3">
+              <Button
+                onClick={() => handleModeSelect('text')}
+                className="w-full justify-start h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
+              >
+                <MessageCircle className="h-5 w-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-semibold">Text Chat</div>
+                  <div className="text-xs text-white/80">Type your questions</div>
+                </div>
+              </Button>
+
+              <Button
+                onClick={() => handleModeSelect('voice')}
+                className="w-full justify-start h-12 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+              >
+                <Mic className="h-5 w-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-semibold">Voice Assistant</div>
+                  <div className="text-xs text-white/80">Speak naturally</div>
+                </div>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* ElevenLabs Voice Assistant Element */}
+      <elevenlabs-convai agent-id="agent_5801k5cfn9gxe2rsnwebn91b94e0"></elevenlabs-convai>
+
+      {/* Animated Avatar - triggers mode selector */}
       <AnimatedAvatar onClick={handleToggle} isOpen={isOpen} />
     </>
   );
