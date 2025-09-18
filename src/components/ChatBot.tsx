@@ -135,8 +135,21 @@ const ChatBot = () => {
     loadN8nChatbot();
     loadElevenLabsChatbot();
 
+    // Hide the default ElevenLabs widget and only show voice assistant when needed
+    const hideElevenLabsWidget = () => {
+      const elevenLabsWidget = document.querySelector('elevenlabs-convai');
+      if (elevenLabsWidget) {
+        (elevenLabsWidget as HTMLElement).style.display = 'none';
+      }
+    };
+
+    // Hide immediately and periodically to catch dynamically loaded elements
+    hideElevenLabsWidget();
+    const interval = setInterval(hideElevenLabsWidget, 1000);
+
     // Cleanup function
     return () => {
+      clearInterval(interval);
       if (scriptRef.current) {
         document.head.removeChild(scriptRef.current);
         scriptRef.current = null;
@@ -170,6 +183,9 @@ const ChatBot = () => {
 
   return (
     <>
+      {/* ElevenLabs Voice Assistant Element */}
+      <elevenlabs-convai agent-id="agent_5801k5cfn9gxe2rsnwebn91b94e0"></elevenlabs-convai>
+
       {/* Animated Avatar - triggers n8n chatbot */}
       <AnimatedAvatar onClick={handleToggle} isOpen={isOpen} />
     </>
