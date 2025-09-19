@@ -32,16 +32,16 @@ function hideLovableComponents() {
     element.style.position = 'absolute';
     element.style.left = '-9999px';
     element.style.top = '-9999px';
-    element.style.transform = 'translateX(100px)';
+    element.style.transform = 'scale(0)';
     // Minimize size to absolute minimum
-    element.style.width = '1px';
-    element.style.height = '1px';
-    element.style.minWidth = '1px';
-    element.style.minHeight = '1px';
-    element.style.maxWidth = '1px';
-    element.style.maxHeight = '1px';
-    element.style.fontSize = '1px';
-    element.style.lineHeight = '1px';
+    element.style.width = '0';
+    element.style.height = '0';
+    element.style.minWidth = '0';
+    element.style.minHeight = '0';
+    element.style.maxWidth = '0';
+    element.style.maxHeight = '0';
+    element.style.fontSize = '0';
+    element.style.lineHeight = '0';
     element.style.padding = '0';
     element.style.margin = '0';
     element.style.border = 'none';

@@ -159,9 +159,48 @@ div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable
 /* Ensure ElevenLabs chatbot positioning doesn't overlap with n8n chatbot */
 elevenlabs-convai {
   position: fixed !important;
-  bottom: 80px !important;
+  bottom: 100px !important;
   right: 20px !important;
   z-index: 1000 !important;
+}
+
+/* More aggressive hiding for Lovable component */
+[data-lovable-tagger],
+[data-lovable-tagger] *,
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]),
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]) *,
+*:has-text("Made with Lovable"),
+*:has-text("Made with Lovable") *,
+*:has-text("Edit with Lovable"),
+*:has-text("Edit with Lovable") * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: transparent !important;
+  text-shadow: none !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  z-index: -9999 !important;
+  transform: scale(0) !important;
 }
 
 
