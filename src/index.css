@@ -45,6 +45,28 @@ div:has-text("Edit with Lovable") * {
   pointer-events: none !important;
 }
 
+/* More aggressive hiding for Lovable components */
+[data-lovable-tagger],
+[data-lovable-tagger] *,
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]),
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]) *,
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]) * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Hide any floating element with heart icon and woman avatar */
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has(button),
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has(button) * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
