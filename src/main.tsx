@@ -32,6 +32,7 @@ function hideLovableComponents() {
     element.style.position = 'absolute';
     element.style.left = '-9999px';
     element.style.top = '-9999px';
+    element.style.transform = 'translateX(100px)';
   });
 }
 

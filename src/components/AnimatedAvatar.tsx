@@ -34,7 +34,7 @@ const AnimatedAvatar = ({ onClick, isOpen }: AnimatedAvatarProps) => {
   }, [isOpen]);
 
   return (
-    <div className="fixed bottom-6 right-4 z-[9999]">
+    <div className="fixed bottom-8 right-4 z-[9999]">
 
       {/* Floating indicators */}
       <div className="absolute -top-2 -left-2 animate-pulse">

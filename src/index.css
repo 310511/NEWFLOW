@@ -107,6 +107,21 @@ div[style*="position: fixed"][style*="bottom"][style*="right"]:has(button) * {
   pointer-events: none !important;
 }
 
+/* Shift Lovable component to the right to be completely hidden */
+[data-lovable-tagger],
+[data-lovable-tagger] *,
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]),
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]) * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateX(100px) !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+}
+
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
