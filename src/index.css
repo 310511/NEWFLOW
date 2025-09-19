@@ -156,6 +156,14 @@ div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable
   z-index: -9999 !important;
 }
 
+/* Ensure ElevenLabs chatbot positioning doesn't overlap with n8n chatbot */
+elevenlabs-convai {
+  position: fixed !important;
+  bottom: 80px !important;
+  right: 20px !important;
+  z-index: 1000 !important;
+}
+
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
