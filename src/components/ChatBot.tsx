@@ -58,7 +58,7 @@ const ChatBot = () => {
               "borderRadius": "circle"
             },
             "tooltip": {
-              "showTooltip": true,
+              "showTooltip": false,
               "tooltipMessage": "Hi There 👋",
               "tooltipBackgroundColor": "#a9ccc7",
               "tooltipTextColor": "#1c1c1c",
