@@ -62,7 +62,8 @@ const ChatBot = () => {
               "tooltipMessage": "Hi There 👋",
               "tooltipBackgroundColor": "#a9ccc7",
               "tooltipTextColor": "#1c1c1c",
-              "tooltipFontSize": 15
+              "tooltipFontSize": 15,
+              "tooltipPosition": "left"
             },
             "chatWindow": {
               "borderRadiusStyle": "rounded",
