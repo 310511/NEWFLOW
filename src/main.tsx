@@ -33,6 +33,27 @@ function hideLovableComponents() {
     element.style.left = '-9999px';
     element.style.top = '-9999px';
     element.style.transform = 'translateX(100px)';
+    // Minimize size to absolute minimum
+    element.style.width = '1px';
+    element.style.height = '1px';
+    element.style.minWidth = '1px';
+    element.style.minHeight = '1px';
+    element.style.maxWidth = '1px';
+    element.style.maxHeight = '1px';
+    element.style.fontSize = '1px';
+    element.style.lineHeight = '1px';
+    element.style.padding = '0';
+    element.style.margin = '0';
+    element.style.border = 'none';
+    element.style.boxShadow = 'none';
+    element.style.background = 'transparent';
+    element.style.color = 'transparent';
+    element.style.textShadow = 'none';
+    element.style.overflow = 'hidden';
+    element.style.clip = 'rect(0, 0, 0, 0)';
+    element.style.clipPath = 'inset(50%)';
+    element.style.whiteSpace = 'nowrap';
+    element.style.zIndex = '-9999';
   });
 }
 

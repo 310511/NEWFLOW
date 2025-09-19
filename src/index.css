@@ -122,6 +122,40 @@ div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable
   top: -9999px !important;
 }
 
+/* Minimize Lovable component size to absolute minimum */
+[data-lovable-tagger],
+[data-lovable-tagger] *,
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]),
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]) *,
+*:has-text("Made with Lovable"),
+*:has-text("Made with Lovable") *,
+*:has-text("Edit with Lovable"),
+*:has-text("Edit with Lovable") * {
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 1px !important;
+  min-height: 1px !important;
+  max-width: 1px !important;
+  max-height: 1px !important;
+  font-size: 1px !important;
+  line-height: 1px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: transparent !important;
+  text-shadow: none !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  z-index: -9999 !important;
+}
+
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
