@@ -34,7 +34,7 @@ const AnimatedAvatar = ({ onClick, isOpen }: AnimatedAvatarProps) => {
   }, [isOpen]);
 
   return (
-    <div className="fixed bottom-20 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-[9999]">
 
       {/* Floating indicators */}
       <div className="absolute -top-2 -left-2 animate-pulse">
@@ -47,7 +47,7 @@ const AnimatedAvatar = ({ onClick, isOpen }: AnimatedAvatarProps) => {
       {/* Avatar Button */}
       <Button
         onClick={onClick}
-        className={`w-10 h-10 rounded-full shadow-2xl bg-gradient-to-br from-blue-50 to-green-50 hover:from-blue-100 hover:to-green-100 border-4 border-white transition-all duration-300 hover:scale-110 p-0 overflow-hidden ${
+        className={`w-16 h-16 rounded-full shadow-2xl bg-gradient-to-br from-blue-50 to-green-50 hover:from-blue-100 hover:to-green-100 border-4 border-white transition-all duration-300 hover:scale-110 p-0 overflow-hidden ${
           isOpen ? 'rotate-12 scale-105' : ''
         } ${isWaving ? 'animate-bounce' : ''}`}
       >
