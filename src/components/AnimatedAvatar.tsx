@@ -47,7 +47,7 @@ const AnimatedAvatar = ({ onClick, isOpen }: AnimatedAvatarProps) => {
       {/* Avatar Button */}
       <Button
         onClick={onClick}
-        className={`w-14 h-14 rounded-full shadow-2xl bg-gradient-to-br from-blue-50 to-green-50 hover:from-blue-100 hover:to-green-100 border-2 border-white transition-all duration-300 hover:scale-110 p-0 overflow-hidden ${
+        className={`w-10 h-10 rounded-full shadow-2xl bg-gradient-to-br from-blue-50 to-green-50 hover:from-blue-100 hover:to-green-100 border-2 border-white transition-all duration-300 hover:scale-110 p-0 overflow-hidden ${
           isOpen ? 'rotate-12 scale-105' : ''
         } ${isWaving ? 'animate-bounce' : ''}`}
       >
