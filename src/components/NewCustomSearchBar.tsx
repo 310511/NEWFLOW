@@ -180,12 +180,17 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
             <SearchButton onSearch={handleSearchClick} expanded={isExpanded} />
           </div>
 
-          {/* GIF in the blank space */}
+          {/* Animated Video in the blank space */}
           <div className="flex items-center ml-2">
-            <img
-              src="/PixVerse_V5_Image_Text_720P_with_same_plain_wh-_2_.gif"
+            <video
+              src="/animated-video.mp4"
               alt="Animated Search Element"
+              autoPlay
+              loop
+              muted
+              playsInline
               style={{ width: "110px", height: "85px", objectFit: "contain" }}
+              className="rounded-lg"
             />
           </div>
         </div>

@@ -234,9 +234,13 @@ const HotelDetails = () => {
                       </div>
                     )}
                   </div>
-                  <img
-                    src="/Couple-Going-On-Vacation.gif"
+                  <video
+                    src="/couple-vacation.mp4"
                     alt="Couple Going On Vacation"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                     className="w-28 h-28 object-cover rounded-md"
                   />
                 </div>

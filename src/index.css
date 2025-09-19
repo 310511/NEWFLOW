@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide Lovable platform components */
+[data-lovable-tagger],
+[data-lovable-tagger] *,
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]),
+div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable-tagger]) * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Hide the "Edit with Lovable" button specifically */
+div[style*="position: fixed"][style*="bottom: 20px"][style*="right: 20px"],
+div[style*="position: fixed"][style*="bottom: 20px"][style*="right: 20px"] *,
+div[style*="position: fixed"][style*="bottom: 1.25rem"][style*="right: 1.25rem"],
+div[style*="position: fixed"][style*="bottom: 1.25rem"][style*="right: 1.25rem"] * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
