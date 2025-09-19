@@ -164,6 +164,23 @@ elevenlabs-convai {
   z-index: 1000 !important;
 }
 
+/* Move View all buttons to avoid n8n chatbot overlap */
+.flex.items-center.justify-between .hidden.sm\\:flex {
+  margin-right: 80px !important;
+}
+
+/* Alternative: Move View all buttons to left side */
+@media (min-width: 640px) {
+  .flex.items-center.justify-between {
+    flex-direction: row-reverse !important;
+  }
+  
+  .flex.items-center.justify-between .hidden.sm\\:flex {
+    margin-right: 0 !important;
+    margin-left: auto !important;
+  }
+}
+
 /* More aggressive hiding for Lovable component */
 [data-lovable-tagger],
 [data-lovable-tagger] *,
