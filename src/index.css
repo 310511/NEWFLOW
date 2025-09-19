@@ -66,6 +66,15 @@ div[style*="position: fixed"][style*="bottom"][style*="right"]:has(button) * {
   pointer-events: none !important;
 }
 
+/* Hide elements containing "Edit with Lovable" text */
+*:has-text("Edit with Lovable"),
+*:has-text("Edit with Lovable") * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
