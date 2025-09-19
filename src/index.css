@@ -156,17 +156,21 @@ div[style*="position: fixed"][style*="bottom"][style*="right"]:has([data-lovable
   z-index: -9999 !important;
 }
 
-/* Ensure ElevenLabs chatbot positioning doesn't overlap with n8n chatbot */
+/* Position ElevenLabs chatbot below View all hotels location */
 elevenlabs-convai {
   position: fixed !important;
-  bottom: 60px !important;
+  top: 50% !important;
   right: 20px !important;
   z-index: 1000 !important;
 }
 
-/* Move View all buttons to avoid n8n chatbot overlap */
+/* Move View all buttons to bottom right of n8n chatbot */
 .flex.items-center.justify-between .hidden.sm\\:flex {
-  margin-right: 80px !important;
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 80px !important;
+  z-index: 1000 !important;
+  margin-right: 0 !important;
 }
 
 /* Alternative: Move View all buttons to left side */
