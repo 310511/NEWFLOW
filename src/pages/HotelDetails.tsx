@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -27,17 +27,42 @@ import {
   Bed,
   Shirt,
 } from "lucide-react";
-import { hotels } from "@/data/hotels";
+import Loader from "@/components/ui/Loader";
+import { getHotelDetails } from "@/services/hotelApi";
 
 const HotelDetails = () => {
   const { id } = useParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [hotelDetails, setHotelDetails] = useState<any>(null);
+  const [loading, setIsLoading] = useState(false);
 
-  // Find hotel by ID
-  const hotel = hotels.find((h) => h.id === id);
+  const fetchHotelDetails = async (hotelCode: string) => {
+    setIsLoading(true);
+    try {
+      console.log('🔍 Fetching hotel details for code:', hotelCode);
+      const response = await getHotelDetails(hotelCode);
+      console.log('📥 API Response:', response);
+      console.log('🏨 Hotel Details:', response.HotelDetails);
+      setHotelDetails(response.HotelDetails);
+    } catch (error) {
+      console.error("Error fetching hotel details:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  if (!hotel) {
+  useEffect(() => {
+    if (id) {
+      fetchHotelDetails(id);
+    }
+  }, [id]);
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!hotelDetails) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -56,9 +81,43 @@ const HotelDetails = () => {
     );
   }
 
+  // Helper function to decode HTML entities
+  const decodeHtmlEntities = (html: string) => {
+    return html
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/andlt;/g, '<')
+      .replace(/andgt;/g, '>')
+      .replace(/andamp;/g, '&')
+      .replace(/andquot;/g, '"')
+      .replace(/and#39;/g, "'");
+  };
+
+  // Helper function to extract sections from description
+  const extractSections = (description: string) => {
+    const decoded = decodeHtmlEntities(description);
+    const sections: { [key: string]: string } = {};
+    
+    // Extract different sections using regex
+    const sectionRegex = /<b>([^<]+)<\/b><br\s*\/?>(.*?)(?=<b>|$)/gs;
+    let match;
+    
+    while ((match = sectionRegex.exec(decoded)) !== null) {
+      const sectionName = match[1].trim();
+      const sectionContent = match[2].trim();
+      sections[sectionName] = sectionContent;
+    }
+    
+    return sections;
+  };
+
   const getAmenityIcon = (amenity: string) => {
     switch (amenity.toLowerCase()) {
       case "wifi":
+      case "free wifi":
         return <Wifi className="h-4 w-4" />;
       case "parking":
         return <Car className="h-4 w-4" />;
@@ -94,7 +153,6 @@ const HotelDetails = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-
       <main
         className="w-full px-6 lg:px-8 py-8 pt-header-plus-25"
         style={{
@@ -116,44 +174,14 @@ const HotelDetails = () => {
           <div className="space-y-4">
             <div className="aspect-[4/3] relative overflow-hidden rounded-xl">
               <img
-                src={hotel.images[currentImageIndex]}
-                alt={hotel.name}
+                src={
+                  hotelDetails.Images?.[0] || 
+                  hotelDetails.FrontImage || 
+                  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop"
+                }
+                alt={hotelDetails.HotelName}
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src =
-                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop";
-                }}
               />
-
-              {/* Image Navigation */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {hotel.images.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentImageIndex ? "bg-white" : "bg-white/60"
-                    }`}
-                    onClick={() => setCurrentImageIndex(index)}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Thumbnail Images */}
-            <div className="grid grid-cols-4 gap-2">
-              {hotel.images.slice(1, 5).map((image, index) => (
-                <button
-                  key={index}
-                  className="aspect-square overflow-hidden rounded-lg"
-                  onClick={() => setCurrentImageIndex(index + 1)}
-                >
-                  <img
-                    src={image}
-                    alt={`${hotel.name} ${index + 2}`}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                  />
-                </button>
-              ))}
             </div>
           </div>
 
@@ -163,11 +191,7 @@ const HotelDetails = () => {
             <div>
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  {hotel.isNew && (
-                    <Badge className="bg-primary text-primary-foreground">
-                      New
-                    </Badge>
-                  )}
+                  {/* API does not provide isNew; can skip */}
                 </div>
                 <div className="flex items-center space-x-2">
                   <Button variant="ghost" size="icon">
@@ -188,69 +212,50 @@ const HotelDetails = () => {
               </div>
 
               <h1 className="text-3xl font-bold text-foreground mb-2">
-                {hotel.name}
+                {hotelDetails.HotelName}
               </h1>
 
               <div className="flex items-center space-x-4 text-muted-foreground">
                 <div className="flex items-center space-x-1">
                   <Star className="h-4 w-4 fill-black text-black" />
-                  <span className="font-medium">{hotel.rating}</span>
-                  <span>({hotel.reviews} reviews)</span>
+                  <span className="font-medium">
+                    {hotelDetails.HotelRating
+                      ? hotelDetails.HotelRating
+                      : "N/A"}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <MapPin className="h-4 w-4" />
-                  <span>{hotel.location}</span>
+                  <span>
+                    {hotelDetails.Address}, {hotelDetails.CityName},{" "}
+                    {hotelDetails.CountryName}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Price */}
+            {/* Price & Dates */}
             <Card>
               <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <div className="flex items-baseline space-x-2 mb-2">
-                      {" "}
-                      {/* Adjusted mb-4 to mb-2 */}
-                      {hotel.originalPrice && (
-                        <span className="text-muted-foreground line-through text-lg">
-                          ${hotel.originalPrice}
-                        </span>
-                      )}
-                      <span className="text-3xl font-bold text-foreground">
-                        ${hotel.price}
-                      </span>
-                      <span className="text-muted-foreground">night</span>
-                    </div>
-
-                    {hotel.checkIn && hotel.checkOut && (
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        {" "}
-                        {/* Removed mb-4 */}
+                {hotelDetails.CheckInTime && hotelDetails.CheckOutTime && (
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
                         <Calendar className="h-4 w-4" />
                         <span>
-                          {hotel.checkIn} – {hotel.checkOut}
+                      {hotelDetails.CheckInTime} – {hotelDetails.CheckOutTime}
                         </span>
                       </div>
                     )}
-                  </div>
-                  <video
-                    src="/couple-vacation.mp4"
-                    alt="Couple Going On Vacation"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-28 h-28 object-cover rounded-md"
-                  />
+                <div className="w-28 h-28 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center">
+                  <span className="text-white text-xs font-medium text-center px-2">
+                    Book Now
+                  </span>
                 </div>
-
-                <Link to={`/booking/${hotel.id}`}>
+                {/* Reserve button (Id for booking), passing hotel code */}
+                <Link to={`/booking/${hotelDetails.HotelCode}`}>
                   <Button size="lg" className="w-full">
                     Reserve
                   </Button>
                 </Link>
-
                 <p className="text-center text-sm text-muted-foreground mt-3">
                   You won't be charged yet
                 </p>
@@ -263,7 +268,8 @@ const HotelDetails = () => {
                 What this place offers
               </h3>
               <div className="flex flex-wrap gap-3">
-                {hotel.amenities.map((amenity) => (
+                {hotelDetails.HotelFacilities &&
+                  hotelDetails.HotelFacilities.map((amenity: string) => (
                   <div
                     key={amenity}
                     className="flex items-center space-x-2 py-1 px-2 rounded-full bg-muted/50"
@@ -279,21 +285,137 @@ const HotelDetails = () => {
           </div>
         </div>
 
-        {/* Description */}
-        <Card className="mb-8">
+        {/* Description and Hotel Information */}
+        {hotelDetails.Description && (() => {
+          const sections = extractSections(hotelDetails.Description);
+          return (
+            <div className="space-y-6 mb-8">
+              {/* About this place */}
+              {(sections['Amenities'] || sections['Dining'] || sections['Business Amenities'] || sections['Rooms']) && (
+                <Card>
           <CardContent className="p-6">
             <h3 className="font-semibold text-foreground mb-4">
               About this place
             </h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Experience luxury and comfort at {hotel.name}, located in the
-              heart of {hotel.location}. This property offers exceptional
-              service and amenities to make your stay memorable. With a{" "}
-              {hotel.rating}-star rating from {hotel.reviews} guests, you can
-              trust in the quality of your accommodation.
-            </p>
+                    <div className="space-y-4">
+                      {sections['Amenities'] && (
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">Amenities</h4>
+                          <div 
+                            className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                            dangerouslySetInnerHTML={{ __html: sections['Amenities'] }}
+                          />
+                        </div>
+                      )}
+                      {sections['Dining'] && (
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">Dining</h4>
+                          <div 
+                            className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                            dangerouslySetInnerHTML={{ __html: sections['Dining'] }}
+                          />
+                        </div>
+                      )}
+                      {sections['Business Amenities'] && (
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">Business Amenities</h4>
+                          <div 
+                            className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                            dangerouslySetInnerHTML={{ __html: sections['Business Amenities'] }}
+                          />
+                        </div>
+                      )}
+                      {sections['Rooms'] && (
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">Rooms</h4>
+                          <div 
+                            className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                            dangerouslySetInnerHTML={{ __html: sections['Rooms'] }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Attractions */}
+              {sections['Attractions'] && (
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-foreground mb-4">
+                      Nearby Attractions
+                    </h3>
+                    <div 
+                      className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: sections['Attractions'] }}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Location */}
+              {sections['Location'] && (
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-foreground mb-4">
+                      Location
+                    </h3>
+                    <div 
+                      className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: sections['Location'] }}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Check In Instructions */}
+              {sections['Check In Instructions'] && (
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-foreground mb-4">
+                      Check In Information
+                    </h3>
+                    <div 
+                      className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: sections['Check In Instructions'] }}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Fees */}
+              {sections['Fees'] && (
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-foreground mb-4">
+                      Fees & Charges
+                    </h3>
+                    <div 
+                      className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: sections['Fees'] }}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Policies */}
+              {sections['Policies'] && (
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-foreground mb-4">
+                      Policies
+                    </h3>
+                    <div 
+                      className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: sections['Policies'] }}
+                    />
           </CardContent>
         </Card>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Location */}
         <Card className="mb-8">
@@ -303,16 +425,31 @@ const HotelDetails = () => {
             </h3>
             <div className="h-80 rounded-lg overflow-hidden">
               <FakeMapView
-                hotels={[hotel]}
-                selectedHotel={hotel.id}
+                hotels={[
+                  {
+                    id: hotelDetails.HotelCode,
+                    name: hotelDetails.HotelName,
+                    location: hotelDetails.Address,
+                    images: hotelDetails.Images || [hotelDetails.FrontImage],
+                    rating: hotelDetails.HotelRating,
+                    price: hotelDetails.Price || 200,
+                    FrontImage: hotelDetails.FrontImage,
+                    HotelName: hotelDetails.HotelName,
+                    Address: hotelDetails.Address,
+                    HotelRating: hotelDetails.HotelRating,
+                    Price: hotelDetails.Price,
+                  },
+                ]}
+                selectedHotel={hotelDetails.HotelCode}
                 onHotelSelect={() => {}}
               />
             </div>
             <div className="mt-4 flex items-center space-x-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
-              <span>{hotel.location}</span>
-              <span>•</span>
-              <span>{hotel.distance} from city center</span>
+              <span>
+                {hotelDetails.Address}, {hotelDetails.CityName},{" "}
+                {hotelDetails.CountryName}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -323,60 +460,18 @@ const HotelDetails = () => {
             <div className="flex items-center space-x-4 mb-6">
               <Star className="h-5 w-5 fill-black text-black" />
               <span className="text-xl font-semibold">
-                {hotel.rating} · {hotel.reviews} reviews
+                {hotelDetails.HotelRating ? hotelDetails.HotelRating : "N/A"} ·
+                Guest Reviews
               </span>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Sample reviews */}
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                      <span className="text-white font-semibold text-sm">
-                        A
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-medium">Ahmed</p>
-                      <p className="text-sm text-muted-foreground">
-                        March 2024
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Excellent location and service. The staff was very helpful
-                    and the room was clean and comfortable.
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                      <span className="text-white font-semibold text-sm">
-                        S
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-medium">Sarah</p>
-                      <p className="text-sm text-muted-foreground">
-                        February 2024
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Amazing experience! The hotel exceeded my expectations in
-                    every way. Highly recommended.
-                  </p>
-                </div>
-              </div>
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                Guest reviews are not available through the API at this time.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                This hotel has a {hotelDetails.HotelRating || "N/A"} star rating.
+              </p>
             </div>
-
-            <Button variant="outline" className="mt-6">
-              Show all {hotel.reviews} reviews
-            </Button>
           </CardContent>
         </Card>
       </main>

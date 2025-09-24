@@ -240,17 +240,21 @@ const searchHotelsMock = async (params: HotelSearchParams): Promise<HotelSearchR
     };
   };
 
-// Get hotel details by code
-export const getHotelDetails = async (hotelCode: string): Promise<HotelResult> => {
+// Get hotel details by code using proxy server
+export const getHotelDetails = async (hotelCode: string): Promise<any> => {
   try {
-    const response = await fetch(getApiUrl('/HotelDetails'), {
+    console.log('🔍 Fetching hotel details for:', hotelCode);
+    
+    const response = await fetch(`${PROXY_SERVER_URL}/hotel-details`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${authHeader}`,
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ HotelCode: hotelCode }),
+      body: JSON.stringify({ 
+        Hotelcodes: hotelCode,
+        Language: "en"
+      }),
     });
 
     if (!response.ok) {
@@ -258,6 +262,7 @@ export const getHotelDetails = async (hotelCode: string): Promise<HotelResult> =
     }
 
     const data = await response.json();
+    console.log('✅ Hotel details response:', data);
     return data;
   } catch (error) {
     console.error('Error getting hotel details:', error);

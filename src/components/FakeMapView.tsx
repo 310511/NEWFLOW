@@ -187,27 +187,27 @@ const FakeMapView = ({ hotels: hotelsProp, selectedHotel, onHotelSelect, onHotel
           <CardContent className="p-4">
             <div className="flex space-x-4">
               <img 
-                src={selectedHotelData.images[0]} 
-                alt={selectedHotelData.name}
+                src={selectedHotelData.images?.[0] || selectedHotelData.FrontImage || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'} 
+                alt={selectedHotelData.name || selectedHotelData.HotelName}
                 className="w-20 h-20 rounded-lg object-cover"
                 onError={(e) => {
                   e.currentTarget.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop';
                 }}
               />
               <div className="flex-1">
-                <h3 className="font-semibold text-foreground">{selectedHotelData.name}</h3>
+                <h3 className="font-semibold text-foreground">{selectedHotelData.name || selectedHotelData.HotelName}</h3>
                 <div className="flex items-center space-x-2 text-muted-foreground text-sm mt-1">
                   <MapPin className="h-3 w-3" />
-                  <span>{selectedHotelData.location}</span>
+                  <span>{selectedHotelData.location || selectedHotelData.Address}</span>
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center space-x-1">
                     <Star className="h-4 w-4 fill-primary text-primary" />
-                    <span className="text-sm font-medium">{selectedHotelData.rating}</span>
+                    <span className="text-sm font-medium">{selectedHotelData.rating || selectedHotelData.HotelRating}</span>
                     <span className="text-sm text-muted-foreground">({selectedHotelData.reviews})</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-semibold">${selectedHotelData.price}</span>
+                    <span className="font-semibold">${selectedHotelData.price || selectedHotelData.Price || 'N/A'}</span>
                     <span className="text-muted-foreground text-sm ml-1">night</span>
                   </div>
                 </div>

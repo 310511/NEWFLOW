@@ -68,6 +68,49 @@ app.post('/api/hotel-search', async (req, res) => {
   }
 });
 
+// Hotel details endpoint
+app.post('/api/hotel-details', async (req, res) => {
+  try {
+    console.log('📤 Proxying hotel details request to Travzilla API...');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
+    const username = process.env.API_USERNAME;
+    const password = process.env.API_PASSWORD;
+    
+    if (!username || !password) {
+      throw new Error('API credentials not configured. Please set API_USERNAME and API_PASSWORD in .env file');
+    }
+    
+    const response = await fetch(`${apiUrl}/Hoteldetails`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log('📥 Travzilla hotel details response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`Travzilla API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Travzilla hotel details response:', data);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ Hotel details proxy error:', error);
+    res.status(500).json({ 
+      error: 'Hotel details proxy error', 
+      message: error.message 
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Proxy server running on http://localhost:${PORT}`);
   console.log(`📡 Proxying Travzilla API calls...`);

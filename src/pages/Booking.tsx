@@ -32,9 +32,10 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { format } from "date-fns";
-import { hotels } from "@/data/hotels";
+import { getHotelDetails } from "@/services/hotelApi";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Loader from "@/components/ui/Loader";
 
 const BookingPage = () => {
   const { id } = useParams();
@@ -56,10 +57,21 @@ const BookingPage = () => {
 
   useEffect(() => {
     if (id) {
-      const hotelData = hotels.find((h) => h.id === id);
-      setHotel(hotelData);
+      fetchHotelDetails(id);
     }
   }, [id]);
+
+  const fetchHotelDetails = async (hotelCode: string) => {
+    setLoading(true);
+    try {
+      const response = await getHotelDetails(hotelCode);
+      setHotel(response.HotelDetails);
+    } catch (error) {
+      console.error("Error fetching hotel details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const calculateNights = () => {
     if (checkIn && checkOut) {
@@ -71,7 +83,9 @@ const BookingPage = () => {
 
   const calculateTotal = () => {
     const nights = calculateNights();
-    const subtotal = hotel ? hotel.price * nights * rooms : 0;
+    // Use a default price if not available from API
+    const basePrice = 200; // Default price per night
+    const subtotal = basePrice * nights * rooms;
     const taxes = subtotal * 0.15; // 15% tax
     const serviceFee = 25;
     return {
@@ -92,6 +106,10 @@ const BookingPage = () => {
     navigate("/");
     setLoading(false);
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   if (!hotel) {
     return (
@@ -138,25 +156,22 @@ const BookingPage = () => {
               <CardContent className="p-6">
                 <div className="flex space-x-4">
                   <img
-                    src={hotel.images[0]}
-                    alt={hotel.name}
+                    src={hotel.Images?.[0] || hotel.FrontImage || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop"}
+                    alt={hotel.HotelName}
                     className="w-24 h-24 rounded-lg object-cover"
                   />
                   <div className="flex-1">
                     <h1 className="text-2xl font-bold text-foreground">
-                      {hotel.name}
+                      {hotel.HotelName}
                     </h1>
                     <div className="flex items-center space-x-2 text-muted-foreground mt-1">
                       <MapPin className="h-4 w-4" />
-                      <span>{hotel.location}</span>
+                      <span>{hotel.Address}, {hotel.CityName}</span>
                     </div>
                     <div className="flex items-center space-x-2 mt-2">
                       <div className="flex items-center space-x-1">
                         <Star className="h-4 w-4 fill-primary text-primary" />
-                        <span className="font-medium">{hotel.rating}</span>
-                        <span className="text-muted-foreground">
-                          ({hotel.reviews} reviews)
-                        </span>
+                        <span className="font-medium">{hotel.HotelRating || "N/A"}</span>
                       </div>
                       <Badge variant="secondary">Excellent</Badge>
                     </div>
@@ -378,7 +393,7 @@ const BookingPage = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span>
-                      ${hotel.price} x {calculateNights()} nights x {rooms} room
+                      $200 x {calculateNights()} nights x {rooms} room
                       {rooms > 1 ? "s" : ""}
                     </span>
                     <span>${pricing.subtotal}</span>
