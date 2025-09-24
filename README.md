@@ -5,10 +5,13 @@ A modern hotel booking platform built with React, TypeScript, and Vite, featurin
 ## 🚀 Features
 
 - **Hotel Search**: Search hotels by destination, dates, and guest preferences
+- **Hotel Details**: Comprehensive hotel information with amenities, policies, and location
+- **Booking System**: Complete booking flow with guest information and payment
 - **Interactive Maps**: Mapbox integration for location-based hotel discovery
 - **Real-time API**: Integration with Travzilla API for live hotel data
 - **Responsive Design**: Mobile-first design with Tailwind CSS
 - **Modern UI**: Beautiful components built with Radix UI and shadcn/ui
+- **Secure API**: Environment-based credential management
 
 ## 🛠️ Tech Stack
 
@@ -154,6 +157,19 @@ This project integrates with the Travzilla Hotel API through a local proxy serve
 2. Adds authentication headers
 3. Forwards requests to the Travzilla API
 4. Returns responses with proper CORS headers
+
+### Available API Endpoints
+
+- **Hotel Search**: `/api/hotel-search` - Search for hotels by destination and dates
+- **Hotel Details**: `/api/hotel-details` - Get detailed information about a specific hotel
+- **Room Availability**: Direct API call for room availability and pricing
+
+### Data Security
+
+- All API credentials are stored in environment variables
+- No sensitive data is exposed in the frontend code
+- Proxy server handles all authentication securely
+- `.env` files are excluded from version control
 
 ## 🤝 Contributing
 
