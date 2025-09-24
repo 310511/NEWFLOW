@@ -40,10 +40,7 @@ const HotelDetails = () => {
   const fetchHotelDetails = async (hotelCode: string) => {
     setIsLoading(true);
     try {
-      console.log('🔍 Fetching hotel details for code:', hotelCode);
       const response = await getHotelDetails(hotelCode);
-      console.log('📥 API Response:', response);
-      console.log('🏨 Hotel Details:', response.HotelDetails);
       setHotelDetails(response.HotelDetails);
     } catch (error) {
       console.error("Error fetching hotel details:", error);
