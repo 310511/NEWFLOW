@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Star } from 'lucide-react';
 import { Hotel } from '@/data/hotels';
+import { HotelResult } from '@/services/hotelApi';
 import { Button } from '@/components/ui/button';
 
 interface AirbnbHotelCardProps {
-  hotel: Hotel;
+  hotel: Hotel | HotelResult;
   onHover?: (hotelId: string | null) => void;
   isSelected?: boolean;
   variant?: 'list' | 'map';
@@ -16,21 +17,40 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
+  // Helper function to check if hotel is from API
+  const isApiHotel = (hotel: Hotel | HotelResult): hotel is HotelResult => {
+    return 'HotelCode' in hotel;
+  };
+
+  // Normalize hotel data for consistent usage
+  const normalizedHotel = {
+    id: isApiHotel(hotel) ? hotel.HotelCode : hotel.id,
+    name: isApiHotel(hotel) ? hotel.HotelName : hotel.name,
+    location: isApiHotel(hotel) ? hotel.Address : hotel.location,
+    rating: isApiHotel(hotel) ? parseFloat(hotel.StarRating) : hotel.rating,
+    price: isApiHotel(hotel) ? (hotel.Price || 100) : hotel.price,
+    images: isApiHotel(hotel) ? [hotel.FrontImage] : hotel.images,
+    originalPrice: isApiHotel(hotel) ? undefined : hotel.originalPrice,
+    checkIn: isApiHotel(hotel) ? undefined : hotel.checkIn,
+    checkOut: isApiHotel(hotel) ? undefined : hotel.checkOut,
+    isNew: isApiHotel(hotel) ? false : hotel.isNew,
+  };
+
   const handleClick = () => {
-    navigate(`/hotel/${hotel.id}`);
+    navigate(`/hotel/${normalizedHotel.id}`);
   };
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentImageIndex((prev) => 
-      prev === 0 ? hotel.images.length - 1 : prev - 1
+      prev === 0 ? normalizedHotel.images.length - 1 : prev - 1
     );
   };
 
   const handleNextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentImageIndex((prev) => 
-      prev === hotel.images.length - 1 ? 0 : prev + 1
+      prev === normalizedHotel.images.length - 1 ? 0 : prev + 1
     );
   };
 
@@ -46,14 +66,14 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
           isSelected ? 'ring-2 ring-primary shadow-3d-hover scale-[1.02]' : ''
         }`}
         onClick={handleClick}
-        onMouseEnter={() => onHover?.(hotel.id)}
+        onMouseEnter={() => onHover?.(normalizedHotel.id)}
         onMouseLeave={() => onHover?.(null)}
       >
         <div className="flex h-20">
           <div className="relative w-20 flex-shrink-0">
             <img 
-              src={hotel.images[0]} 
-              alt={hotel.name}
+              src={normalizedHotel.images[0]} 
+              alt={normalizedHotel.name}
               className="w-full h-full object-cover"
             />
             <Button
@@ -68,16 +88,16 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
           <div className="flex-1 p-3 min-w-0">
             <div className="flex items-start justify-between h-full">
               <div className="min-w-0 flex-1">
-                <h3 className="font-medium text-sm truncate mb-1">{hotel.name}</h3>
-                <p className="text-muted-foreground text-xs truncate">{hotel.location}</p>
+                <h3 className="font-medium text-sm truncate mb-1">{normalizedHotel.name}</h3>
+                <p className="text-muted-foreground text-xs truncate">{normalizedHotel.location}</p>
               </div>
               <div className="ml-2 text-right">
                 <div className="flex items-center mb-1">
                   <Star className="h-3 w-3 fill-current mr-1" />
-                  <span className="text-xs font-medium">{hotel.rating}</span>
+                  <span className="text-xs font-medium">{normalizedHotel.rating}</span>
                 </div>
                 <div>
-                  <span className="font-semibold text-sm">${hotel.price}</span>
+                  <span className="font-semibold text-sm">${normalizedHotel.price}</span>
                   <div className="text-xs text-muted-foreground">night</div>
                 </div>
               </div>
@@ -92,19 +112,19 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
     <div 
       className="bg-background rounded-xl overflow-hidden cursor-pointer group transition-all duration-300 shadow-3d hover:shadow-3d-hover hover:scale-[1.02] animate-fade-in"
       onClick={handleClick}
-      onMouseEnter={() => onHover?.(hotel.id)}
+      onMouseEnter={() => onHover?.(normalizedHotel.id)}
       onMouseLeave={() => onHover?.(null)}
     >
       {/* Image Carousel */}
       <div className="relative aspect-square overflow-hidden">
         <img 
-          src={hotel.images[currentImageIndex]} 
-          alt={hotel.name}
+          src={normalizedHotel.images[currentImageIndex]} 
+          alt={normalizedHotel.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         
         {/* Navigation Buttons */}
-        {hotel.images.length > 1 && (
+        {normalizedHotel.images.length > 1 && (
           <>
             <Button
               variant="ghost"
@@ -130,9 +150,9 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
         )}
 
         {/* Dots Indicator */}
-        {hotel.images.length > 1 && (
+        {normalizedHotel.images.length > 1 && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-1">
-            {hotel.images.map((_, index) => (
+            {normalizedHotel.images.map((_, index) => (
               <div
                 key={index}
                 className={`w-1.5 h-1.5 rounded-full transition-colors ${
@@ -154,7 +174,7 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
         </Button>
 
         {/* Guest Favourite Badge */}
-        {hotel.isNew && (
+        {normalizedHotel.isNew && (
           <div className="absolute top-6 left-2 bg-white px-2 py-1 rounded-md text-xs font-medium">
             Guest favourite
           </div>
@@ -165,27 +185,27 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
       <div className="p-3">
         <div className="flex items-start justify-between mb-1">
           <div className="min-w-0 flex-1">
-            <h3 className="font-medium text-foreground truncate">{hotel.name}</h3>
-            <p className="text-muted-foreground text-sm">{hotel.location}</p>
+            <h3 className="font-medium text-foreground truncate">{normalizedHotel.name}</h3>
+            <p className="text-muted-foreground text-sm">{normalizedHotel.location}</p>
           </div>
           <div className="flex items-center ml-2">
             <Star className="h-4 w-4 fill-current mr-1" />
-            <span className="text-sm font-medium">{hotel.rating}</span>
+            <span className="text-sm font-medium">{normalizedHotel.rating}</span>
           </div>
         </div>
 
-        {hotel.checkIn && hotel.checkOut && (
+        {normalizedHotel.checkIn && normalizedHotel.checkOut && (
           <div className="text-muted-foreground text-sm mb-2">
-            {hotel.checkIn} – {hotel.checkOut}
+            {normalizedHotel.checkIn} – {normalizedHotel.checkOut}
           </div>
         )}
 
         <div className="flex items-baseline">
-          <span className="font-semibold text-foreground">${hotel.price}</span>
+          <span className="font-semibold text-foreground">${normalizedHotel.price}</span>
           <span className="text-muted-foreground text-sm ml-1">night</span>
-          {hotel.originalPrice && (
+          {normalizedHotel.originalPrice && (
             <span className="text-muted-foreground text-sm line-through ml-2">
-              ${hotel.originalPrice}
+              ${normalizedHotel.originalPrice}
             </span>
           )}
         </div>

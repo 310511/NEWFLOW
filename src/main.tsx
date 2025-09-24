@@ -2,65 +2,34 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
-// Hide any element containing "Edit with Lovable" or "Made with Lovable" text
-function hideLovableComponents() {
-  const elements = document.querySelectorAll('*');
-  elements.forEach(element => {
-    if (element.textContent && (
-      element.textContent.includes('Edit with Lovable') || 
-      element.textContent.includes('Made with Lovable') ||
-      element.textContent.includes('lovable') ||
-      element.textContent.includes('Lovable')
-    )) {
-      element.style.display = 'none';
-      element.style.visibility = 'hidden';
-      element.style.opacity = '0';
-      element.style.pointerEvents = 'none';
-      element.style.position = 'absolute';
-      element.style.left = '-9999px';
-      element.style.top = '-9999px';
-    }
-  });
+// Restore the full HotelRBS app
+try {
+  console.log('Starting HotelRBS app...');
   
-  // Also hide any elements with lovable data attributes
-  const lovableElements = document.querySelectorAll('[data-lovable-tagger], [data-lovable]');
-  lovableElements.forEach(element => {
-    element.style.display = 'none';
-    element.style.visibility = 'hidden';
-    element.style.opacity = '0';
-    element.style.pointerEvents = 'none';
-    element.style.position = 'absolute';
-    element.style.left = '-9999px';
-    element.style.top = '-9999px';
-    element.style.transform = 'scale(0)';
-    // Minimize size to absolute minimum
-    element.style.width = '0';
-    element.style.height = '0';
-    element.style.minWidth = '0';
-    element.style.minHeight = '0';
-    element.style.maxWidth = '0';
-    element.style.maxHeight = '0';
-    element.style.fontSize = '0';
-    element.style.lineHeight = '0';
-    element.style.padding = '0';
-    element.style.margin = '0';
-    element.style.border = 'none';
-    element.style.boxShadow = 'none';
-    element.style.background = 'transparent';
-    element.style.color = 'transparent';
-    element.style.textShadow = 'none';
-    element.style.overflow = 'hidden';
-    element.style.clip = 'rect(0, 0, 0, 0)';
-    element.style.clipPath = 'inset(50%)';
-    element.style.whiteSpace = 'nowrap';
-    element.style.zIndex = '-9999';
-  });
+  const rootElement = document.getElementById("root");
+  if (!rootElement) {
+    throw new Error('Root element not found');
+  }
+  
+  console.log('Root element found, creating React root...');
+  const root = createRoot(rootElement);
+  
+  console.log('Rendering App component...');
+  root.render(<App />);
+  
+  console.log('HotelRBS app rendered successfully!');
+} catch (error) {
+  console.error('App error:', error);
+  const rootElement = document.getElementById("root");
+  if (rootElement) {
+    rootElement.innerHTML = `
+      <div style="padding: 20px; background: #ffe0e0; border: 2px solid #ff0000; margin: 20px;">
+        <h1 style="color: #ff0000;">❌ App Error</h1>
+        <p>Error: ${error instanceof Error ? error.message : 'Unknown error'}</p>
+        <button onclick="window.location.reload()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          Reload Page
+        </button>
+      </div>
+    `;
+  }
 }
-
-// Run immediately and on DOM changes
-hideLovableComponents();
-document.addEventListener('DOMContentLoaded', hideLovableComponents);
-const observer = new MutationObserver(hideLovableComponents);
-observer.observe(document.body, { childList: true, subtree: true });
-
-createRoot(document.getElementById("root")!).render(<App />);

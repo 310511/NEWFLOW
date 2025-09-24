@@ -45,6 +45,7 @@ const Home = () => {
           paddingTop: "calc(var(--header-height-default) + 37px + 56px + 26px)",
         }}
       >
+
         {/* Hotel Categories Quick Access */}
         <section className="py-8 bg-muted/30">
           <div className="w-full max-w-none px-6 lg:px-12 xl:px-16">

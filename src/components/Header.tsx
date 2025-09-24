@@ -126,94 +126,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
             isCompact ? "justify-start space-x-6 h-14" : "justify-between"
           } ${!isCompact && (isScrolled ? "h-16" : "h-20")}`}
         >
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center group cursor-pointer flex-shrink-0 pl-0 pt-5"
-          >
-            <img
-              src={logoIcon}
-              alt="HotelRBS Logo"
-              className={`w-auto transform group-hover:scale-105 transition-all duration-300 -ml-2 mt-1 ${
-                isCompact ? "h-10" : isScrolled ? "h-14" : "h-20"
-              }`}
-            />
-          </Link>
-
-          {/* Center Navigation - Desktop - Airbnb Style */}
-          <div
-            className={`hidden lg:flex items-center ${
-              isCompact ? "flex-none" : "flex-1 justify-center"
-            }`}
-          >
-            <nav
-              className={`flex items-center backdrop-blur-sm rounded-full border shadow-lg transition-all duration-300 ${
-                isCompact
-                  ? "bg-white/95 border-border/30 p-0.5 scale-90"
-                  : isScrolled
-                  ? "bg-white/95 border-border/30 scale-95 p-1"
-                  : "bg-white/90 border-border/20 p-1"
-              }`}
-            >
-              {navigation.map((item, index) => (
-                <button
-                  key={item.name}
-                  className={`relative flex items-center space-x-2 text-muted-foreground hover:text-foreground font-medium transition-all duration-300 rounded-full hover:bg-white group ${
-                    isCompact ? "text-sm py-2.5 px-5" : "text-base py-3 px-6"
-                  }`}
-                  onClick={() => {
-                    navigate(item.href);
-                  }}
-                >
-                  {}
-                  <img
-                    src={item.customIcon}
-                    alt={item.name}
-                    className={isCompact ? "h-5 w-5" : "h-6 w-6"}
-                  />
-                  <span className="transition-all duration-300 group-hover:font-semibold">
-                    {item.name}
-                  </span>
-
-                  {/* Active indicator with glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white to-gray-50 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-95 group-hover:scale-100 -z-10"></div>
-
-                  {/* Separator */}
-                  {index < navigation.length - 1 && (
-                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-px h-4 bg-border/30"></div>
-                  )}
-                </button>
-              ))}
-
-              {/* Search Icon with enhanced animations */}
-              {((isScrolled && isHomePage) || !isHomePage) &&
-                !showSearchBar && (
-                  <button
-                    onClick={() => setShowSearchBar(true)}
-                    className={`relative flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 aspect-square hover:scale-110 active:scale-95 ml-2 group ${
-                      isCompact ? "w-9 h-9" : "w-11 h-11"
-                    }`}
-                    style={{ backgroundColor: "#165d31" }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "#134a28";
-                      e.currentTarget.style.transform = "scale(1.1)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "#165d31";
-                      e.currentTarget.style.transform = "scale(1)";
-                    }}
-                  >
-                    <Search className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                    <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </button>
-                )}
-            </nav>
-          </div>
-
-          {/* Spacer for compact header */}
-          {isCompact && <div className="flex-1" />}
-
-          {/* Right Side Actions */}
+          {/* Left Side Actions - Language and Profile */}
           <div
             className={`flex items-center space-x-4 ${isCompact ? "ml-4" : ""}`}
           >
@@ -372,6 +285,93 @@ const Header = ({ variant = "default" }: HeaderProps) => {
               </SheetContent>
             </Sheet>
           </div>
+
+          {/* Center Navigation - Desktop - Airbnb Style */}
+          <div
+            className={`hidden lg:flex items-center ${
+              isCompact ? "flex-none" : "flex-1 justify-center"
+            }`}
+          >
+            <nav
+              className={`flex items-center backdrop-blur-sm rounded-full border shadow-lg transition-all duration-300 ${
+                isCompact
+                  ? "bg-white/95 border-border/30 p-0.5 scale-90"
+                  : isScrolled
+                  ? "bg-white/95 border-border/30 scale-95 p-1"
+                  : "bg-white/90 border-border/20 p-1"
+              }`}
+            >
+              {navigation.map((item, index) => (
+                <button
+                  key={item.name}
+                  className={`relative flex items-center space-x-2 text-muted-foreground hover:text-foreground font-medium transition-all duration-300 rounded-full hover:bg-white group ${
+                    isCompact ? "text-sm py-2.5 px-5" : "text-base py-3 px-6"
+                  }`}
+                  onClick={() => {
+                    navigate(item.href);
+                  }}
+                >
+                  {}
+                  <img
+                    src={item.customIcon}
+                    alt={item.name}
+                    className={isCompact ? "h-5 w-5" : "h-6 w-6"}
+                  />
+                  <span className="transition-all duration-300 group-hover:font-semibold">
+                    {item.name}
+                  </span>
+
+                  {/* Active indicator with glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white to-gray-50 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-95 group-hover:scale-100 -z-10"></div>
+
+                  {/* Separator */}
+                  {index < navigation.length - 1 && (
+                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-px h-4 bg-border/30"></div>
+                  )}
+                </button>
+              ))}
+
+              {/* Search Icon with enhanced animations */}
+              {((isScrolled && isHomePage) || !isHomePage) &&
+                !showSearchBar && (
+                  <button
+                    onClick={() => setShowSearchBar(true)}
+                    className={`relative flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 aspect-square hover:scale-110 active:scale-95 ml-2 group ${
+                      isCompact ? "w-9 h-9" : "w-11 h-11"
+                    }`}
+                    style={{ backgroundColor: "#165d31" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#134a28";
+                      e.currentTarget.style.transform = "scale(1.1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "#165d31";
+                      e.currentTarget.style.transform = "scale(1)";
+                    }}
+                  >
+                    <Search className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+                    <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </button>
+                )}
+            </nav>
+          </div>
+
+          {/* Spacer for compact header */}
+          {isCompact && <div className="flex-1" />}
+
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex items-center group cursor-pointer flex-shrink-0 pl-0 pt-5"
+          >
+            <img
+              src={logoIcon}
+              alt="HotelRBS Logo"
+              className={`w-auto transform group-hover:scale-105 transition-all duration-300 -ml-2 mt-1 ${
+                isCompact ? "h-10" : isScrolled ? "h-14" : "h-20"
+              }`}
+            />
+          </Link>
         </div>
 
         {/* Integrated Search Bar inside header - only show on home page */}

@@ -65,10 +65,10 @@ const SearchFilters = ({
 
   const clearAllFilters = () => {
     setSelectedFilters([]);
-    setPriceRange([50, 1000]);
+    setPriceRange([50, 5000]);
   };
 
-  const activeFiltersCount = selectedFilters.length + (priceRange[0] !== 50 || priceRange[1] !== 1000 ? 1 : 0);
+  const activeFiltersCount = selectedFilters.length + (priceRange[0] !== 50 || priceRange[1] !== 5000 ? 1 : 0);
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -115,9 +115,9 @@ const SearchFilters = ({
               <Slider
                 value={priceRange}
                 onValueChange={setPriceRange}
-                max={1000}
+                max={5000}
                 min={50}
-                step={10}
+                step={50}
                 className="w-full"
               />
               <div className="flex justify-between">

@@ -1,0 +1,74 @@
+import express from 'express';
+import cors from 'cors';
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PROXY_SERVER_PORT || 3001;
+
+// Enable CORS for all routes
+app.use(cors());
+app.use(express.json());
+
+// Proxy endpoint for Travzilla API
+app.post('/api/hotel-search', async (req, res) => {
+  try {
+    console.log('📤 Proxying request to Travzilla API...');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
+    const username = process.env.API_USERNAME;
+    const password = process.env.API_PASSWORD;
+    
+    if (!username || !password) {
+      throw new Error('API credentials not configured. Please set API_USERNAME and API_PASSWORD in .env file');
+    }
+    
+    const response = await fetch(`${apiUrl}/Search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log('📥 Travzilla response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`Travzilla API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Travzilla response:', data);
+    
+    // Handle null response (no hotels found)
+    if (data === null || data === undefined) {
+      console.log('📭 No hotels found for this search');
+      return res.json({
+        Status: {
+          Code: "201",
+          Description: "No hotels found"
+        },
+        HotelResult: []
+      });
+    }
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ Proxy error:', error);
+    res.status(500).json({ 
+      error: 'Proxy error', 
+      message: error.message 
+    });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Proxy server running on http://localhost:${PORT}`);
+  console.log(`📡 Proxying Travzilla API calls...`);
+});

@@ -7,12 +7,14 @@ import {
   ChevronRight,
   Grid3X3,
   Map as MapIcon,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import SearchFilters from "@/components/SearchFilters";
 import Footer from "@/components/Footer";
 import AirbnbHotelCard from "@/components/AirbnbHotelCard";
 import Header from "@/components/Header";
-import { hotels } from "@/data/hotels";
+import { useHotelSearch } from "@/hooks/useHotelSearch";
 import FakeMapView from "@/components/FakeMapView";
 
 const NewSearchResults = () => {
@@ -24,7 +26,7 @@ const NewSearchResults = () => {
   const checkIn = searchParams.get("checkIn") || "";
   const checkOut = searchParams.get("checkOut") || "";
 
-  const [priceRange, setPriceRange] = useState<[number, number]>([50, 1000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([50, 5000]);
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedHotel, setSelectedHotel] = useState<string>();
@@ -33,6 +35,19 @@ const NewSearchResults = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const itemsPerPage = viewMode === "map" ? 15 : 20;
+
+  // Use the hotel search hook
+  const { hotels, loading, error, search } = useHotelSearch();
+  
+  // Debug logging
+  console.log('📊 SearchResults state:', { 
+    hotels: hotels, 
+    hotelsType: typeof hotels, 
+    hotelsIsArray: Array.isArray(hotels),
+    hotelsLength: hotels?.length, 
+    loading, 
+    error 
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,17 +58,82 @@ const NewSearchResults = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Search hotels when component mounts or search params change
+  useEffect(() => {
+    console.log('🔍 SearchResults useEffect triggered with:', { checkIn, checkOut, destination, guests });
+    
+    if (checkIn && checkOut) {
+      try {
+        // Map destination to city code
+        const getCityCode = (dest: string) => {
+          const cityMap: { [key: string]: string } = {
+            'dubai': 'DXB',
+            'abu dhabi': 'AUH',
+            'sharjah': 'SHJ',
+            'ajman': 'AJM',
+            'riyadh': 'RUH',
+            'jeddah': 'JED',
+            'dammam': 'DMM',
+            'doha': 'DOH',
+            'kuwait': 'KWI',
+            'muscat': 'MCT',
+            'manama': 'BAH'
+          };
+          return cityMap[dest.toLowerCase()] || 'DXB'; // Default to Dubai
+        };
+
+        const searchParams = {
+          CheckIn: checkIn,
+          CheckOut: checkOut,
+          HotelCodes: destination.toLowerCase() === 'dubai' ? "263678,91920,414792" : "", // Use specific hotel codes for Dubai only
+          CityCode: destination.toLowerCase() === 'dubai' ? "" : getCityCode(destination), // Use city code for other destinations
+          GuestNationality: "AE",
+          PreferredCurrencyCode: "AED",
+          PaxRooms: [
+            {
+              Adults: parseInt(guests) || 1,
+              Children: 0,
+              ChildrenAges: [],
+            },
+          ],
+          IsDetailResponse: true,
+          ResponseTime: 30,
+          Filters: {
+            MealType: "All",
+            Refundable: "true",
+            NoOfRooms: 1,
+          },
+        };
+
+        console.log('🎯 Calling search with params:', searchParams);
+        search(searchParams);
+      } catch (error) {
+        console.error('💥 Error in search effect:', error);
+      }
+    } else {
+      console.log('⚠️ Missing checkIn or checkOut dates:', { checkIn, checkOut });
+    }
+  }, [checkIn, checkOut, guests, destination, search]);
+
   // Filter hotels based on selected filters and price range
   const filteredHotels = useMemo(() => {
+    // Safety check: ensure hotels is an array
+    if (!Array.isArray(hotels)) {
+      console.warn('⚠️ Hotels is not an array:', hotels);
+      return [];
+    }
+    
     return hotels.filter((hotel) => {
+      // For API hotels, we'll use a default price range since pricing might not be in the search response
+      const hotelPrice = hotel.Price || 100; // Default price if not available
       const priceInRange =
-        hotel.price >= priceRange[0] && hotel.price <= priceRange[1];
+        hotelPrice >= priceRange[0] && hotelPrice <= priceRange[1];
 
       if (!priceInRange) return false;
 
-      // Check amenity filters
+      // Check amenity filters (simplified for API data)
       if (selectedFilters.length > 0) {
-        const hotelAmenities = hotel.amenities.map((a) => a.toLowerCase());
+        const hotelAmenities = (hotel.Amenities || []).map((a: string) => a.toLowerCase());
         return selectedFilters.some(
           (filter) =>
             hotelAmenities.includes(filter) ||
@@ -127,10 +207,10 @@ const NewSearchResults = () => {
 
               {/* Quick Filter Badges */}
               {(priceRange[0] !== 50 ||
-                priceRange[1] !== 1000 ||
+                priceRange[1] !== 5000 ||
                 selectedFilters.length > 0) && (
                 <div className="flex items-center space-x-2">
-                  {(priceRange[0] !== 50 || priceRange[1] !== 1000) && (
+                  {(priceRange[0] !== 50 || priceRange[1] !== 5000) && (
                     <Badge
                       variant="secondary"
                       className="bg-black text-white text-xs"
@@ -173,17 +253,49 @@ const NewSearchResults = () => {
         </div>
         {viewMode === "list" ? (
           <div className="px-6 py-8">
+            {/* Loading State */}
+            {loading && (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin mr-2" />
+                <span className="text-lg">Searching hotels...</span>
+              </div>
+            )}
+
+                   {/* Error State */}
+                   {error && (
+                     <div className="flex items-center justify-center py-12">
+                       <AlertCircle className="h-8 w-8 text-red-500 mr-2" />
+                       <div className="text-center">
+                         <p className="text-lg text-red-600">Error loading hotels</p>
+                         <p className="text-sm text-gray-500">{error}</p>
+                         <p className="text-xs text-gray-400 mt-2">
+                           This might be due to no available rooms for your search criteria or API connectivity issues.
+                         </p>
+                       </div>
+                     </div>
+                   )}
+
             {/* Results Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-8">
-              {paginatedHotels.map((hotel) => (
-                <AirbnbHotelCard
-                  key={hotel.id}
-                  hotel={hotel}
-                  variant="list"
-                  onHover={handleHotelHover}
-                />
-              ))}
-            </div>
+            {!loading && !error && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-8">
+                {paginatedHotels.map((hotel) => (
+                  <AirbnbHotelCard
+                    key={hotel.HotelCode}
+                    hotel={hotel}
+                    variant="list"
+                    onHover={handleHotelHover}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* No Results */}
+            {!loading && !error && paginatedHotels.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-lg text-gray-600">No hotels found</p>
+                <p className="text-sm text-gray-500">Try adjusting your search criteria</p>
+              </div>
+            )}
 
             {/* Pagination */}
             {totalPages > 1 && (
@@ -250,15 +362,29 @@ const NewSearchResults = () => {
                   {/* Scrollable Hotel List */}
                   <div className="flex-1 overflow-y-auto">
                     <div className="p-6 space-y-4">
-                      {paginatedHotels.map((hotel) => (
+                      {loading && (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                          <span>Loading hotels...</span>
+                        </div>
+                      )}
+                      
+                      {error && (
+                        <div className="flex items-center justify-center py-8">
+                          <AlertCircle className="h-6 w-6 text-red-500 mr-2" />
+                          <span className="text-red-600">{error}</span>
+                        </div>
+                      )}
+                      
+                      {!loading && !error && paginatedHotels.map((hotel) => (
                         <AirbnbHotelCard
-                          key={hotel.id}
+                          key={hotel.HotelCode}
                           hotel={hotel}
                           variant="map"
                           onHover={handleHotelHover}
                           isSelected={
-                            selectedHotel === hotel.id ||
-                            hoveredHotel === hotel.id
+                            selectedHotel === hotel.HotelCode ||
+                            hoveredHotel === hotel.HotelCode
                           }
                         />
                       ))}
@@ -303,9 +429,12 @@ const NewSearchResults = () => {
                 <FakeMapView
                   hotels={filteredHotels.map((hotel) => ({
                     ...hotel,
-                    coordinates: hotel.coordinates || {
-                      lat: 24.7136 + (Math.random() - 0.5) * 0.1,
-                      lng: 46.6753 + (Math.random() - 0.5) * 0.1,
+                    id: hotel.HotelCode,
+                    name: hotel.HotelName,
+                    price: hotel.Price || 100,
+                    coordinates: hotel.Location || {
+                      lat: 25.2048 + (Math.random() - 0.5) * 0.1, // Dubai coordinates
+                      lng: 55.2708 + (Math.random() - 0.5) * 0.1,
                     },
                   }))}
                   selectedHotel={selectedHotel || hoveredHotel || undefined}
