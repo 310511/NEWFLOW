@@ -20,12 +20,8 @@ app.post('/api/hotel-search', async (req, res) => {
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
     
     const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
-    const username = process.env.API_USERNAME;
-    const password = process.env.API_PASSWORD;
-    
-    if (!username || !password) {
-      throw new Error('API credentials not configured. Please set API_USERNAME and API_PASSWORD in .env file');
-    }
+    const username = "MS|GenX";
+    const password = "GenX@123";
     
     const response = await fetch(`${apiUrl}/Search`, {
       method: 'POST',
@@ -104,12 +100,8 @@ app.post('/api/hotel-details', async (req, res) => {
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
     
     const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
-    const username = process.env.API_USERNAME;
-    const password = process.env.API_PASSWORD;
-    
-    if (!username || !password) {
-      throw new Error('API credentials not configured. Please set API_USERNAME and API_PASSWORD in .env file');
-    }
+    const username = "MS|GenX";
+    const password = "GenX@123";
     
     const response = await fetch(`${apiUrl}/Hoteldetails`, {
       method: 'POST',
@@ -147,12 +139,8 @@ app.post('/api/hotel-room', async (req, res) => {
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
     
     const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
-    const username = process.env.API_USERNAME;
-    const password = process.env.API_PASSWORD;
-    
-    if (!username || !password) {
-      throw new Error('API credentials not configured. Please set API_USERNAME and API_PASSWORD in .env file');
-    }
+    const username = "MS|GenX";
+    const password = "GenX@123";
     
     const response = await fetch(`${apiUrl}/HotelRoom`, {
       method: 'POST',
@@ -185,6 +173,57 @@ app.post('/api/hotel-room', async (req, res) => {
   }
 });
 
+// Hotel Prebook endpoint
+app.post('/api/hotel-prebook', async (req, res) => {
+  try {
+    console.log('🔒 Proxying hotel prebook request to Travzilla API...');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
+    const username = "MS|GenX";
+    const password = "GenX@123";
+    
+    const response = await fetch(`${apiUrl}/Prebook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log('📥 Travzilla prebook response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Travzilla prebook API error:', errorText);
+      throw new Error(`Travzilla Prebook API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Travzilla prebook response:', data);
+    
+    // Handle null response
+    if (data === null || data === undefined) {
+      console.log('📭 No prebook response received');
+      return res.json({
+        Status: {
+          Code: "400",
+          Description: "No prebook response received"
+        }
+      });
+    }
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ Hotel prebook proxy error:', error);
+    res.status(500).json({ 
+      error: 'Hotel prebook proxy error', 
+      message: error.message 
+    });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`🚀 Proxy server running on http://localhost:${PORT}`);

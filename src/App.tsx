@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import SearchResults from "./pages/SearchResults";
 import HotelDetails from "./pages/HotelDetails";
+import Reserve from "./pages/Reserve";
+import Booking from "./pages/Booking";
 import Profile from "./pages/Profile";
 import Destinations from "./pages/Destinations";
 import DestinationDetail from "./pages/DestinationDetail";
@@ -39,6 +41,8 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/hotel/:id" element={<HotelDetails />} />
+          <Route path="/reserve/:id" element={<Reserve />} />
+          <Route path="/booking/:id" element={<Booking />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/destinations" element={<Destinations />} />
           <Route path="/destination/:destination" element={<DestinationDynamic />} />

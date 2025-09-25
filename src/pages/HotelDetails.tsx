@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FakeMapView from "@/components/FakeMapView";
@@ -30,6 +30,8 @@ import {
 import Loader from "@/components/ui/Loader";
 import { getHotelDetails } from "@/services/hotelApi";
 import HotelRoomDetails from "@/components/HotelRoomDetails";
+import { prebookHotel } from "@/services/bookingapi";
+import { searchHotels } from "@/services/hotelApi";
 
 const HotelDetails = () => {
   const { id } = useParams();
@@ -41,6 +43,9 @@ const HotelDetails = () => {
   const [loading, setIsLoading] = useState(false);
   const [showRoomDetails, setShowRoomDetails] = useState(false);
   const [selectedBookingCode, setSelectedBookingCode] = useState<string | null>(null);
+  const [prebookLoading, setPrebookLoading] = useState(false);
+  const [bookingCode, setBookingCode] = useState<string | null>(null);
+  const [searchingForBookingCode, setSearchingForBookingCode] = useState(false);
 
   // Handle ESC key to close modal
   useEffect(() => {
@@ -72,6 +77,60 @@ const HotelDetails = () => {
     }
   };
 
+  const fetchBookingCode = async () => {
+    if (!id) return;
+    
+    setSearchingForBookingCode(true);
+    try {
+      console.log("🔍 Searching for booking code for hotel:", id);
+      
+      // Get search parameters from URL
+      const checkIn = searchParams.get("checkIn");
+      const checkOut = searchParams.get("checkOut");
+      const guests = searchParams.get("guests");
+      const rooms = searchParams.get("rooms");
+      
+      if (checkIn && checkOut && guests && rooms) {
+        const searchParams = {
+          CheckIn: checkIn,
+          CheckOut: checkOut,
+          GuestNationality: "IN",
+          PreferredCurrencyCode: "USD",
+          PaxRooms: Array.from({ length: parseInt(rooms) }, () => ({
+            Adults: parseInt(guests),
+            Children: 0,
+            ChildrenAges: []
+          })),
+          IsDetailResponse: true
+        };
+        
+        const searchResponse = await searchHotels(searchParams);
+        console.log("🔍 Search response:", searchResponse);
+        
+        if (searchResponse?.HotelResult && Array.isArray(searchResponse.HotelResult)) {
+          const hotel = searchResponse.HotelResult.find(h => h.HotelCode === id);
+          if (hotel?.Rooms && Array.isArray(hotel.Rooms) && hotel.Rooms.length > 0) {
+            const foundBookingCode = hotel.Rooms[0].BookingCode;
+            console.log("✅ Found booking code:", foundBookingCode);
+            setBookingCode(foundBookingCode);
+            return;
+          }
+        }
+      }
+      
+      // If no booking code found from search, use fallback
+      console.log("📭 No booking code found from search, using fallback");
+      setBookingCode("414792!AX1.1!8c8a2992-39a8-419c-a54d-cc8faa8c246f");
+      
+    } catch (error) {
+      console.error("❌ Error fetching booking code:", error);
+      // Use fallback booking code
+      setBookingCode("414792!AX1.1!8c8a2992-39a8-419c-a54d-cc8faa8c246f");
+    } finally {
+      setSearchingForBookingCode(false);
+    }
+  };
+
   const handleViewRoomDetails = (bookingCode: string) => {
     setSelectedBookingCode(bookingCode);
     setShowRoomDetails(true);
@@ -82,10 +141,60 @@ const HotelDetails = () => {
     setSelectedBookingCode(null);
   };
 
+  const handleReserveClick = async () => {
+    if (!bookingCode) {
+      console.error("No booking code available");
+      alert("Booking code is not available. Please try again.");
+      return;
+    }
+
+    setPrebookLoading(true);
+    try {
+      console.log("🔒 Starting prebook process with booking code:", bookingCode);
+
+      const prebookResponse = await prebookHotel({
+        BookingCode: bookingCode,
+        PaymentMode: "Limit",
+      });
+
+      console.log("✅ Prebook successful:", prebookResponse);
+
+      // Check if prebook was successful
+      if (prebookResponse.Status && prebookResponse.Status.Code === "200") {
+        // Navigate to booking page with hotel code and prebook data
+        navigate(`/booking/${hotelDetails.HotelCode}`, {
+          state: {
+            prebookData: prebookResponse,
+            bookingCode: bookingCode,
+            hotelDetails: hotelDetails,
+          },
+        });
+      } else {
+        // Handle prebook failure
+        console.error("Prebook failed:", prebookResponse);
+        alert(
+          `Prebook failed: ${
+            prebookResponse.Status?.Description || "Unknown error"
+          }`
+        );
+      }
+    } catch (error) {
+      console.error("💥 Prebook error:", error);
+      alert(
+        `Prebook failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setPrebookLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     if (id) {
       fetchHotelDetails(id);
+      fetchBookingCode();
     }
   }, [id]);
 
@@ -264,30 +373,27 @@ const HotelDetails = () => {
                 </div>
               </div>
 
-              {/* Reserve and Book Buttons */}
+              {/* Reserve Button */}
               <div className="flex gap-3 mt-6">
                 <Button 
                   size="lg" 
                   className="flex-1 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  onClick={() => {
-                    console.log("Reserve button clicked - future scope");
-                    // TODO: Implement reserve functionality
-                  }}
+                  onClick={handleReserveClick}
+                  disabled={prebookLoading || !bookingCode || searchingForBookingCode}
                 >
-                  Reserve
+                  {searchingForBookingCode ? "Finding booking code..." : prebookLoading ? "Processing..." : "Reserve"}
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="flex-1 border-primary text-primary hover:bg-primary hover:text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  onClick={() => {
-                    console.log("Book Now button clicked - future scope");
-                    // TODO: Implement booking functionality
-                  }}
-                >
-                  Book Now
-                </Button>
-              </div>
+            </div>
+
+            {!bookingCode && !searchingForBookingCode && (
+              <p className="text-center text-sm text-red-500 mt-2">
+                Booking code not available. Please try again.
+              </p>
+            )}
+
+            <p className="text-center text-sm text-muted-foreground mt-3">
+              You won't be charged yet
+            </p>
 
               {/* Available Rooms Section */}
               <div className="mt-8">
@@ -311,8 +417,8 @@ const HotelDetails = () => {
                         <div className="text-right">
                           <div className="text-lg font-bold">$200</div>
                           <div className="text-sm text-muted-foreground">per night</div>
-                        </div>
                       </div>
+                </div>
                       <div className="mt-4">
                         <Button 
                           onClick={() => handleViewRoomDetails("414792!AX1.1!8c8a2992-39a8-419c-a54d-cc8faa8c246f")}
@@ -320,7 +426,7 @@ const HotelDetails = () => {
                           className="w-full"
                         >
                           View Room Details
-                        </Button>
+                  </Button>
                       </div>
                     </div>
                   </div>
