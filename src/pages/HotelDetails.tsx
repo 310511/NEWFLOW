@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FakeMapView from "@/components/FakeMapView";
@@ -29,13 +29,36 @@ import {
 } from "lucide-react";
 import Loader from "@/components/ui/Loader";
 import { getHotelDetails } from "@/services/hotelApi";
+import HotelRoomDetails from "@/components/HotelRoomDetails";
 
 const HotelDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [hotelDetails, setHotelDetails] = useState<any>(null);
   const [loading, setIsLoading] = useState(false);
+  const [showRoomDetails, setShowRoomDetails] = useState(false);
+  const [selectedBookingCode, setSelectedBookingCode] = useState<string | null>(null);
+
+  // Handle ESC key to close modal
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showRoomDetails) {
+        handleCloseRoomDetails();
+      }
+    };
+
+    if (showRoomDetails) {
+      document.addEventListener('keydown', handleEscKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [showRoomDetails]);
+
 
   const fetchHotelDetails = async (hotelCode: string) => {
     setIsLoading(true);
@@ -48,6 +71,17 @@ const HotelDetails = () => {
       setIsLoading(false);
     }
   };
+
+  const handleViewRoomDetails = (bookingCode: string) => {
+    setSelectedBookingCode(bookingCode);
+    setShowRoomDetails(true);
+  };
+
+  const handleCloseRoomDetails = () => {
+    setShowRoomDetails(false);
+    setSelectedBookingCode(null);
+  };
+
 
   useEffect(() => {
     if (id) {
@@ -229,35 +263,70 @@ const HotelDetails = () => {
                   </span>
                 </div>
               </div>
-            </div>
 
-            {/* Price & Dates */}
-            <Card>
-              <CardContent className="p-6">
-                {hotelDetails.CheckInTime && hotelDetails.CheckOutTime && (
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
-                        <Calendar className="h-4 w-4" />
-                        <span>
-                      {hotelDetails.CheckInTime} – {hotelDetails.CheckOutTime}
-                        </span>
+              {/* Reserve and Book Buttons */}
+              <div className="flex gap-3 mt-6">
+                <Button 
+                  size="lg" 
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  onClick={() => {
+                    console.log("Reserve button clicked - future scope");
+                    // TODO: Implement reserve functionality
+                  }}
+                >
+                  Reserve
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="flex-1 border-primary text-primary hover:bg-primary hover:text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  onClick={() => {
+                    console.log("Book Now button clicked - future scope");
+                    // TODO: Implement booking functionality
+                  }}
+                >
+                  Book Now
+                </Button>
+              </div>
+
+              {/* Available Rooms Section */}
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold mb-4">Available Rooms</h3>
+                <div className="space-y-4">
+                  <p className="text-muted-foreground">
+                    Click on a room to view detailed information including amenities, pricing, and booking details.
+                  </p>
+                  <div className="grid gap-4">
+                    {/* Sample room - you can replace this with actual room data from search results */}
+                    <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-semibold">Standard Room</h4>
+                          <p className="text-sm text-muted-foreground">Comfortable room with modern amenities</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Badge variant="outline">Refundable</Badge>
+                            <Badge variant="outline">Breakfast Included</Badge>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold">$200</div>
+                          <div className="text-sm text-muted-foreground">per night</div>
+                        </div>
                       </div>
-                    )}
-                <div className="w-28 h-28 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center">
-                  <span className="text-white text-xs font-medium text-center px-2">
-                    Book Now
-                  </span>
+                      <div className="mt-4">
+                        <Button 
+                          onClick={() => handleViewRoomDetails("414792!AX1.1!8c8a2992-39a8-419c-a54d-cc8faa8c246f")}
+                          variant="outline"
+                          className="w-full"
+                        >
+                          View Room Details
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                {/* Reserve button (Id for booking), passing hotel code */}
-                <Link to={`/booking/${hotelDetails.HotelCode}`}>
-                  <Button size="lg" className="w-full">
-                    Reserve
-                  </Button>
-                </Link>
-                <p className="text-center text-sm text-muted-foreground mt-3">
-                  You won't be charged yet
-                </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Amenities */}
             <div>
@@ -430,11 +499,7 @@ const HotelDetails = () => {
                     images: hotelDetails.Images || [hotelDetails.FrontImage],
                     rating: hotelDetails.HotelRating,
                     price: hotelDetails.Price || 200,
-                    FrontImage: hotelDetails.FrontImage,
-                    HotelName: hotelDetails.HotelName,
-                    Address: hotelDetails.Address,
-                    HotelRating: hotelDetails.HotelRating,
-                    Price: hotelDetails.Price,
+                    reviews: 0,
                   },
                 ]}
                 selectedHotel={hotelDetails.HotelCode}
@@ -471,6 +536,25 @@ const HotelDetails = () => {
             </div>
           </CardContent>
         </Card>
+
+
+        {/* Room Details Modal */}
+        {showRoomDetails && selectedBookingCode && (
+          <div 
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
+            onClick={handleCloseRoomDetails}
+          >
+            <div 
+              className="bg-background rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <HotelRoomDetails 
+                bookingCode={selectedBookingCode} 
+                onClose={handleCloseRoomDetails}
+              />
+            </div>
+          </div>
+        )}
       </main>
       <Footer />
     </div>

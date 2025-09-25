@@ -12,7 +12,6 @@ import Destinations from "./pages/Destinations";
 import DestinationDetail from "./pages/DestinationDetail";
 import DestinationDynamic from "./pages/DestinationDynamic";
 import Deals from "./pages/Deals";
-import Booking from "./pages/Booking";
 import NotFound from "./pages/NotFound";
 import "./App.css";
 
@@ -44,7 +43,6 @@ const App = () => (
           <Route path="/destinations" element={<Destinations />} />
           <Route path="/destination/:destination" element={<DestinationDynamic />} />
           <Route path="/deals" element={<Deals />} />
-          <Route path="/booking/:id" element={<Booking />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

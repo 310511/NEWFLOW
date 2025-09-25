@@ -217,17 +217,6 @@ const HotelCard = ({ hotel, onFavoriteToggle, isFavorite, animationDelay = 0 }: 
               </div>
             )}
 
-            {/* Reserve Button */}
-            <Button 
-              className="w-full bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                window.location.href = `/booking/${hotel.id}`;
-              }}
-            >
-              Reserve
-            </Button>
           </div>
       </CardContent>
     </Card>

@@ -71,11 +71,6 @@ const UniversalHotelCard = ({
     });
   };
 
-  const handleReserveClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    window.location.href = `/booking/${hotel.id}`;
-  };
 
   const getAmenityIcon = (amenity: string) => {
     const iconProps = { className: "h-3 w-3" };
@@ -257,15 +252,6 @@ const UniversalHotelCard = ({
               </div>
             )}
 
-            {/* Reserve Button */}
-            {showReserveButton && variant !== 'compact' && (
-              <Button 
-                className="w-full bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                onClick={handleReserveClick}
-              >
-                Reserve
-              </Button>
-            )}
           </div>
         </CardContent>
       </Card>
