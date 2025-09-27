@@ -34,8 +34,8 @@ nano /var/www/hotel-rbs/.env
 Make sure these are set correctly:
 ```env
 API_BASE_URL=http://api.travzillapro.com/HotelServiceRest
-API_USERNAME=MS|GenX
-API_PASSWORD=GenX@123
+API_USERNAME=your_api_username_here
+API_PASSWORD=your_api_password_here
 PROXY_SERVER_PORT=3001
 ```
 

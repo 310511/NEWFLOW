@@ -17,9 +17,15 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
+  // Safety check - if hotel is not an object, return null
+  if (!hotel || typeof hotel !== 'object') {
+    console.error('🚨 Invalid hotel data:', hotel);
+    return null;
+  }
+
   // Helper function to check if hotel is from API
   const isApiHotel = (hotel: Hotel | HotelResult): hotel is HotelResult => {
-    return 'HotelCode' in hotel;
+    return hotel && typeof hotel === 'object' && 'HotelCode' in hotel;
   };
 
   // Normalize hotel data for consistent usage
@@ -28,7 +34,32 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
     name: isApiHotel(hotel) ? hotel.HotelName : hotel.name,
     location: isApiHotel(hotel) ? hotel.Address : hotel.location,
     rating: isApiHotel(hotel) ? parseFloat(hotel.StarRating) : hotel.rating,
-    price: isApiHotel(hotel) ? (hotel.Price || 100) : hotel.price,
+    price: isApiHotel(hotel) ? (() => {
+      let price = hotel.Price;
+      console.log('🔍 AirbnbHotelCard price extraction:', {
+        hotelName: hotel.HotelName,
+        Price: hotel.Price,
+        Rooms: hotel.Rooms,
+        TotalFare: (hotel.Rooms as any)?.TotalFare,
+        RoomsType: typeof hotel.Rooms,
+        RoomsKeys: hotel.Rooms ? Object.keys(hotel.Rooms) : 'no rooms',
+        FullRoomsObject: JSON.stringify(hotel.Rooms, null, 2)
+      });
+      // Always prioritize TotalFare from Rooms object (this is the real price from API)
+      if (hotel.Rooms && (hotel.Rooms as any).TotalFare) {
+        price = (hotel.Rooms as any).TotalFare;
+        console.log('✅ Using TotalFare from Rooms:', price);
+      } else if (hotel.Price) {
+        price = hotel.Price;
+        console.log('⚠️ Using hotel.Price as fallback:', price);
+      } else {
+        console.log('❌ No price found - Rooms:', hotel.Rooms, 'Price:', hotel.Price);
+        price = 0; // No hardcoded fallback - show 0 if no price found
+      }
+      const finalPrice = typeof price === 'string' ? parseFloat(price) : price;
+      console.log('🔍 Final extracted price:', finalPrice);
+      return finalPrice;
+    })() : hotel.price,
     images: isApiHotel(hotel) ? [hotel.FrontImage] : hotel.images,
     originalPrice: isApiHotel(hotel) ? undefined : hotel.originalPrice,
     checkIn: isApiHotel(hotel) ? undefined : hotel.checkIn,

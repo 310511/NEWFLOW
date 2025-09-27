@@ -50,15 +50,15 @@ echo "🔧 Creating environment configuration..."
 cat > .env << EOF
 # API Configuration
 API_BASE_URL=http://api.travzillapro.com/HotelServiceRest
-API_USERNAME=MS|GenX
-API_PASSWORD=GenX@123
+API_USERNAME=your_api_username_here
+API_PASSWORD=your_api_password_here
 PROXY_SERVER_PORT=3001
 
 # Frontend Configuration
 VITE_PROXY_SERVER_URL=http://localhost:3001/api
 VITE_API_BASE_URL=http://api.travzillapro.com/HotelServiceRest
-VITE_API_USERNAME=MS|GenX
-VITE_API_PASSWORD=GenX@123
+VITE_API_USERNAME=your_api_username_here
+VITE_API_PASSWORD=your_api_password_here
 EOF
 
 # Build the frontend

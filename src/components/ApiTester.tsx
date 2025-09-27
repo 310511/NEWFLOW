@@ -20,7 +20,7 @@ const ApiTester = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Basic ' + btoa('MS|GenX:GenX@123'),
+            'Authorization': 'Basic ' + btoa(`${import.meta.env.VITE_API_USERNAME || 'MS|GenX'}:${import.meta.env.VITE_API_PASSWORD || 'GenX@123'}`),
             'Accept': 'application/json',
           },
           body: JSON.stringify({

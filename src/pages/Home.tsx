@@ -17,6 +17,9 @@ const Home = () => {
   const [showStickySearch, setShowStickySearch] = useState(false);
   const { toggleFavorite, isFavorite } = useFavorites();
 
+  // Test debug info
+  console.log('🏠 Home component is rendering!');
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;

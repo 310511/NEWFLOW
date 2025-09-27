@@ -10,9 +10,18 @@ import {
   Search,
   Plus,
   Minus,
+  ChevronRight,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { 
+  getCountryList, 
+  getCityList, 
+  Country,
+  City,
+  CountryListResponse,
+  CityListResponse
+} from "@/services/hotelCodeApi";
 
 interface DestinationPickerProps {
   value: string;
@@ -30,14 +39,79 @@ export const DestinationPicker = ({
   const [inputValue, setInputValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const popularDestinations = [
-    { name: "Riyadh", country: "Saudi Arabia" },
-    { name: "Jeddah", country: "Saudi Arabia" },
-    { name: "Dubai", country: "UAE" },
-    { name: "Abu Dhabi", country: "UAE" },
-    { name: "Doha", country: "Qatar" },
-    { name: "Mecca", country: "Saudi Arabia" },
-  ];
+  // Dynamic country and city selection
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [loadingCountries, setLoadingCountries] = useState(false);
+  const [loadingCities, setLoadingCities] = useState(false);
+  const [currentStep, setCurrentStep] = useState<'country' | 'city'>('country');
+  const [countrySearchTerm, setCountrySearchTerm] = useState('');
+  const [citySearchTerm, setCitySearchTerm] = useState('');
+
+  // Load countries on component mount
+  useEffect(() => {
+    if (isOpen && countries.length === 0) {
+      loadCountries();
+    }
+  }, [isOpen]);
+
+  const loadCountries = async () => {
+    try {
+      setLoadingCountries(true);
+      console.log('🌍 Loading countries...');
+      
+      const response: CountryListResponse = await getCountryList();
+      
+      if (response.Status.Code === '200' && response.CountryList) {
+        setCountries(response.CountryList);
+        console.log('✅ Countries loaded:', response.CountryList.length);
+      } else {
+        console.error('❌ Failed to load countries:', response.Status.Description);
+      }
+    } catch (error) {
+      console.error('❌ Error loading countries:', error);
+    } finally {
+      setLoadingCountries(false);
+    }
+  };
+
+  const handleCountrySelect = async (country: Country) => {
+    try {
+      setSelectedCountry(country);
+      setSelectedCity(null);
+      setCurrentStep('city');
+      setCitySearchTerm(''); // Clear city search when switching to city selection
+      
+      console.log('🌍 Country selected:', country.Name, 'Code:', country.Code);
+      
+      setLoadingCities(true);
+      console.log('🏙️ Loading cities for country:', country.Code);
+      
+      const response: CityListResponse = await getCityList(country.Code);
+      
+      if (response.Status.Code === '200' && response.CityList) {
+        setCities(response.CityList);
+        console.log('✅ Cities loaded:', response.CityList.length);
+      } else {
+        console.error('❌ Failed to load cities:', response.Status.Description);
+      }
+    } catch (error) {
+      console.error('❌ Error loading cities:', error);
+    } finally {
+      setLoadingCities(false);
+    }
+  };
+
+  const handleCitySelect = (city: City) => {
+    setSelectedCity(city);
+    const destinationValue = `${city.CityName}, ${selectedCountry?.Name}`;
+    setInputValue(destinationValue);
+    onChange(destinationValue);
+    onOpenChange(false);
+    console.log('🏙️ City selected:', city.CityName, 'Code:', city.CityCode);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -50,6 +124,48 @@ export const DestinationPicker = ({
     onChange(destination);
     onOpenChange(false);
   };
+
+  const handleBackToCountries = () => {
+    setCurrentStep('country');
+    setSelectedCountry(null);
+    setSelectedCity(null);
+    setCities([]);
+    setCountrySearchTerm('');
+  };
+
+  // Filter countries based on search term
+  const filteredCountries = countries.filter(country => 
+    country.Name.toLowerCase().includes(countrySearchTerm.toLowerCase()) ||
+    country.Code.toLowerCase().includes(countrySearchTerm.toLowerCase())
+  ).sort((a, b) => {
+    // Prioritize exact matches and matches that start with the search term
+    const aName = a.Name.toLowerCase();
+    const bName = b.Name.toLowerCase();
+    const searchTerm = countrySearchTerm.toLowerCase();
+    
+    if (aName.startsWith(searchTerm) && !bName.startsWith(searchTerm)) return -1;
+    if (!aName.startsWith(searchTerm) && bName.startsWith(searchTerm)) return 1;
+    if (aName.includes(searchTerm) && !bName.includes(searchTerm)) return -1;
+    if (!aName.includes(searchTerm) && bName.includes(searchTerm)) return 1;
+    return aName.localeCompare(bName);
+  });
+
+  // Filter cities based on search term
+  const filteredCities = cities.filter(city => 
+    city.CityName.toLowerCase().includes(citySearchTerm.toLowerCase()) ||
+    city.CityCode.toLowerCase().includes(citySearchTerm.toLowerCase())
+  ).sort((a, b) => {
+    // Prioritize exact matches and matches that start with the search term
+    const aName = a.CityName.toLowerCase();
+    const bName = b.CityName.toLowerCase();
+    const searchTerm = citySearchTerm.toLowerCase();
+    
+    if (aName.startsWith(searchTerm) && !bName.startsWith(searchTerm)) return -1;
+    if (!aName.startsWith(searchTerm) && bName.startsWith(searchTerm)) return 1;
+    if (aName.includes(searchTerm) && !bName.includes(searchTerm)) return -1;
+    if (!aName.includes(searchTerm) && bName.includes(searchTerm)) return 1;
+    return aName.localeCompare(bName);
+  });
 
   return (
     <div className="relative">
@@ -73,40 +189,126 @@ export const DestinationPicker = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute top-full left-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden"
+          className="absolute top-full left-0 mt-2 w-96 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden"
         >
           <div className="p-4">
             <div className="space-y-3">
+              {/* Header with back button for city selection */}
+              {currentStep === 'city' && (
+                <div className="flex items-center space-x-2 pb-2 border-b">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleBackToCountries}
+                    className="p-1 h-auto"
+                  >
+                    <ChevronRight className="h-4 w-4 rotate-180" />
+                  </Button>
+                  <div>
+                    <div className="font-medium text-sm">Select City</div>
+                    <div className="text-xs text-muted-foreground">
+                      {selectedCountry?.Name} ({selectedCountry?.Code})
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Country Selection */}
+              {currentStep === 'country' && (
               <div className="space-y-2">
-                <h4 className="font-medium text-sm">Search destinations</h4>
+                  <h4 className="font-medium text-sm">Select Country</h4>
+                  
+                  {/* Search input for countries */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  placeholder="Where to?"
-                  className="border border-border focus-visible:ring-1 focus-visible:ring-ring"
-                  autoFocus
+                      placeholder="Search countries..."
+                      value={countrySearchTerm}
+                      onChange={(e) => setCountrySearchTerm(e.target.value)}
+                      className="pl-10 h-9 text-sm"
                 />
               </div>
-              <div className="space-y-1">
-                <h4 className="font-medium text-sm">Popular destinations</h4>
-                {popularDestinations.map((dest) => (
+                  
+                  {loadingCountries ? (
+                    <div className="text-center py-4 text-sm text-muted-foreground">
+                      Loading countries...
+                    </div>
+                  ) : (
+                    <div className="max-h-60 overflow-y-auto space-y-1">
+                      {filteredCountries.length === 0 ? (
+                        <div className="text-center py-4 text-sm text-muted-foreground">
+                          No countries found matching "{countrySearchTerm}"
+                        </div>
+                      ) : (
+                        filteredCountries.map((country) => (
                   <button
-                    key={dest.name}
-                    onClick={() => handleDestinationSelect(dest.name)}
+                          key={country.Code}
+                          onClick={() => handleCountrySelect(country)}
                     className="flex items-center space-x-3 w-full p-3 hover:bg-muted/50 rounded-lg transition-colors text-left"
                   >
                     <div className="h-10 w-10 bg-muted rounded-lg flex items-center justify-center">
                       <MapPin className="h-5 w-5" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-base font-medium">{dest.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {dest.country}
-                      </div>
+                            <div className="font-medium text-sm">{country.Name}</div>
+                            <div className="text-xs text-muted-foreground">{country.Code}</div>
+                          </div>
+                        </button>
+                        ))
+                      )}
                     </div>
-                  </button>
-                ))}
-              </div>
+                  )}
+                </div>
+              )}
+
+              {/* City Selection */}
+              {currentStep === 'city' && (
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Select City</h4>
+                  
+                  {/* Search input for cities */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search cities..."
+                      value={citySearchTerm}
+                      onChange={(e) => setCitySearchTerm(e.target.value)}
+                      className="pl-10 h-9 text-sm"
+                    />
+                  </div>
+                  
+                  {loadingCities ? (
+                    <div className="text-center py-4 text-sm text-muted-foreground">
+                      Loading cities...
+                    </div>
+                  ) : (
+                    <div className="max-h-60 overflow-y-auto space-y-1">
+                      {filteredCities.length === 0 ? (
+                        <div className="text-center py-4 text-sm text-muted-foreground">
+                          No cities found matching "{citySearchTerm}"
+                        </div>
+                      ) : (
+                        filteredCities.map((city) => (
+                        <button
+                          key={city.CityCode}
+                          onClick={() => handleCitySelect(city)}
+                          className="flex items-center space-x-3 w-full p-3 hover:bg-muted/50 rounded-lg transition-colors text-left"
+                        >
+                          <div className="h-10 w-10 bg-muted rounded-lg flex items-center justify-center">
+                            <MapPin className="h-5 w-5" />
+                      </div>
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">{city.CityName}</div>
+                            <div className="text-xs text-muted-foreground">{city.CityCode}</div>
+                    </div>
+                        </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
             </div>
           </div>
         </div>

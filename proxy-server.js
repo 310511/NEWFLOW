@@ -20,8 +20,8 @@ app.post('/api/hotel-search', async (req, res) => {
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
     
     const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
-    const username = "MS|GenX";
-    const password = "GenX@123";
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
     
     const response = await fetch(`${apiUrl}/Search`, {
       method: 'POST',
@@ -41,6 +41,11 @@ app.post('/api/hotel-search', async (req, res) => {
 
     const data = await response.json();
     console.log('✅ Travzilla response:', data);
+    
+    // Debug: Log the first hotel's rooms structure
+    if (data && data.HotelResult && data.HotelResult.length > 0) {
+      console.log('🔍 Debug - First hotel rooms structure:', JSON.stringify(data.HotelResult[0].Rooms, null, 2));
+    }
     
     // Handle null response (no hotels found)
     if (data === null || data === undefined) {
@@ -100,8 +105,8 @@ app.post('/api/hotel-details', async (req, res) => {
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
     
     const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
-    const username = "MS|GenX";
-    const password = "GenX@123";
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
     
     const response = await fetch(`${apiUrl}/Hoteldetails`, {
       method: 'POST',
@@ -139,8 +144,8 @@ app.post('/api/hotel-room', async (req, res) => {
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
     
     const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
-    const username = "MS|GenX";
-    const password = "GenX@123";
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
     
     const response = await fetch(`${apiUrl}/HotelRoom`, {
       method: 'POST',
@@ -180,8 +185,8 @@ app.post('/api/hotel-prebook', async (req, res) => {
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
     
     const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
-    const username = "MS|GenX";
-    const password = "GenX@123";
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
     
     const response = await fetch(`${apiUrl}/Prebook`, {
       method: 'POST',
@@ -220,6 +225,121 @@ app.post('/api/hotel-prebook', async (req, res) => {
     console.error('❌ Hotel prebook proxy error:', error);
     res.status(500).json({ 
       error: 'Hotel prebook proxy error', 
+      message: error.message 
+    });
+  }
+});
+
+// CountryList endpoint
+app.get('/api/CountryList', async (req, res) => {
+  try {
+    console.log('🌍 Fetching country list from Travzilla API...');
+    
+    const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
+    
+    const response = await fetch(`${apiUrl}/CountryList`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        'Accept': 'application/json',
+      },
+    });
+
+    console.log('📥 CountryList response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`Travzilla CountryList API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ CountryList response:', data);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ CountryList proxy error:', error);
+    res.status(500).json({ 
+      error: 'CountryList proxy error', 
+      message: error.message 
+    });
+  }
+});
+
+// CityList endpoint
+app.post('/api/CityList', async (req, res) => {
+  try {
+    console.log('🏙️ Fetching city list from Travzilla API...');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
+    
+    const response = await fetch(`${apiUrl}/CityList`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log('📥 CityList response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`Travzilla CityList API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ CityList response:', data);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ CityList proxy error:', error);
+    res.status(500).json({ 
+      error: 'CityList proxy error', 
+      message: error.message 
+    });
+  }
+});
+
+// HotelCodeList endpoint
+app.post('/api/HotelCodeList', async (req, res) => {
+  try {
+    console.log('🏨 Fetching hotel code list from Travzilla API...');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
+    
+    const response = await fetch(`${apiUrl}/HotelCodeList`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log('📥 HotelCodeList response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`Travzilla HotelCodeList API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ HotelCodeList response:', data);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ HotelCodeList proxy error:', error);
+    res.status(500).json({ 
+      error: 'HotelCodeList proxy error', 
       message: error.message 
     });
   }

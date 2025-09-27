@@ -15,6 +15,8 @@ import DestinationDetail from "./pages/DestinationDetail";
 import DestinationDynamic from "./pages/DestinationDynamic";
 import Deals from "./pages/Deals";
 import NotFound from "./pages/NotFound";
+import HotelCodeTester from "./components/HotelCodeTester";
+import ApiTest from "./components/ApiTest";
 import "./App.css";
 
 const queryClient = new QueryClient();
@@ -47,6 +49,8 @@ const App = () => (
           <Route path="/destinations" element={<Destinations />} />
           <Route path="/destination/:destination" element={<DestinationDynamic />} />
           <Route path="/deals" element={<Deals />} />
+          <Route path="/test-hotel-codes" element={<HotelCodeTester />} />
+          <Route path="/api-test" element={<ApiTest />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

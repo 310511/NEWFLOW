@@ -59,10 +59,10 @@ export interface HotelResult {
 
 export interface HotelSearchResponse {
   Status: {
-    Code: string;
+    Code: string | number;
     Description: string;
   };
-  HotelResult: HotelResult[];
+  HotelResult: HotelResult[] | HotelResult;
 }
 
 // Search hotels using Travzilla API
@@ -85,6 +85,7 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
     const proxyUrl = getApiUrl('/hotel-search');
     console.log('📍 Proxy URL:', proxyUrl);
     console.log('📤 Request Body:', JSON.stringify(params, null, 2));
+    console.log('🔍 Environment check - PROXY_SERVER_URL:', PROXY_SERVER_URL);
     
     const response = await fetch(proxyUrl, {
       method: 'POST',
@@ -108,30 +109,13 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
 
     // Handle null response (no hotels found)
     if (data === null || data === undefined) {
-      console.log('📭 No hotels found for this search, using fallback data');
-      // Return a fallback response with a hotel that has a booking code
+      console.log('📭 No hotels found for this search');
       return {
         Status: {
-          Code: "200",
-          Description: "Successful"
+          Code: "204",
+          Description: "No results found for the requested search"
         },
-        HotelResult: [{
-          HotelCode: "414792",
-          HotelName: "ARMADA AVENUE HOTEL",
-          Address: "Armada Towers, Jumeira Lake Towers, Sheikh Zayed Road, Dubai, AE, Dubai, United Arab Emirates",
-          StarRating: "4",
-          FrontImage: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
-          Currency: "USD",
-          Rooms: [{
-            BookingCode: "414792!AX1.1!8c8a2992-39a8-419c-a54d-cc8faa8c246f",
-            RoomType: "R1 - Double Standard",
-            Price: 121.476,
-            Currency: "USD",
-            Refundable: true,
-            MealType: "ROOM ONLY",
-            CancellationPolicy: "Free cancellation available"
-          }]
-        }]
+        HotelResult: []
       };
     }
 
@@ -142,7 +126,8 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
       if (!Array.isArray(hotelResults)) {
         console.log("📋 HotelResult is not an array, converting...", typeof hotelResults);
         if (typeof hotelResults === 'object' && hotelResults !== null) {
-          hotelResults = Object.values(hotelResults);
+          // Convert single hotel object to array
+          hotelResults = [hotelResults];
         } else {
           hotelResults = [];
         }
@@ -152,24 +137,11 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
       const processedHotels = hotelResults.map((hotel: any) => {
         if (hotel.Rooms) {
           // Process rooms data to extract booking codes
-          let rooms = hotel.Rooms;
-          if (typeof rooms === 'object' && !Array.isArray(rooms)) {
-            // Convert object to array
-            rooms = Object.values(rooms);
-          }
-          
-          // Add booking codes to rooms
-          const processedRooms = rooms.map((room: any, index: number) => ({
-            ...room,
-            BookingCode: room.BookingCode || `room-${hotel.HotelCode}-${index}`,
-            Refundable: true, // Force refundable for testing
-            Price: room.Price || 200,
-            Currency: room.Currency || 'AED'
-          }));
-          
+          // Preserve the original Rooms object structure - don't convert to array
+          // The Rooms object contains TotalFare which we need for pricing
           return {
             ...hotel,
-            Rooms: processedRooms
+            // Keep Rooms as-is since it contains the pricing information
           };
         }
         return hotel;
