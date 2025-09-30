@@ -23,6 +23,8 @@ import {
 interface HotelRoomDetailsProps {
   bookingCode: string;
   onClose?: () => void;
+  onRoomSelect?: (room: RoomOption) => void;
+  selectedRoom?: RoomOption | null;
 }
 
 interface RoomOption {
@@ -59,7 +61,7 @@ interface RoomDetails {
   TotalTax?: string;
 }
 
-const HotelRoomDetails: React.FC<HotelRoomDetailsProps> = ({ bookingCode, onClose }) => {
+const HotelRoomDetails: React.FC<HotelRoomDetailsProps> = ({ bookingCode, onClose, onRoomSelect, selectedRoom }) => {
   const [hotelData, setHotelData] = useState<HotelRoomResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -177,49 +179,61 @@ const HotelRoomDetails: React.FC<HotelRoomDetailsProps> = ({ bookingCode, onClos
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Room Types & Meal Plans</h3>
           <div className="grid gap-4">
-            {hotelData.Rooms.map((room, index) => (
-              <div key={index} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-lg">{room.Name}</h4>
-                    <p className="text-sm text-muted-foreground mb-2">{room.MealType}</p>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant={room.IsRefundable === "true" ? "default" : "destructive"}>
-                        {room.IsRefundable === "true" ? "Refundable" : "Non-Refundable"}
-                      </Badge>
-                      {room.WithTransfers === "true" && (
-                        <Badge variant="outline">With Transfers</Badge>
+            {hotelData.Rooms.map((room, index) => {
+              const isSelected = selectedRoom?.BookingCode === room.BookingCode;
+              return (
+                <div 
+                  key={index} 
+                  className={`border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer ${
+                    isSelected ? 'border-primary bg-primary/5' : ''
+                  }`}
+                  onClick={() => onRoomSelect?.(room)}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-lg">{room.Name}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{room.MealType}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant={room.IsRefundable === "true" ? "default" : "destructive"}>
+                          {room.IsRefundable === "true" ? "Refundable" : "Non-Refundable"}
+                        </Badge>
+                        {room.WithTransfers === "true" && (
+                          <Badge variant="outline">With Transfers</Badge>
+                        )}
+                        {isSelected && (
+                          <Badge variant="default" className="bg-primary">Selected</Badge>
+                        )}
+                      </div>
+                      {room.Inclusion && (
+                        <p className="text-sm text-muted-foreground">{room.Inclusion}</p>
                       )}
                     </div>
-                    {room.Inclusion && (
-                      <p className="text-sm text-muted-foreground">{room.Inclusion}</p>
-                    )}
-                  </div>
-                  <div className="text-right ml-4">
-                    <div className="text-xl font-bold text-primary">
-                      {hotelData.Currency} {room.TotalFare}
-                    </div>
-                    {room.TotalTax !== "0" && (
-                      <p className="text-sm text-muted-foreground">
-                        Tax: {hotelData.Currency} {room.TotalTax}
-                      </p>
-                    )}
-                    <div className="mt-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => {
-                          console.log("Select room:", room.BookingCode);
-                          // TODO: Implement room selection
-                        }}
-                      >
-                        Select Room
-                      </Button>
+                    <div className="text-right ml-4">
+                      <div className="text-xl font-bold text-primary">
+                        {hotelData.Currency} {room.TotalFare}
+                      </div>
+                      {room.TotalTax !== "0" && (
+                        <p className="text-sm text-muted-foreground">
+                          Tax: {hotelData.Currency} {room.TotalTax}
+                        </p>
+                      )}
+                      <div className="mt-2">
+                        <Button 
+                          size="sm" 
+                          variant={isSelected ? "default" : "outline"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onRoomSelect?.(room);
+                          }}
+                        >
+                          {isSelected ? "Selected" : "Select Room"}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

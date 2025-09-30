@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowLeft, CheckCircle, Clock, User, Calendar, Users } from "lucide-react";
 import { prebookHotel } from "@/services/bookingapi";
-import { getHotelDetails } from "@/services/hotelApi";
+import { getHotelDetails, searchHotels } from "@/services/hotelApi";
+import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
 
 const Reserve = () => {
   const { id } = useParams();
@@ -56,8 +57,55 @@ const Reserve = () => {
       setError(null);
       console.log("🔒 Starting prebook process...");
 
-      // Generate a booking code for testing
-      const bookingCode = `room-${id}-${Date.now()}`;
+      // First, get a real booking code from search API
+      let bookingCode = null;
+      
+      try {
+        console.log("🔍 Getting real booking code from search API...");
+        
+      const searchParams = {
+        CheckIn: checkIn || getCurrentDate(),
+        CheckOut: checkOut || getDateFromNow(1),
+        HotelCodes: id || "",
+        GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
+        PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
+        PaxRooms: Array.from({ length: parseInt(rooms) || APP_CONFIG.DEFAULT_ROOMS }, () => ({
+          Adults: parseInt(guests) || APP_CONFIG.DEFAULT_GUESTS,
+          Children: APP_CONFIG.DEFAULT_CHILDREN,
+          ChildrenAges: []
+        })),
+        IsDetailResponse: true,
+        ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
+      };
+        
+        const searchResponse = await searchHotels(searchParams);
+        console.log("🔍 Search response for booking code:", searchResponse);
+        
+        if (searchResponse?.HotelResult) {
+          const hotel = searchResponse.HotelResult;
+          // Handle both array and object structures
+          if (Array.isArray(hotel)) {
+            const foundHotel = hotel.find(h => h.HotelCode === id);
+            if (foundHotel?.Rooms && Array.isArray(foundHotel.Rooms) && foundHotel.Rooms.length > 0) {
+              bookingCode = foundHotel.Rooms[0].BookingCode;
+              console.log("✅ Found real booking code (array structure):", bookingCode);
+            }
+          } else if (hotel.HotelCode === id && hotel.Rooms && hotel.Rooms.BookingCode) {
+            // Handle object structure where Rooms is an object
+            bookingCode = hotel.Rooms.BookingCode;
+            console.log("✅ Found real booking code (object structure):", bookingCode);
+          }
+        }
+      } catch (searchError) {
+        console.error("❌ Error getting booking code from search:", searchError);
+      }
+      
+      // If no real booking code found, show error
+      if (!bookingCode) {
+        console.log("📭 No real booking code found");
+        setError("No booking code available. Please try searching again.");
+        return;
+      }
 
       const prebookResponse = await prebookHotel({
         BookingCode: bookingCode,

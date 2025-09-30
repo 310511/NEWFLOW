@@ -1,10 +1,12 @@
+import { APP_CONFIG } from '@/config/constants';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
 const PROXY_SERVER_URL = import.meta.env.VITE_PROXY_SERVER_URL || 'http://localhost:3001/api';
 const API_USERNAME = import.meta.env.VITE_API_USERNAME || '';
 const API_PASSWORD = import.meta.env.VITE_API_PASSWORD || '';
 
 const getApiUrl = (endpoint: string) => {
-  return `${PROXY_SERVER_URL}/hotel-search`;
+  return `${PROXY_SERVER_URL}${endpoint}`;
 };
 const authHeader = btoa(`${API_USERNAME}:${API_PASSWORD}`);
 export interface HotelSearchParams {
@@ -82,6 +84,7 @@ export const searchHotels = async (params: HotelSearchParams): Promise<HotelSear
 const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSearchResponse> => {
   try {
     console.log('🌐 Calling Travzilla API via local proxy...');
+    console.log('🌐 searchHotelsTravzilla called with params:', params);
     const proxyUrl = getApiUrl('/hotel-search');
     console.log('📍 Proxy URL:', proxyUrl);
     console.log('📤 Request Body:', JSON.stringify(params, null, 2));
@@ -106,6 +109,8 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
 
     const data = await response.json();
     console.log('✅ Travzilla API response:', data);
+    console.log('✅ Travzilla API response type:', typeof data);
+    console.log('✅ Travzilla API response keys:', Object.keys(data || {}));
 
     // Handle null response (no hotels found)
     if (data === null || data === undefined) {
@@ -164,6 +169,11 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
 
   } catch (error) {
     console.error('💥 Proxy API error:', error);
+    console.error('💥 Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     throw new Error(`Travzilla API failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };
@@ -187,7 +197,7 @@ const searchHotelsMock = async (params: HotelSearchParams): Promise<HotelSearchR
           StarRating: "5",
           FrontImage: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop",
           Price: 2500,
-          Currency: "AED",
+          Currency: APP_CONFIG.DEFAULT_CURRENCY,
           RoomType: "Deluxe Suite",
           MealType: "All Inclusive",
           Refundable: true,
@@ -206,7 +216,7 @@ const searchHotelsMock = async (params: HotelSearchParams): Promise<HotelSearchR
           StarRating: "5",
           FrontImage: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop",
           Price: 1800,
-          Currency: "AED",
+          Currency: APP_CONFIG.DEFAULT_CURRENCY,
           RoomType: "Ocean View Room",
           MealType: "Breakfast Included",
           Refundable: true,
@@ -225,7 +235,7 @@ const searchHotelsMock = async (params: HotelSearchParams): Promise<HotelSearchR
           StarRating: "5",
           FrontImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
           Price: 1200,
-          Currency: "AED",
+          Currency: APP_CONFIG.DEFAULT_CURRENCY,
           RoomType: "Executive Suite",
           MealType: "Room Only",
           Refundable: true,
@@ -244,7 +254,7 @@ const searchHotelsMock = async (params: HotelSearchParams): Promise<HotelSearchR
           StarRating: "5",
           FrontImage: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=300&fit=crop",
           Price: 1500,
-          Currency: "AED",
+          Currency: APP_CONFIG.DEFAULT_CURRENCY,
           RoomType: "Deluxe Room",
           MealType: "Breakfast Included",
           Refundable: true,
@@ -263,7 +273,7 @@ const searchHotelsMock = async (params: HotelSearchParams): Promise<HotelSearchR
           StarRating: "5",
           FrontImage: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop",
           Price: 3000,
-          Currency: "AED",
+          Currency: APP_CONFIG.DEFAULT_CURRENCY,
           RoomType: "Armani Suite",
           MealType: "All Inclusive",
           Refundable: true,

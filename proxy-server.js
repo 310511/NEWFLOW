@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 
 // Load environment variables
@@ -9,9 +8,25 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PROXY_SERVER_PORT || 3001;
 
-// Enable CORS for all routes
-app.use(cors());
+// Enable CORS for all routes with more permissive settings
+app.use(cors({
+  origin: ['http://localhost:8083', 'http://localhost:3000', 'http://127.0.0.1:8083', 'http://127.0.0.1:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+}));
 app.use(express.json());
+
+// Test endpoint to verify proxy server is working
+app.get('/api/test', (req, res) => {
+  console.log('🧪 Test endpoint called from:', req.headers.origin || req.headers.host);
+  res.json({ 
+    success: true, 
+    message: 'Proxy server is working!',
+    timestamp: new Date().toISOString(),
+    origin: req.headers.origin || 'unknown'
+  });
+});
 
 // Proxy endpoint for Travzilla API
 app.post('/api/hotel-search', async (req, res) => {
@@ -188,17 +203,25 @@ app.post('/api/hotel-prebook', async (req, res) => {
     const username = process.env.API_USERNAME || "MS|GenX";
     const password = process.env.API_PASSWORD || "GenX@123";
     
+    console.log('🔐 Using credentials:', username, '***');
+    console.log('🌐 API URL:', `${apiUrl}/Prebook`);
+    
+    const authHeader = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
+    console.log('🔐 Auth header:', authHeader);
+    console.log('🔐 Auth header length:', authHeader.length);
+    
     const response = await fetch(`${apiUrl}/Prebook`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        'Authorization': authHeader,
         'Accept': 'application/json',
       },
       body: JSON.stringify(req.body),
     });
 
     console.log('📥 Travzilla prebook response status:', response.status);
+    console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
     
     if (!response.ok) {
       const errorText = await response.text();
@@ -345,7 +368,120 @@ app.post('/api/HotelCodeList', async (req, res) => {
   }
 });
 
+// Customer lookup endpoint
+app.get('/api/customer/:email', async (req, res) => {
+  try {
+    console.log('👤 Proxying customer lookup request...');
+    console.log('📧 Email:', req.params.email);
+    
+    const customerApiUrl = 'http://hotelrbs.us-east-1.elasticbeanstalk.com';
+    
+    const response = await fetch(`${customerApiUrl}/customer/${req.params.email}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('📥 Customer lookup response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`Customer lookup API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Customer lookup response:', data);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ Customer lookup proxy error:', error);
+    res.status(500).json({ 
+      error: 'Customer lookup proxy error', 
+      message: error.message 
+    });
+  }
+});
+
+// Booking reference generation endpoint
+app.post('/api/bookings/reference', async (req, res) => {
+  try {
+    console.log('📋 Proxying booking reference generation request...');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const bookingApiUrl = 'http://hotelrbs.us-east-1.elasticbeanstalk.com';
+    
+    const response = await fetch(`${bookingApiUrl}/bookings/reference`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log('📥 Booking reference response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`Booking reference API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Booking reference response:', data);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ Booking reference proxy error:', error);
+    res.status(500).json({ 
+      error: 'Booking reference proxy error', 
+      message: error.message 
+    });
+  }
+});
+
+// Hotel booking endpoint
+app.post('/api/hotel-book', async (req, res) => {
+  try {
+    console.log('🏨 Proxying hotel booking request to Travzilla API...');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
+    
+    const response = await fetch(`${apiUrl}/HotelBook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log('📥 Travzilla hotel booking response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Travzilla hotel booking API error:', errorText);
+      throw new Error(`Travzilla Hotel Booking API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Travzilla hotel booking response:', data);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ Hotel booking proxy error:', error);
+    res.status(500).json({ 
+      error: 'Hotel booking proxy error', 
+      message: error.message 
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Proxy server running on http://localhost:${PORT}`);
   console.log(`📡 Proxying Travzilla API calls...`);
+  console.log(`👤 Proxying Customer API calls...`);
+  console.log(`📋 Proxying Booking API calls...`);
+  console.log(`🏨 Proxying Hotel Booking API calls...`);
 });

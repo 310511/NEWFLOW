@@ -20,6 +20,7 @@ import Header from "@/components/Header";
 import { useHotelSearch } from "@/hooks/useHotelSearch";
 import FakeMapView from "@/components/FakeMapView";
 import { getCountryList, getCityList, getHotelCodeList } from "@/services/hotelCodeApi";
+import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
 
 const SearchResults = () => {
   console.log('🚀 SearchResults component rendering...');
@@ -27,7 +28,7 @@ const SearchResults = () => {
   const navigate = useNavigate();
 
   const destination = searchParams.get("destination") || "Riyadh";
-  const guests = searchParams.get("guests") || "2";
+  const guests = searchParams.get("guests") || APP_CONFIG.DEFAULT_GUESTS.toString();
   const checkInRaw = searchParams.get("checkIn") || "";
   const checkOutRaw = searchParams.get("checkOut") || "";
   
@@ -174,15 +175,19 @@ const SearchResults = () => {
 
           // Step 4: Search hotels
           console.log('🔍 Step 4: Searching hotels...');
-        const searchParams = {
-          CheckIn: checkIn,
-          CheckOut: checkOut,
+          const searchParams = {
+            CheckIn: checkIn,
+            CheckOut: checkOut,
             HotelCodes: hotelCodes,
-          GuestNationality: "AE",
-          PreferredCurrencyCode: "AED",
-            PaxRooms: [{ Adults: parseInt(guests) || 2, Children: 0, ChildrenAges: [] }],
-          IsDetailResponse: true,
-            ResponseTime: 30
+            GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
+            PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
+            PaxRooms: [{ 
+              Adults: parseInt(guests) || APP_CONFIG.DEFAULT_GUESTS, 
+              Children: APP_CONFIG.DEFAULT_CHILDREN, 
+              ChildrenAges: [] 
+            }],
+            IsDetailResponse: true,
+            ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
           };
           
              const searchResult = await search(searchParams);

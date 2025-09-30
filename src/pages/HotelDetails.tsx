@@ -30,13 +30,21 @@ import {
 import Loader from "@/components/ui/Loader";
 import { getHotelDetails } from "@/services/hotelApi";
 import HotelRoomDetails from "@/components/HotelRoomDetails";
+import BookingModal from "@/components/BookingModal";
 import { prebookHotel } from "@/services/bookingapi";
 import { searchHotels } from "@/services/hotelApi";
+import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
 
-const HotelDetails = () => {
-  const { id } = useParams();
+  const HotelDetails = () => {
+    const { id } = useParams();
+  
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  
+  // Extract search parameters
+  const rooms = parseInt(searchParams.get("rooms") || "1");
+  const guests = parseInt(searchParams.get("guests") || "1");
+  
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [hotelDetails, setHotelDetails] = useState<any>(null);
@@ -46,23 +54,29 @@ const HotelDetails = () => {
   const [prebookLoading, setPrebookLoading] = useState(false);
   const [bookingCode, setBookingCode] = useState<string | null>(null);
   const [searchingForBookingCode, setSearchingForBookingCode] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<any>(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
-  // Handle ESC key to close modal
+  // Handle ESC key to close modals
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showRoomDetails) {
-        handleCloseRoomDetails();
+      if (event.key === 'Escape') {
+        if (showRoomDetails) {
+          handleCloseRoomDetails();
+        } else if (showBookingModal) {
+          handleCloseBookingModal();
+        }
       }
     };
 
-    if (showRoomDetails) {
+    if (showRoomDetails || showBookingModal) {
       document.addEventListener('keydown', handleEscKey);
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, [showRoomDetails]);
+  }, [showRoomDetails, showBookingModal]);
 
 
   const fetchHotelDetails = async (hotelCode: string) => {
@@ -78,54 +92,139 @@ const HotelDetails = () => {
   };
 
   const fetchBookingCode = async () => {
-    if (!id) return;
+    if (!id) {
+      return;
+    }
     
     setSearchingForBookingCode(true);
     try {
-      console.log("🔍 Searching for booking code for hotel:", id);
-      
       // Get search parameters from URL
-      const checkIn = searchParams.get("checkIn");
-      const checkOut = searchParams.get("checkOut");
+      let checkIn = searchParams.get("checkIn");
+      let checkOut = searchParams.get("checkOut");
       const guests = searchParams.get("guests");
       const rooms = searchParams.get("rooms");
       
-      if (checkIn && checkOut && guests && rooms) {
+      // Parse ISO dates to YYYY-MM-DD format
+      if (checkIn && checkIn.includes('T')) {
+        try {
+          checkIn = new Date(checkIn).toISOString().split('T')[0];
+        } catch (error) {
+          console.error('Error parsing checkIn date:', checkIn, error);
+        }
+      }
+      
+      if (checkOut && checkOut.includes('T')) {
+        try {
+          checkOut = new Date(checkOut).toISOString().split('T')[0];
+        } catch (error) {
+          console.error('Error parsing checkOut date:', checkOut, error);
+        }
+      }
+      
+        if (checkIn && checkOut && guests) {
+        // Use rooms parameter if available, otherwise default to 1
+        const roomsCount = rooms ? parseInt(rooms) : 1;
+        const guestsCount = parseInt(guests);
+        
+        // Validate that parsing was successful
+        if (isNaN(roomsCount) || isNaN(guestsCount)) {
+          setBookingCode(null);
+          return;
+        }
+        
         const searchParams = {
           CheckIn: checkIn,
           CheckOut: checkOut,
-          GuestNationality: "IN",
-          PreferredCurrencyCode: "USD",
-          PaxRooms: Array.from({ length: parseInt(rooms) }, () => ({
-            Adults: parseInt(guests),
-            Children: 0,
+          HotelCodes: id,
+          GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
+          PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
+          PaxRooms: Array.from({ length: roomsCount }, () => ({
+            Adults: guestsCount,
+            Children: APP_CONFIG.DEFAULT_CHILDREN,
             ChildrenAges: []
           })),
-          IsDetailResponse: true
+          IsDetailResponse: true,
+          ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
         };
         
         const searchResponse = await searchHotels(searchParams);
-        console.log("🔍 Search response:", searchResponse);
         
-        if (searchResponse?.HotelResult && Array.isArray(searchResponse.HotelResult)) {
-          const hotel = searchResponse.HotelResult.find(h => h.HotelCode === id);
-          if (hotel?.Rooms && Array.isArray(hotel.Rooms) && hotel.Rooms.length > 0) {
-            const foundBookingCode = hotel.Rooms[0].BookingCode;
-            console.log("✅ Found booking code:", foundBookingCode);
-            setBookingCode(foundBookingCode);
-            return;
+        if (searchResponse?.HotelResult) {
+          const hotel = searchResponse.HotelResult;
+          
+          // Handle both array and object structures
+          if (Array.isArray(hotel)) {
+            const foundHotel = hotel.find(h => h.HotelCode === id);
+            
+            if (foundHotel?.Rooms) {
+              if (Array.isArray(foundHotel.Rooms) && foundHotel.Rooms.length > 0) {
+                const foundBookingCode = foundHotel.Rooms[0].BookingCode;
+                setBookingCode(foundBookingCode);
+                return;
+              } else if (foundHotel.Rooms.BookingCode) {
+                // Handle object structure where Rooms is an object
+                const foundBookingCode = foundHotel.Rooms.BookingCode;
+                setBookingCode(foundBookingCode);
+                return;
+              }
+            }
+          } else if (hotel.HotelCode && hotel.Rooms && hotel.Rooms.BookingCode) {
+            // Handle object structure where Rooms is an object
+            if (hotel.HotelCode === id || hotel.HotelCode === String(id)) {
+              const foundBookingCode = hotel.Rooms.BookingCode;
+              setBookingCode(foundBookingCode);
+              return;
+            }
           }
         }
       }
       
-      // If no booking code found from search, use fallback
-      console.log("📭 No booking code found from search, using fallback");
-      setBookingCode("414792!AX1.1!8c8a2992-39a8-419c-a54d-cc8faa8c246f");
+      // If no search parameters available, try with default values
+      if (!checkIn || !checkOut || !guests) {
+        const defaultSearchParams = {
+          CheckIn: getCurrentDate(),
+          CheckOut: getDateFromNow(1),
+          HotelCodes: id,
+          GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
+          PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
+          PaxRooms: [{ 
+            Adults: APP_CONFIG.DEFAULT_GUESTS, 
+            Children: APP_CONFIG.DEFAULT_CHILDREN, 
+            ChildrenAges: [] 
+          }],
+          IsDetailResponse: true,
+          ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
+        };
+        
+        const defaultSearchResponse = await searchHotels(defaultSearchParams);
+        
+        if (defaultSearchResponse?.HotelResult) {
+          const hotel = defaultSearchResponse.HotelResult;
+          
+          if (Array.isArray(hotel)) {
+            const foundHotel = hotel.find(h => h.HotelCode === id);
+            if (foundHotel?.Rooms && Array.isArray(foundHotel.Rooms) && foundHotel.Rooms.length > 0) {
+              const foundBookingCode = foundHotel.Rooms[0].BookingCode;
+              setBookingCode(foundBookingCode);
+              return;
+            }
+          } else if (hotel.HotelCode && hotel.Rooms && hotel.Rooms.BookingCode) {
+            if (hotel.HotelCode === id || hotel.HotelCode === String(id)) {
+              const foundBookingCode = hotel.Rooms.BookingCode;
+              setBookingCode(foundBookingCode);
+              return;
+            }
+          }
+        }
+      }
+      
+      // If no booking code found from search, show error
+      setBookingCode(null);
       
     } catch (error) {
-      console.error("❌ Error fetching booking code:", error);
-      // Use fallback booking code
-      setBookingCode("414792!AX1.1!8c8a2992-39a8-419c-a54d-cc8faa8c246f");
+      console.error("Error fetching booking code:", error);
+      // Set booking code to null if search fails
+      setBookingCode(null);
     } finally {
       setSearchingForBookingCode(false);
     }
@@ -141,11 +240,29 @@ const HotelDetails = () => {
     setSelectedBookingCode(null);
   };
 
+  const handleRoomSelect = (room: any) => {
+    setSelectedRoom(room);
+    setBookingCode(room.BookingCode);
+    console.log("Selected room:", room);
+  };
+
+  const handleBookingClick = () => {
+    setShowBookingModal(true);
+  };
+
+  const handleCloseBookingModal = () => {
+    setShowBookingModal(false);
+  };
+
   const handleReserveClick = async () => {
     if (!bookingCode) {
-      console.error("No booking code available");
-      alert("Booking code is not available. Please try again.");
-      return;
+      console.error("No booking code available, trying to fetch again...");
+      // Try to fetch booking code again
+      await fetchBookingCode();
+      if (!bookingCode) {
+        alert("Booking code is not available. Please try again.");
+        return;
+      }
     }
 
     setPrebookLoading(true);
@@ -373,7 +490,38 @@ const HotelDetails = () => {
                 </div>
               </div>
 
-              {/* Reserve Button */}
+              {/* Selected Room Information */}
+              {selectedRoom && (
+                <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                  <h4 className="font-semibold text-lg mb-2">Selected Room</h4>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <p className="font-medium">{selectedRoom.Name}</p>
+                      <p className="text-sm text-muted-foreground">{selectedRoom.MealType}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant={selectedRoom.IsRefundable === "true" ? "default" : "destructive"}>
+                          {selectedRoom.IsRefundable === "true" ? "Refundable" : "Non-Refundable"}
+                        </Badge>
+                        {selectedRoom.WithTransfers === "true" && (
+                          <Badge variant="outline">With Transfers</Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right ml-4">
+                      <div className="text-xl font-bold text-primary">
+                        {hotelDetails.Currency || 'USD'} {selectedRoom.TotalFare}
+                      </div>
+                      {selectedRoom.TotalTax !== "0" && (
+                        <p className="text-sm text-muted-foreground">
+                          Tax: {hotelDetails.Currency || 'USD'} {selectedRoom.TotalTax}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Reserve and Booking Buttons */}
               <div className="flex gap-3 mt-6">
                 <Button 
                   size="lg" 
@@ -383,12 +531,26 @@ const HotelDetails = () => {
                 >
                   {searchingForBookingCode ? "Finding booking code..." : prebookLoading ? "Processing..." : "Reserve"}
                 </Button>
+                <Button 
+                  size="lg" 
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  onClick={handleBookingClick}
+                  disabled={prebookLoading || !bookingCode || searchingForBookingCode}
+                >
+                  Booking
+                </Button>
             </div>
 
             {!bookingCode && !searchingForBookingCode && (
-              <p className="text-center text-sm text-red-500 mt-2">
-                Booking code not available. Please try again.
-              </p>
+              <div className="text-center text-sm text-red-500 mt-2">
+                <p>Booking code not available. Please try again.</p>
+                <button 
+                  onClick={fetchBookingCode}
+                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Retry Fetch Booking Code
+                </button>
+              </div>
             )}
 
             <p className="text-center text-sm text-muted-foreground mt-3">
@@ -403,32 +565,66 @@ const HotelDetails = () => {
                     Click on a room to view detailed information including amenities, pricing, and booking details.
                   </p>
                   <div className="grid gap-4">
-                    {/* Sample room - you can replace this with actual room data from search results */}
-                    <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-semibold">Standard Room</h4>
-                          <p className="text-sm text-muted-foreground">Comfortable room with modern amenities</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Badge variant="outline">Refundable</Badge>
-                            <Badge variant="outline">Breakfast Included</Badge>
+                    {/* Show selected room if available, otherwise show default room */}
+                    {selectedRoom ? (
+                      <div className="border border-primary rounded-lg p-4 bg-primary/5">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-semibold">{selectedRoom.Name}</h4>
+                            <p className="text-sm text-muted-foreground">{selectedRoom.MealType}</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge variant={selectedRoom.IsRefundable === "true" ? "default" : "destructive"}>
+                                {selectedRoom.IsRefundable === "true" ? "Refundable" : "Non-Refundable"}
+                              </Badge>
+                              {selectedRoom.WithTransfers === "true" && (
+                                <Badge variant="outline">With Transfers</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-primary">
+                              {hotelDetails.Currency || 'USD'} {selectedRoom.TotalFare}
+                            </div>
+                            <div className="text-sm text-muted-foreground">total</div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold">$200</div>
-                          <div className="text-sm text-muted-foreground">per night</div>
+                        <div className="mt-4">
+                          <Button 
+                            onClick={() => handleViewRoomDetails(bookingCode || "no-booking-code")}
+                            variant="outline"
+                            className="w-full"
+                          >
+                            Change Room Selection
+                          </Button>
+                        </div>
                       </div>
-                </div>
-                      <div className="mt-4">
-                        <Button 
-                          onClick={() => handleViewRoomDetails("414792!AX1.1!8c8a2992-39a8-419c-a54d-cc8faa8c246f")}
-                          variant="outline"
-                          className="w-full"
-                        >
-                          View Room Details
-                  </Button>
+                    ) : (
+                      <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-semibold">Room Options Available</h4>
+                            <p className="text-sm text-muted-foreground">Multiple room types and meal plans available</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge variant="outline">Various Options</Badge>
+                              <Badge variant="outline">Different Meal Plans</Badge>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold">From $200</div>
+                            <div className="text-sm text-muted-foreground">per night</div>
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <Button 
+                            onClick={() => handleViewRoomDetails(bookingCode || "no-booking-code")}
+                            variant="outline"
+                            className="w-full"
+                          >
+                            View Room Options
+                          </Button>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -441,9 +637,9 @@ const HotelDetails = () => {
               </h3>
               <div className="flex flex-wrap gap-3">
                 {hotelDetails.HotelFacilities &&
-                  hotelDetails.HotelFacilities.map((amenity: string) => (
+                  hotelDetails.HotelFacilities.map((amenity: string, index: number) => (
                   <div
-                    key={amenity}
+                    key={`${amenity}-${index}`}
                     className="flex items-center space-x-2 py-1 px-2 rounded-full bg-muted/50"
                   >
                     <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
@@ -657,6 +853,29 @@ const HotelDetails = () => {
               <HotelRoomDetails 
                 bookingCode={selectedBookingCode} 
                 onClose={handleCloseRoomDetails}
+                onRoomSelect={handleRoomSelect}
+                selectedRoom={selectedRoom}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Booking Modal */}
+        {showBookingModal && (
+          <div 
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
+            onClick={handleCloseBookingModal}
+          >
+            <div 
+              className="bg-background rounded-lg max-w-md w-full animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <BookingModal 
+                hotelDetails={hotelDetails}
+                selectedRoom={selectedRoom}
+                rooms={rooms}
+                guests={guests}
+                onClose={handleCloseBookingModal}
               />
             </div>
           </div>

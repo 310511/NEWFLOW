@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ const UniversalHotelCard = ({
 }: UniversalHotelCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
 
   const handleImageNavigation = (direction: 'next' | 'prev', e: React.MouseEvent) => {
@@ -98,8 +99,27 @@ const UniversalHotelCard = ({
     }
   };
 
+  // Build URL with search parameters
+  const buildHotelUrl = () => {
+    const checkIn = searchParams.get("checkIn");
+    const checkOut = searchParams.get("checkOut");
+    const guests = searchParams.get("guests");
+    const rooms = searchParams.get("rooms");
+    
+    const params = new URLSearchParams();
+    if (checkIn) params.set("checkIn", checkIn);
+    if (checkOut) params.set("checkOut", checkOut);
+    if (guests) params.set("guests", guests);
+    if (rooms) params.set("rooms", rooms);
+    // Add default rooms if not present
+    if (!rooms) params.set("rooms", "1");
+    
+    const queryString = params.toString();
+    return `/hotel/${hotel.id}${queryString ? `?${queryString}` : ''}`;
+  };
+
   return (
-    <Link to={`/hotel/${hotel.id}`} className="block">
+    <Link to={buildHotelUrl()} className="block">
       <Card 
         className={`group cursor-pointer transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 border-0 bg-white animate-fade-in-up overflow-hidden rounded-3xl hover:scale-[1.02] ${className}`}
         style={{ animationDelay: `${animationDelay}ms` }}

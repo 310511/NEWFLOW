@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Heart, Star } from 'lucide-react';
 import { Hotel } from '@/data/hotels';
 import { HotelResult } from '@/services/hotelApi';
@@ -14,6 +14,7 @@ interface AirbnbHotelCardProps {
 
 const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: AirbnbHotelCardProps) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
@@ -68,7 +69,26 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
   };
 
   const handleClick = () => {
-    navigate(`/hotel/${normalizedHotel.id}`);
+    // Get current search parameters
+    const checkIn = searchParams.get("checkIn");
+    const checkOut = searchParams.get("checkOut");
+    const guests = searchParams.get("guests");
+    const rooms = searchParams.get("rooms");
+    
+    // Build URL with search parameters
+    const params = new URLSearchParams();
+    if (checkIn) params.set("checkIn", checkIn);
+    if (checkOut) params.set("checkOut", checkOut);
+    if (guests) params.set("guests", guests);
+    if (rooms) params.set("rooms", rooms);
+    // Add default rooms if not present
+    if (!rooms) params.set("rooms", "1");
+    
+    const queryString = params.toString();
+    const url = `/hotel/${normalizedHotel.id}${queryString ? `?${queryString}` : ''}`;
+    
+    console.log("🔗 Navigating to hotel details with params:", url);
+    navigate(url);
   };
 
   const handlePrevImage = (e: React.MouseEvent) => {
