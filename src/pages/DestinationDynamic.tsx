@@ -9,7 +9,9 @@ import { MapPin, Users, Star, ArrowLeft } from "lucide-react";
 const DestinationDynamic = () => {
   const { destination } = useParams<{ destination: string }>();
 
+
   const destinationsData = [
+  
     {
       id: 1,
       name: "Riyadh",

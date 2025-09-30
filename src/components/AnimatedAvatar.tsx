@@ -6,6 +6,7 @@ interface AnimatedAvatarProps {
   className?: string;
 }
 
+
 const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({ 
   src, 
   alt = "Avatar", 

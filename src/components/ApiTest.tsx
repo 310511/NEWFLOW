@@ -5,6 +5,7 @@ const ApiTest = () => {
   const [loading, setLoading] = useState(false);
 
   const testApi = async () => {
+    
     setLoading(true);
     try {
       const response = await fetch('http://localhost:3001/api/hotel-search', {

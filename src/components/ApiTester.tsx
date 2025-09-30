@@ -12,6 +12,7 @@ const ApiTester = () => {
     setLoading(true);
     setError(null);
     
+    
     try {
       // Temporarily modify the API service to use real API
       if (useRealApi) {

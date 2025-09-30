@@ -9,6 +9,7 @@ const HotelCodeTester: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [testResults, setTestResults] = useState<string>('');
+  
 
   const {
     countries,

@@ -11,6 +11,7 @@ const HotelListings = () => {
   const toggleFavoriteLocal = (hotelId: string) => {
     toggleFavorite(hotelId);
   };
+  
 
   const sortedHotels = [...hotels].sort((a, b) => {
     switch (sortBy) {

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Star, MapPin, Tag, TrendingDown } from "lucide-react";
 
+
 const Deals = () => {
   const deals = [
     {

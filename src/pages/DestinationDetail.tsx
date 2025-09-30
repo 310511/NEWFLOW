@@ -8,6 +8,7 @@ import { Star, MapPin, Heart, Camera, Award, Wifi, Car, Coffee } from "lucide-re
 
 const DestinationDetail = () => {
   const { destination } = useParams();
+  
 
   // Mock data based on destination
   const destinationData = {

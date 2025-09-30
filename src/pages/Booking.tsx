@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowLeft, CheckCircle, Clock, User, Calendar, Users } from "lucide-react";
 
 const Booking = () => {
+  
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();

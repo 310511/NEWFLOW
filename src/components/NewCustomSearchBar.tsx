@@ -18,14 +18,26 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
-  const [rooms, setRooms] = useState(1); // Initialize rooms state
+  const [rooms, setRooms] = useState(1);
   const [showDestinations, setShowDestinations] = useState(false);
   const [showCheckinPicker, setShowCheckinPicker] = useState(false);
   const [showCheckoutPicker, setShowCheckoutPicker] = useState(false);
   const [showGuests, setShowGuests] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeField, setActiveField] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const searchBarRef = useRef<HTMLDivElement>(null);
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -91,13 +103,90 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
   };
 
   const handleSearchClick = () => {
-    if (!isExpanded) {
+    if (!isExpanded && !isMobile) {
       handleFieldFocus("destination");
     } else {
       handleSearch();
     }
   };
 
+  // Mobile Layout - Stack vertically
+  if (isMobile) {
+    return (
+      <div className="w-full">
+        <div
+          ref={searchBarRef}
+          className={`bg-background border border-border rounded-2xl shadow-search transition-all duration-300 backdrop-blur-sm ${
+            isExpanded ? "shadow-card-hover" : "hover:shadow-card-hover"
+          } ${isSticky ? "scale-95" : ""}`}
+        >
+          <div className="p-4 space-y-3">
+            {/* Where - Full Width */}
+            <div className="w-full">
+              <DestinationPicker
+                value={destination}
+                onChange={setDestination}
+                isOpen={showDestinations}
+                onOpenChange={(open) => {
+                  setShowDestinations(open);
+                  if (open) handleFieldFocus("destination");
+                }}
+              />
+            </div>
+
+            {/* Date Pickers - Side by Side */}
+            <div className="grid grid-cols-2 gap-3">
+              <DatePicker
+                date={startDate}
+                onDateChange={setStartDate}
+                isOpen={showCheckinPicker}
+                onOpenChange={(open) => {
+                  setShowCheckinPicker(open);
+                  if (open) handleFieldFocus("checkin");
+                }}
+                type="checkin"
+              />
+              <DatePicker
+                date={endDate}
+                onDateChange={setEndDate}
+                isOpen={showCheckoutPicker}
+                onOpenChange={(open) => {
+                  setShowCheckoutPicker(open);
+                  if (open) handleFieldFocus("checkout");
+                }}
+                type="checkout"
+                minDate={startDate}
+              />
+            </div>
+
+            {/* Guests and Search - Side by Side */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-2">
+                <GuestSelector
+                  adults={adults}
+                  children={children}
+                  rooms={rooms}
+                  onAdultsChange={setAdults}
+                  onChildrenChange={setChildren}
+                  onRoomsChange={setRooms}
+                  isOpen={showGuests}
+                  onOpenChange={(open) => {
+                    setShowGuests(open);
+                    if (open) handleFieldFocus("guests");
+                  }}
+                />
+              </div>
+              <div className="flex items-end">
+                <SearchButton onSearch={handleSearchClick} expanded={true} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop Layout - Horizontal
   return (
     <div className="w-full">
       <div
@@ -163,10 +252,10 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
             <GuestSelector
               adults={adults}
               children={children}
-              rooms={rooms} // Pass rooms prop
+              rooms={rooms}
               onAdultsChange={setAdults}
               onChildrenChange={setChildren}
-              onRoomsChange={setRooms} // Pass onRoomsChange handler
+              onRoomsChange={setRooms}
               isOpen={showGuests}
               onOpenChange={(open) => {
                 setShowGuests(open);
@@ -180,8 +269,8 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
             <SearchButton onSearch={handleSearchClick} expanded={isExpanded} />
           </div>
 
-          {/* Animated Video in the blank space */}
-          <div className="flex items-center ml-2">
+          {/* Animated Video - Hidden on smaller screens */}
+          <div className="hidden xl:flex items-center ml-2">
             <video
               src="/animated-video.mp4"
               alt="Animated Search Element"

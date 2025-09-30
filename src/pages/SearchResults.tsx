@@ -13,6 +13,7 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
+
 import SearchFilters from "@/components/SearchFilters";
 import Footer from "@/components/Footer";
 import AirbnbHotelCard from "@/components/AirbnbHotelCard";

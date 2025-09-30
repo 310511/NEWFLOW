@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Settings,
   Search,
+  X,
 } from "lucide-react";
 import homeIcon from "@/assets/home-icon.png";
 import destinationIcon from "@/assets/destination-icon.png";
@@ -41,9 +42,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import NewCustomSearchBar from "@/components/NewCustomSearchBar";
-import SearchFilters from "@/components/SearchFilters";
-import { Badge } from "@/components/ui/badge";
-import { Grid3X3, Map } from "lucide-react";
 import logoIcon from "@/assets/logo-icon.png";
 
 interface HeaderProps {
@@ -86,8 +84,6 @@ const Header = ({ variant = "default" }: HeaderProps) => {
     flag: string;
   }) => {
     setCurrentLanguage(language.name);
-    localStorage.setItem("language", language.code);
-    // Here you would typically trigger a translation system
     console.log(`Language changed to ${language.name}`);
   };
 
@@ -118,147 +114,76 @@ const Header = ({ variant = "default" }: HeaderProps) => {
     >
       <div
         className={`w-full max-w-none transition-all duration-300 ${
-          isCompact ? "px-4 lg:px-6" : "px-6 lg:px-12 xl:px-16"
-        } ${isScrolled ? "py-2" : ""}`}
+          isCompact ? "px-3 sm:px-4 lg:px-6" : "px-4 sm:px-6 lg:px-12 xl:px-16"
+        } ${isScrolled ? "py-2" : "py-1 sm:py-2"}`}
       >
         <div
           className={`flex items-center transition-all duration-300 ${
-            isCompact ? "justify-start space-x-6 h-14" : "justify-between"
-          } ${!isCompact && (isScrolled ? "h-16" : "h-20")}`}
+            isCompact ? "justify-start space-x-4 sm:space-x-6 h-12 sm:h-14" : "justify-between"
+          } ${!isCompact && (isScrolled ? "h-14 sm:h-16" : "h-16 sm:h-20")}`}
         >
-          {/* Left Side Actions - Language and Profile */}
-          <div
-            className={`flex items-center space-x-4 ${isCompact ? "ml-4" : ""}`}
-          >
-            {/* Language Selector */}
-            <DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hidden md:flex hover:bg-muted/80 transition-all duration-200 rounded-pill shadow-sm hover:shadow-md"
-                    >
-                      <Globe className="h-5 w-5" />
-                      <span className="ml-1 text-sm font-medium">EN</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Select Language</p>
-                </TooltipContent>
-              </Tooltip>
-              <DropdownMenuContent
-                align="end"
-                className="z-[10000] bg-background border shadow-lg"
-              >
-                {languages.map((language) => (
-                  <DropdownMenuItem
-                    key={language.code}
-                    onClick={() => handleLanguageChange(language)}
-                    className="flex items-center space-x-2 cursor-pointer"
-                  >
-                    <span>{language.flag}</span>
-                    <span>{language.name}</span>
-                    {currentLanguage === language.name && (
-                      <div className="ml-auto h-2 w-2 bg-primary rounded-full" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Profile Menu with Enhanced Animations */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="flex items-center space-x-2 border border-border rounded-full p-2 hover:shadow-xl transition-all duration-300 cursor-pointer group bg-background/90 backdrop-blur-sm hover:bg-background hover:scale-105 active:scale-95">
-                  <Menu className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-all duration-300 group-hover:rotate-180" />
-                  <div className="h-8 w-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-110">
-                    <User className="h-4 w-4 text-primary-foreground transition-transform duration-300 group-hover:scale-110" />
-                  </div>
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-60 bg-background border shadow-xl rounded-xl p-2 z-[10000]"
-              >
-                <div className="py-2">
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setIsLogin(true);
-                      setShowLoginDialog(true);
-                    }}
-                    className="flex items-center space-x-3 cursor-pointer px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <LogIn className="h-5 w-5 text-muted-foreground" />
-                    <span className="font-medium">Log in</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setIsLogin(false);
-                      setShowLoginDialog(true);
-                    }}
-                    className="flex items-center space-x-3 cursor-pointer px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <UserPlus className="h-5 w-5 text-muted-foreground" />
-                    <span className="font-medium">Sign up</span>
-                  </DropdownMenuItem>
-                </div>
-                <DropdownMenuSeparator className="my-2" />
-                <div className="py-2">
-                  <DropdownMenuItem
-                    onClick={() => navigate("/profile")}
-                    className="flex items-center space-x-3 cursor-pointer px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <User className="h-5 w-5 text-muted-foreground" />
-                    <span>Your account</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex items-center space-x-3 cursor-pointer px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors">
-                    <Settings className="h-5 w-5 text-muted-foreground" />
-                    <span>Account settings</span>
-                  </DropdownMenuItem>
-                </div>
-                <DropdownMenuSeparator className="my-2" />
-                <div className="py-2">
-                  <DropdownMenuItem className="flex items-center space-x-3 cursor-pointer px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors">
-                    <HelpCircle className="h-5 w-5 text-muted-foreground" />
-                    <span>Help Centre</span>
-                  </DropdownMenuItem>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Mobile Menu */}
+          {/* Mobile Menu Button - Left Side */}
+          <div className="flex items-center lg:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon" className="rounded-full">
+              <SheetTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="rounded-full h-10 w-10"
+                >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent
-                side="right"
-                className="w-[300px] bg-white/95 backdrop-blur-md"
+                side="left"
+                className="w-[280px] sm:w-[300px] bg-white/95 backdrop-blur-md p-0"
               >
-                <div className="flex flex-col space-y-6 mt-8">
-                  {/* Mobile Navigation */}
-                  <nav className="space-y-2">
-                    {navigation.map((item) => (
-                      <button
-                        key={item.name}
-                        className="w-full text-left flex items-center space-x-3 text-lg font-medium text-gray-700 hover:text-primary transition-all duration-300 p-4 rounded-xl hover:bg-white/80 group"
-                        onClick={() => {
-                          navigate(item.href);
-                          setIsOpen(false);
-                        }}
-                      >
-                        <item.icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
-                        <span>{item.name}</span>
-                      </button>
-                    ))}
-                  </nav>
+                <div className="flex flex-col h-full">
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-6 border-b">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={logoIcon}
+                        alt="HotelRBS Logo"
+                        className="h-8 w-auto"
+                      />
+                      <span className="text-lg font-semibold">HotelRBS</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setIsOpen(false)}
+                      className="rounded-full"
+                    >
+                      <X className="h-5 w-5" />
+                    </Button>
+                  </div>
 
-                  <div className="border-t pt-6 space-y-3">
+                  {/* Navigation */}
+                  <div className="flex-1 px-6 py-6">
+                    <nav className="space-y-2">
+                      {navigation.map((item) => (
+                        <button
+                          key={item.name}
+                          className="w-full text-left flex items-center space-x-3 text-base font-medium text-gray-700 hover:text-primary transition-all duration-300 p-4 rounded-xl hover:bg-white/80 group"
+                          onClick={() => {
+                            navigate(item.href);
+                            setIsOpen(false);
+                          }}
+                        >
+                          <img 
+                            src={item.customIcon} 
+                            alt={item.name}
+                            className="h-5 w-5 transition-transform duration-300 group-hover:scale-110"
+                          />
+                          <span>{item.name}</span>
+                        </button>
+                      ))}
+                    </nav>
+                  </div>
+
+                  {/* Bottom Actions */}
+                  <div className="p-6 border-t space-y-3">
                     <Button
                       variant="outline"
                       className="w-full justify-center rounded-xl h-12 border-2"
@@ -286,12 +211,26 @@ const Header = ({ variant = "default" }: HeaderProps) => {
             </Sheet>
           </div>
 
-          {/* Center Navigation - Desktop - Airbnb Style */}
-          <div
-            className={`hidden lg:flex items-center ${
-              isCompact ? "flex-none" : "flex-1 justify-center"
-            }`}
+          {/* Logo - Left on mobile, center/right on desktop */}
+          <Link
+            to="/"
+            className="flex items-center group cursor-pointer flex-shrink-0"
           >
+            <img
+              src={logoIcon}
+              alt="HotelRBS Logo"
+              className={`w-auto transform group-hover:scale-105 transition-all duration-300 ${
+                isCompact 
+                  ? "h-8 sm:h-10" 
+                  : isScrolled 
+                    ? "h-10 sm:h-14" 
+                    : "h-12 sm:h-16 md:h-20"
+              }`}
+            />
+          </Link>
+
+          {/* Desktop Navigation - Hidden on mobile */}
+          <div className="hidden lg:flex items-center flex-1 justify-center">
             <nav
               className={`flex items-center backdrop-blur-sm rounded-full border shadow-lg transition-all duration-300 ${
                 isCompact
@@ -311,7 +250,6 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                     navigate(item.href);
                   }}
                 >
-                  {}
                   <img
                     src={item.customIcon}
                     alt={item.name}
@@ -331,50 +269,134 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                 </button>
               ))}
 
-              {/* Search Icon with enhanced animations */}
-              {((isScrolled && isHomePage) || !isHomePage) &&
-                !showSearchBar && (
-                  <button
-                    onClick={() => setShowSearchBar(true)}
-                    className={`relative flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 aspect-square hover:scale-110 active:scale-95 ml-2 group ${
-                      isCompact ? "w-9 h-9" : "w-11 h-11"
-                    }`}
-                    style={{ backgroundColor: "#165d31" }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "#134a28";
-                      e.currentTarget.style.transform = "scale(1.1)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "#165d31";
-                      e.currentTarget.style.transform = "scale(1)";
-                    }}
-                  >
-                    <Search className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                    <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </button>
-                )}
+              {/* Search Icon for desktop */}
+              {((isScrolled && isHomePage) || !isHomePage) && !showSearchBar && (
+                <button
+                  onClick={() => setShowSearchBar(true)}
+                  className={`relative flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 aspect-square hover:scale-110 active:scale-95 ml-2 group ${
+                    isCompact ? "w-9 h-9" : "w-11 h-11"
+                  }`}
+                  style={{ backgroundColor: "#165d31" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#134a28";
+                    e.currentTarget.style.transform = "scale(1.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#165d31";
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
+                >
+                  <Search className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+                  <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </button>
+              )}
             </nav>
           </div>
 
-          {/* Spacer for compact header */}
-          {isCompact && <div className="flex-1" />}
+          {/* Right Side Actions */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Language Selector - Hidden on very small screens */}
+            <DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="hidden sm:flex hover:bg-muted/80 transition-all duration-200 rounded-full shadow-sm hover:shadow-md h-10 w-10"
+                    >
+                      <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="ml-1 text-xs sm:text-sm font-medium">EN</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Select Language</p>
+                </TooltipContent>
+              </Tooltip>
+              <DropdownMenuContent
+                align="end"
+                className="z-[10000] bg-background border shadow-lg"
+              >
+                {languages.map((language) => (
+                  <DropdownMenuItem
+                    key={language.code}
+                    onClick={() => handleLanguageChange(language)}
+                    className="flex items-center space-x-2 cursor-pointer"
+                  >
+                    <span>{language.flag}</span>
+                    <span>{language.name}</span>
+                    {currentLanguage === language.name && (
+                      <div className="ml-auto h-2 w-2 bg-primary rounded-full" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center group cursor-pointer flex-shrink-0 pl-0 pt-5"
-          >
-            <img
-              src={logoIcon}
-              alt="HotelRBS Logo"
-              className={`w-auto transform group-hover:scale-105 transition-all duration-300 -ml-2 mt-1 ${
-                isCompact ? "h-10" : isScrolled ? "h-14" : "h-20"
-              }`}
-            />
-          </Link>
+            {/* Profile Menu - Mobile optimized */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="flex items-center space-x-1.5 sm:space-x-2 border border-border rounded-full p-1.5 sm:p-2 hover:shadow-xl transition-all duration-300 cursor-pointer group bg-background/90 backdrop-blur-sm hover:bg-background hover:scale-105 active:scale-95">
+                  <Menu className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-foreground transition-all duration-300 group-hover:rotate-180 lg:hidden" />
+                  <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-110">
+                    <User className="h-3 w-3 sm:h-4 sm:w-4 text-primary-foreground transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-52 sm:w-60 bg-background border shadow-xl rounded-xl p-2 z-[10000]"
+              >
+                <div className="py-2">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setIsLogin(true);
+                      setShowLoginDialog(true);
+                    }}
+                    className="flex items-center space-x-3 cursor-pointer px-3 sm:px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <LogIn className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                    <span className="font-medium text-sm sm:text-base">Log in</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setIsLogin(false);
+                      setShowLoginDialog(true);
+                    }}
+                    className="flex items-center space-x-3 cursor-pointer px-3 sm:px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <UserPlus className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                    <span className="font-medium text-sm sm:text-base">Sign up</span>
+                  </DropdownMenuItem>
+                </div>
+                <DropdownMenuSeparator className="my-2" />
+                <div className="py-2">
+                  <DropdownMenuItem
+                    onClick={() => navigate("/profile")}
+                    className="flex items-center space-x-3 cursor-pointer px-3 sm:px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <User className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                    <span className="text-sm sm:text-base">Your account</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center space-x-3 cursor-pointer px-3 sm:px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors">
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                    <span className="text-sm sm:text-base">Account settings</span>
+                  </DropdownMenuItem>
+                </div>
+                <DropdownMenuSeparator className="my-2" />
+                <div className="py-2">
+                  <DropdownMenuItem className="flex items-center space-x-3 cursor-pointer px-3 sm:px-4 py-3 rounded-lg hover:bg-muted/50 transition-colors">
+                    <HelpCircle className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                    <span className="text-sm sm:text-base">Help Centre</span>
+                  </DropdownMenuItem>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
-        {/* Integrated Search Bar inside header - only show on home page */}
+        {/* Desktop Search Bar - only show on home page when not scrolled */}
         <div
           className={`hidden md:block pb-[37px] mt-4 transition-all duration-300 ${
             isHomePage && !isScrolled
@@ -391,17 +413,17 @@ const Header = ({ variant = "default" }: HeaderProps) => {
 
         {/* Overlay Search Bar - Shows when search icon is clicked */}
         {showSearchBar && (
-          <div className="fixed inset-x-0 top-20 z-[10000] flex items-start justify-center px-6 lg:px-12 xl:px-16">
-            <div className="bg-white p-6 rounded-2xl shadow-2xl w-full relative">
+          <div className="fixed inset-x-0 top-16 sm:top-20 z-[10000] flex items-start justify-center px-4 sm:px-6 lg:px-12 xl:px-16">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-2xl w-full max-w-4xl relative">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Search Hotels</h3>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowSearchBar(false)}
-                  className="rounded-full"
+                  className="rounded-full h-8 w-8"
                 >
-                  ×
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
               <NewCustomSearchBar isSticky />
@@ -412,10 +434,10 @@ const Header = ({ variant = "default" }: HeaderProps) => {
 
       {/* Login/Signup Dialog */}
       <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-2xl z-[10000]">
-          <div className="p-8">
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-2xl z-[10000] mx-4">
+          <div className="p-6 sm:p-8">
             <DialogHeader className="text-center mb-6">
-              <DialogTitle className="text-2xl font-semibold text-foreground">
+              <DialogTitle className="text-xl sm:text-2xl font-semibold text-foreground">
                 Welcome to HotelRBS
               </DialogTitle>
             </DialogHeader>
@@ -424,20 +446,20 @@ const Header = ({ variant = "default" }: HeaderProps) => {
               {/* Phone Number Section */}
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="country">Country/Region</Label>
-                  <select className="w-full p-3 border border-input rounded-lg bg-background">
+                  <Label htmlFor="country" className="text-sm">Country/Region</Label>
+                  <select className="w-full p-3 border border-input rounded-lg bg-background text-sm">
                     <option>Saudi Arabia (+966)</option>
                     <option>United Arab Emirates (+971)</option>
                     <option>Kuwait (+965)</option>
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone number</Label>
+                  <Label htmlFor="phone" className="text-sm">Phone number</Label>
                   <Input
                     id="phone"
                     type="tel"
                     placeholder="Phone number"
-                    className="p-3 text-base"
+                    className="p-3 text-sm sm:text-base"
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -449,7 +471,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                 </p>
               </div>
 
-              <Button className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium">
+              <Button className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium text-sm sm:text-base">
                 Continue
               </Button>
 
@@ -461,7 +483,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
               <div className="space-y-3">
                 <Button
                   variant="outline"
-                  className="w-full py-3 rounded-lg border border-input hover:bg-muted/50"
+                  className="w-full py-3 rounded-lg border border-input hover:bg-muted/50 text-sm sm:text-base"
                 >
                   <div className="flex items-center justify-center space-x-3">
                     <div className="w-5 h-5 bg-white rounded flex items-center justify-center border">
@@ -473,7 +495,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
 
                 <Button
                   variant="outline"
-                  className="w-full py-3 rounded-lg border border-input hover:bg-muted/50"
+                  className="w-full py-3 rounded-lg border border-input hover:bg-muted/50 text-sm sm:text-base"
                 >
                   <div className="flex items-center justify-center space-x-3">
                     <div className="w-5 h-5 bg-black rounded flex items-center justify-center">
@@ -485,7 +507,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
 
                 <Button
                   variant="outline"
-                  className="w-full py-3 rounded-lg border border-input hover:bg-muted/50"
+                  className="w-full py-3 rounded-lg border border-input hover:bg-muted/50 text-sm sm:text-base"
                 >
                   <div className="flex items-center justify-center space-x-3">
                     <div className="w-5 h-5 bg-gray-100 rounded flex items-center justify-center">

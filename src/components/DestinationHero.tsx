@@ -13,6 +13,7 @@ const DestinationHero = () => {
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop",
       subtitle: "Coastal Paradise",
     },
+    
     {
       id: 2,
       name: "Nature",
