@@ -147,12 +147,12 @@ export const completeBooking = async (
       ? `FALLBACK_${Date.now()}` 
       : bookingCode;
     
-    // Try different booking types - this rate might not support Voucher
+    // Use Voucher booking type as specified
     const bookingRequest = {
       BookingCode: finalBookingCode,
       PaymentMode: 'Limit',
       CustomerDetails: customerDetails,
-      BookingType: 'Instant', // Try Instant instead of Voucher
+      BookingType: 'Voucher', // Use Voucher as specified
       ClientReferenceId: clientReferenceId,
       BookingReferenceId: bookingReferenceId,
       GuestNationality: 'AE',
