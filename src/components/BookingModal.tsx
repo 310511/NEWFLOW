@@ -180,13 +180,19 @@ const BookingModal: React.FC<BookingModalProps> = ({ hotelDetails, selectedRoom,
   };
 
   const handleCompleteBooking = async () => {
+    console.log('🎯 Complete Booking button clicked!');
+    console.log('📋 Booking form data:', bookingForm);
+    console.log('📦 Booking data:', bookingData);
+    
     // Validate booking form data
     if (!bookingForm.firstName || !bookingForm.lastName || !bookingForm.email || !bookingForm.phone) {
+      console.log('❌ Validation failed: Missing required fields');
       setErrorMessage('Please fill in all required fields (First Name, Last Name, Email, Phone).');
       return;
     }
 
     if (!bookingData) {
+      console.log('❌ Validation failed: Missing booking data');
       setErrorMessage('Missing booking data. Please login first.');
       return;
     }
@@ -498,6 +504,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ hotelDetails, selectedRoom,
         {bookingData && (
           <div className="space-y-4 pt-4 border-t">
             <h3 className="text-lg font-semibold">Booking Information</h3>
+            {console.log('📝 Rendering booking form section, bookingData:', bookingData)}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="booking-title">Title</Label>
