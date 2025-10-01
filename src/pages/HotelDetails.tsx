@@ -29,7 +29,6 @@ import {
 } from "lucide-react";
 import Loader from "@/components/ui/Loader";
 import HotelRoomDetails from "@/components/HotelRoomDetails";
-import BookingModal from "@/components/BookingModal";
 import { prebookHotel } from "@/services/bookingapi";
 import { searchHotels, getHotelDetails } from "@/services/hotelApi";
 import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
@@ -52,7 +51,6 @@ const HotelDetails = () => {
   const [bookingCode, setBookingCode] = useState<string | null>(null);
   const [searchingForBookingCode, setSearchingForBookingCode] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
-  const [showBookingModal, setShowBookingModal] = useState(false);
   
   // Extract search parameters at component level
   const checkIn = searchParams.get("checkIn");
@@ -66,20 +64,18 @@ const HotelDetails = () => {
       if (event.key === 'Escape') {
         if (showRoomDetails) {
         handleCloseRoomDetails();
-        } else if (showBookingModal) {
-          handleCloseBookingModal();
         }
       }
     };
 
-    if (showRoomDetails || showBookingModal) {
+    if (showRoomDetails) {
       document.addEventListener('keydown', handleEscKey);
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, [showRoomDetails, showBookingModal]);
+  }, [showRoomDetails]);
 
 
   const fetchHotelDetails = async (hotelCode: string) => {
@@ -294,13 +290,6 @@ const HotelDetails = () => {
     console.log("Selected room:", room);
   };
 
-  const handleBookingClick = () => {
-    setShowBookingModal(true);
-  };
-
-  const handleCloseBookingModal = () => {
-    setShowBookingModal(false);
-  };
 
   const handleReserveClick = async () => {
     console.log("🔍 Debug - checkIn:", checkIn);
@@ -578,23 +567,15 @@ const HotelDetails = () => {
                 </div>
               )}
 
-              {/* Reserve and Booking Buttons */}
+              {/* Reserve Button */}
               <div className="flex gap-3 mt-6">
                 <Button 
                   size="lg" 
-                  className="flex-1 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  className="w-full bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                   onClick={handleReserveClick}
                   disabled={prebookLoading || !bookingCode || searchingForBookingCode}
                 >
                   {searchingForBookingCode ? "Finding booking code..." : prebookLoading ? "Processing..." : "Reserve"}
-                </Button>
-                <Button 
-                  size="lg" 
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  onClick={handleBookingClick}
-                  disabled={prebookLoading || !bookingCode || searchingForBookingCode}
-                >
-                  Booking
                 </Button>
             </div>
 
@@ -917,26 +898,6 @@ const HotelDetails = () => {
           </div>
         )}
 
-        {/* Booking Modal */}
-        {showBookingModal && (
-          <div 
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
-            onClick={handleCloseBookingModal}
-          >
-            <div 
-              className="bg-background rounded-lg max-w-md w-full animate-in zoom-in-95 duration-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <BookingModal 
-                hotelDetails={hotelDetails}
-                selectedRoom={selectedRoom}
-                rooms={rooms}
-                guests={guests}
-                onClose={handleCloseBookingModal}
-              />
-            </div>
-          </div>
-        )}
       </main>
       <Footer />
     </div>
