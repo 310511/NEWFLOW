@@ -119,10 +119,30 @@ const SearchResults = () => {
     
     // Only search if we have valid parameters
     if (checkIn && checkOut && destination && guests) {
-      // Validate stay duration (max 30 days)
+      // Validate dates
       const checkInDate = new Date(checkIn);
       const checkOutDate = new Date(checkOut);
+      const today = new Date();
+      const maxFutureDate = new Date();
+      maxFutureDate.setMonth(maxFutureDate.getMonth() + 6); // 6 months from now
+      
       const stayDuration = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // Check if dates are in the past
+      if (checkInDate < today) {
+        console.warn('Check-in date is in the past:', checkIn);
+        setError('Check-in date cannot be in the past. Please select a future date.');
+        setIsSearching(false);
+        return;
+      }
+      
+      // Check if dates are too far in the future (more than 6 months)
+      if (checkInDate > maxFutureDate) {
+        console.warn('Check-in date is too far in the future:', checkIn);
+        setError('Check-in date cannot be more than 6 months in the future. Please select a closer date.');
+        setIsSearching(false);
+        return;
+      }
       
       if (stayDuration > 30) {
         console.warn('Stay duration too long:', stayDuration, 'days. Maximum allowed is 30 days.');
@@ -212,10 +232,12 @@ const SearchResults = () => {
 
           // Step 4: Search hotels
           console.log('🔍 Step 4: Searching hotels...');
-          const searchParams = {
+          
+          // Try searching by city code first (broader search)
+          let searchParams = {
             CheckIn: checkIn,
             CheckOut: checkOut,
-            HotelCodes: hotelCodes,
+            CityCode: cityCode, // Use city code instead of specific hotel codes
             GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
             PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
             PaxRooms: [{ 
@@ -227,10 +249,37 @@ const SearchResults = () => {
             ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
           };
           
-             const searchResult = await search(searchParams);
-             console.log('✅ Step 4 complete - Search finished');
-             console.log('🔍 Search result:', searchResult);
-             console.log('🔍 Hotels state after search:', hotels);
+          console.log('🔍 Trying city-based search first with cityCode:', cityCode);
+          
+          let searchResult = await search(searchParams);
+          console.log('🔍 City-based search result:', searchResult);
+          
+          // If city-based search returns no results, try with specific hotel codes
+          if (!searchResult || searchResult.length === 0) {
+            console.log('🔍 City-based search returned no results, trying with specific hotel codes...');
+            searchParams = {
+              CheckIn: checkIn,
+              CheckOut: checkOut,
+              HotelCodes: hotelCodes, // Fallback to specific hotel codes
+              GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
+              PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
+              PaxRooms: [{ 
+                Adults: parseInt(guests) || APP_CONFIG.DEFAULT_GUESTS, 
+                Children: APP_CONFIG.DEFAULT_CHILDREN, 
+                ChildrenAges: [] 
+              }],
+              IsDetailResponse: true,
+              ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
+            };
+            
+            console.log('🔍 Trying hotel-codes-based search with:', hotelCodes);
+            searchResult = await search(searchParams);
+            console.log('🔍 Hotel-codes-based search result:', searchResult);
+          }
+          
+          console.log('✅ Step 4 complete - Search finished');
+          console.log('🔍 Final search result:', searchResult);
+          console.log('🔍 Hotels state after search:', hotels);
              
              // Force a small delay to ensure state updates
              await new Promise(resolve => setTimeout(resolve, 100));
