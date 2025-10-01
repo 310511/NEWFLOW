@@ -79,6 +79,9 @@ export const generateClientReferenceId = (): string => {
 // Make the final booking API call
 export const makeBooking = async (bookingData: BookingRequest): Promise<BookingResponse> => {
   try {
+    console.log('🚀 Making booking API call to:', BOOKING_API_URL);
+    console.log('📋 Booking request data:', JSON.stringify(bookingData, null, 2));
+    
     const response = await fetch(BOOKING_API_URL, {
       method: 'POST',
       headers: {
@@ -88,11 +91,17 @@ export const makeBooking = async (bookingData: BookingRequest): Promise<BookingR
       body: JSON.stringify(bookingData),
     });
 
+    console.log('📥 Booking API response status:', response.status);
+    console.log('📥 Booking API response ok:', response.ok);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Booking API error response:', errorText);
       throw new Error(`Booking failed: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log('✅ Booking API response data:', data);
     
     // Check if the API returned an error status
     // Check for API errors
@@ -139,8 +148,22 @@ export const completeBooking = async (
   guests: number = 1
 ): Promise<BookingResponse> => {
   try {
+    console.log('🎯 Starting completeBooking function');
+    console.log('📋 Input parameters:', {
+      bookingCode,
+      bookingReferenceId,
+      customerData,
+      bookingForm,
+      totalFare,
+      rooms,
+      guests
+    });
+    
     const customerDetails = createCustomerDetails(bookingForm, rooms, guests);
     const clientReferenceId = generateClientReferenceId();
+    
+    console.log('👥 Created customer details:', customerDetails);
+    console.log('🆔 Generated client reference ID:', clientReferenceId);
     
     // Generate a fallback booking code if none provided
     const finalBookingCode = bookingCode === 'default_booking_code' 

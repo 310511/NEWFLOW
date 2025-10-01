@@ -37,7 +37,24 @@ const SearchResults = () => {
     if (!dateStr) return "";
     try {
       const date = new Date(dateStr);
-      return date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+      const parsedDate = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+      
+      // Validate that the date is reasonable (not too far in the past or future)
+      const today = new Date();
+      const oneYearFromNow = new Date();
+      oneYearFromNow.setFullYear(today.getFullYear() + 1);
+      
+      if (date < today) {
+        console.warn('Date is in the past:', parsedDate);
+        return "";
+      }
+      
+      if (date > oneYearFromNow) {
+        console.warn('Date is too far in the future:', parsedDate);
+        return "";
+      }
+      
+      return parsedDate;
     } catch (error) {
       console.error('Error parsing date:', dateStr, error);
       return "";
@@ -102,7 +119,27 @@ const SearchResults = () => {
     
     // Only search if we have valid parameters
     if (checkIn && checkOut && destination && guests) {
+      // Validate stay duration (max 30 days)
+      const checkInDate = new Date(checkIn);
+      const checkOutDate = new Date(checkOut);
+      const stayDuration = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (stayDuration > 30) {
+        console.warn('Stay duration too long:', stayDuration, 'days. Maximum allowed is 30 days.');
+        setError('Stay duration cannot exceed 30 days. Please select a shorter period.');
+        setIsSearching(false);
+        return;
+      }
+      
+      if (stayDuration <= 0) {
+        console.warn('Invalid stay duration:', stayDuration, 'days. Check-out must be after check-in.');
+        setError('Check-out date must be after check-in date.');
+        setIsSearching(false);
+        return;
+      }
+      
       console.log('✅ All parameters valid, starting search...');
+      console.log('📅 Stay duration:', stayDuration, 'days');
       
       // No hardcoded city codes - everything will be fetched dynamically from API
 
