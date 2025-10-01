@@ -74,11 +74,11 @@ const Booking = () => {
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      <span>Check-in: {prebookData.CheckIn || "N/A"}</span>
+                      <span>Check-in: {location.state?.checkIn || "N/A"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      <span>Check-out: {prebookData.CheckOut || "N/A"}</span>
+                      <span>Check-out: {location.state?.checkOut || "N/A"}</span>
                     </div>
                   </div>
                 </div>
@@ -98,17 +98,17 @@ const Booking = () => {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">Booking Reference</p>
-                      <p className="font-medium">{prebookData.BookingReference || "N/A"}</p>
+                      <p className="font-medium">{location.state?.bookingCode || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Total Amount</p>
                       <p className="font-medium">
-                        {prebookData.Currency} {prebookData.TotalAmount || "N/A"}
+                        {prebookData.HotelResult?.Currency} {prebookData.HotelResult?.Rooms?.TotalFare || "N/A"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Expiry Time</p>
-                      <p className="font-medium">{prebookData.ExpiryTime || "N/A"}</p>
+                      <p className="text-muted-foreground">Room Type</p>
+                      <p className="font-medium">{prebookData.HotelResult?.Rooms?.Name || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Status</p>
@@ -144,19 +144,29 @@ const Booking = () => {
                   
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Check-in</span>
-                    <span className="font-medium">{prebookData.CheckIn || "N/A"}</span>
+                    <span className="font-medium">{location.state?.checkIn || "N/A"}</span>
                   </div>
                   
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Check-out</span>
-                    <span className="font-medium">{prebookData.CheckOut || "N/A"}</span>
+                    <span className="font-medium">{location.state?.checkOut || "N/A"}</span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Room Type</span>
+                    <span className="font-medium">{prebookData.HotelResult?.Rooms?.Name || "N/A"}</span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Meal Type</span>
+                    <span className="font-medium">{prebookData.HotelResult?.Rooms?.MealType || "N/A"}</span>
                   </div>
                   
                   <hr />
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Total Amount</span>
                     <span className="font-bold text-lg">
-                      {prebookData.Currency} {prebookData.TotalAmount || "N/A"}
+                      {prebookData.HotelResult?.Currency} {prebookData.HotelResult?.Rooms?.TotalFare || "N/A"}
                     </span>
                   </div>
                 </div>

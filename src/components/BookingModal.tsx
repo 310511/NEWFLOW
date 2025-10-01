@@ -256,6 +256,9 @@ const BookingModal: React.FC<BookingModalProps> = ({ hotelDetails, selectedRoom,
   };
 
 
+  console.log('🔄 BookingModal render - bookingData:', bookingData);
+  console.log('🔄 BookingModal render - bookingForm:', bookingForm);
+  
   return (
     <Card className="w-full max-h-[90vh] flex flex-col">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 flex-shrink-0">
@@ -573,6 +576,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ hotelDetails, selectedRoom,
             >
               {isLoading ? "Completing Booking..." : "Complete Booking"}
             </Button>
+            {console.log('🔘 Complete Booking button rendered')}
           </div>
         )}
 

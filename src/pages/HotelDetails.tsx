@@ -28,22 +28,19 @@ import {
   Shirt,
 } from "lucide-react";
 import Loader from "@/components/ui/Loader";
-import { getHotelDetails } from "@/services/hotelApi";
 import HotelRoomDetails from "@/components/HotelRoomDetails";
 import BookingModal from "@/components/BookingModal";
 import { prebookHotel } from "@/services/bookingapi";
-import { searchHotels } from "@/services/hotelApi";
+import { searchHotels, getHotelDetails } from "@/services/hotelApi";
 import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
 
-  const HotelDetails = () => {
-    const { id } = useParams();
+const HotelDetails = () => {
+  const { id } = useParams();
   
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
-  // Extract search parameters
-  const rooms = parseInt(searchParams.get("rooms") || "1");
-  const guests = parseInt(searchParams.get("guests") || "1");
+  // Extract search parameters (will be redefined below)
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -56,13 +53,19 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
   const [searchingForBookingCode, setSearchingForBookingCode] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  
+  // Extract search parameters at component level
+  const checkIn = searchParams.get("checkIn");
+  const checkOut = searchParams.get("checkOut");
+  const guests = searchParams.get("guests");
+  const rooms = searchParams.get("rooms");
 
   // Handle ESC key to close modals
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         if (showRoomDetails) {
-          handleCloseRoomDetails();
+        handleCloseRoomDetails();
         } else if (showBookingModal) {
           handleCloseBookingModal();
         }
@@ -92,22 +95,36 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
   };
 
   const fetchBookingCode = async () => {
+    console.log('🔍 fetchBookingCode called with id:', id);
+    console.log('🔍 Current state - searchingForBookingCode:', searchingForBookingCode);
+    
     if (!id) {
+      console.log('❌ No id provided');
+      return;
+    }
+    
+    // Prevent multiple simultaneous calls
+    if (searchingForBookingCode) {
+      console.log('⏳ Already searching for booking code, skipping...');
       return;
     }
     
     setSearchingForBookingCode(true);
+    console.log('🚀 Starting booking code fetch...');
     try {
-      // Get search parameters from URL
-      let checkIn = searchParams.get("checkIn");
-      let checkOut = searchParams.get("checkOut");
-      const guests = searchParams.get("guests");
-      const rooms = searchParams.get("rooms");
-      
       // Parse ISO dates to YYYY-MM-DD format
+      console.log('📅 Raw checkIn:', checkIn);
+      console.log('📅 Raw checkOut:', checkOut);
+      console.log('👥 Raw guests:', guests);
+      console.log('🏠 Raw rooms:', rooms);
+      
+      let parsedCheckIn = checkIn;
+      let parsedCheckOut = checkOut;
+      
       if (checkIn && checkIn.includes('T')) {
         try {
-          checkIn = new Date(checkIn).toISOString().split('T')[0];
+          parsedCheckIn = new Date(checkIn).toISOString().split('T')[0];
+          console.log('📅 Parsed checkIn:', parsedCheckIn);
         } catch (error) {
           console.error('Error parsing checkIn date:', checkIn, error);
         }
@@ -115,26 +132,32 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
       
       if (checkOut && checkOut.includes('T')) {
         try {
-          checkOut = new Date(checkOut).toISOString().split('T')[0];
+          parsedCheckOut = new Date(checkOut).toISOString().split('T')[0];
+          console.log('📅 Parsed checkOut:', parsedCheckOut);
         } catch (error) {
           console.error('Error parsing checkOut date:', checkOut, error);
         }
       }
       
         if (checkIn && checkOut && guests) {
+        console.log('✅ All required parameters available, proceeding with search...');
         // Use rooms parameter if available, otherwise default to 1
         const roomsCount = rooms ? parseInt(rooms) : 1;
         const guestsCount = parseInt(guests);
         
+        console.log('🏠 roomsCount:', roomsCount);
+        console.log('👥 guestsCount:', guestsCount);
+        
         // Validate that parsing was successful
         if (isNaN(roomsCount) || isNaN(guestsCount)) {
+          console.log('❌ Invalid room or guest count');
           setBookingCode(null);
           return;
         }
         
         const searchParams = {
-          CheckIn: checkIn,
-          CheckOut: checkOut,
+          CheckIn: parsedCheckIn,
+          CheckOut: parsedCheckOut,
           HotelCodes: id,
           GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
           PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
@@ -147,7 +170,26 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
           ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
         };
         
-        const searchResponse = await searchHotels(searchParams);
+        // Try to get booking code from hotel details first (faster)
+        console.log('🚀 Trying to get booking code from hotel details...');
+        try {
+          const hotelDetailsResponse = await getHotelDetails(id);
+          if (hotelDetailsResponse?.Rooms?.BookingCode) {
+            console.log('✅ Found booking code from hotel details:', hotelDetailsResponse.Rooms.BookingCode);
+            setBookingCode(hotelDetailsResponse.Rooms.BookingCode);
+            return;
+          }
+        } catch (error) {
+          console.log('⚠️ Hotel details approach failed, trying search API...');
+        }
+        
+        // Fallback to search API with timeout
+        const searchResponse = await Promise.race([
+          searchHotels(searchParams),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Search request timeout after 30 seconds')), 30000)
+          )
+        ]);
         
         if (searchResponse?.HotelResult) {
           const hotel = searchResponse.HotelResult;
@@ -196,7 +238,13 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
           ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
         };
         
-        const defaultSearchResponse = await searchHotels(defaultSearchParams);
+        // Add timeout to prevent hanging requests (increased to 30 seconds)
+        const defaultSearchResponse = await Promise.race([
+          searchHotels(defaultSearchParams),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Default search request timeout after 30 seconds')), 30000)
+          )
+        ]);
         
         if (defaultSearchResponse?.HotelResult) {
           const hotel = defaultSearchResponse.HotelResult;
@@ -211,8 +259,8 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
           } else if (hotel.HotelCode && hotel.Rooms && hotel.Rooms.BookingCode) {
             if (hotel.HotelCode === id || hotel.HotelCode === String(id)) {
               const foundBookingCode = hotel.Rooms.BookingCode;
-              setBookingCode(foundBookingCode);
-              return;
+            setBookingCode(foundBookingCode);
+            return;
             }
           }
         }
@@ -255,13 +303,18 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
   };
 
   const handleReserveClick = async () => {
+    console.log("🔍 Debug - checkIn:", checkIn);
+    console.log("🔍 Debug - checkOut:", checkOut);
+    console.log("🔍 Debug - guests:", guests);
+    console.log("🔍 Debug - rooms:", rooms);
+    
     if (!bookingCode) {
       console.error("No booking code available, trying to fetch again...");
       // Try to fetch booking code again
       await fetchBookingCode();
       if (!bookingCode) {
-        alert("Booking code is not available. Please try again.");
-        return;
+      alert("Booking code is not available. Please try again.");
+      return;
       }
     }
 
@@ -284,6 +337,10 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
             prebookData: prebookResponse,
             bookingCode: bookingCode,
             hotelDetails: hotelDetails,
+            checkIn: checkIn,
+            checkOut: checkOut,
+            guests: guests,
+            rooms: rooms,
           },
         });
       } else {
@@ -313,7 +370,7 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
       fetchHotelDetails(id);
       fetchBookingCode();
     }
-  }, [id]);
+  }, [id, searchParams]);
 
   if (loading) {
     return <Loader />;
@@ -568,11 +625,11 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
                     {/* Show selected room if available, otherwise show default room */}
                     {selectedRoom ? (
                       <div className="border border-primary rounded-lg p-4 bg-primary/5">
-                        <div className="flex justify-between items-start">
-                          <div>
+                      <div className="flex justify-between items-start">
+                        <div>
                             <h4 className="font-semibold">{selectedRoom.Name}</h4>
                             <p className="text-sm text-muted-foreground">{selectedRoom.MealType}</p>
-                            <div className="flex items-center gap-2 mt-2">
+                          <div className="flex items-center gap-2 mt-2">
                               <Badge variant={selectedRoom.IsRefundable === "true" ? "default" : "destructive"}>
                                 {selectedRoom.IsRefundable === "true" ? "Refundable" : "Non-Refundable"}
                               </Badge>
@@ -607,23 +664,23 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
                             <div className="flex items-center gap-2 mt-2">
                               <Badge variant="outline">Various Options</Badge>
                               <Badge variant="outline">Different Meal Plans</Badge>
-                            </div>
                           </div>
-                          <div className="text-right">
+                        </div>
+                        <div className="text-right">
                             <div className="text-lg font-bold">From $200</div>
-                            <div className="text-sm text-muted-foreground">per night</div>
-                          </div>
-                        </div>
-                        <div className="mt-4">
-                          <Button 
-                            onClick={() => handleViewRoomDetails(bookingCode || "no-booking-code")}
-                            variant="outline"
-                            className="w-full"
-                          >
-                            View Room Options
-                          </Button>
-                        </div>
+                          <div className="text-sm text-muted-foreground">per night</div>
                       </div>
+                </div>
+                      <div className="mt-4">
+                        <Button 
+                            onClick={() => handleViewRoomDetails(bookingCode || "no-booking-code")}
+                          variant="outline"
+                          className="w-full"
+                        >
+                            View Room Options
+                  </Button>
+                      </div>
+                    </div>
                     )}
                   </div>
                 </div>
