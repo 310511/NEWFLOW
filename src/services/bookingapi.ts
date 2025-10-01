@@ -53,7 +53,14 @@ const prebookHotelTravzilla = async (
     console.log("🌐 Calling Travzilla Prebook API via local proxy...");
     const proxyUrl = `${PROXY_SERVER_URL}/hotel-prebook`;
     console.log("📍 Proxy URL:", proxyUrl);
-    console.log("📤 Request Body:", JSON.stringify(params, null, 2));
+    
+    // Transform params to match API format (simple format that works)
+    const requestBody = {
+      BookingCode: params.BookingCode,
+      PaymentMode: params.PaymentMode || "Limit"
+    };
+    
+    console.log("📤 Request Body:", JSON.stringify(requestBody, null, 2));
 
     const response = await fetch(proxyUrl, {
       method: "POST",
@@ -61,7 +68,7 @@ const prebookHotelTravzilla = async (
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify(params),
+      body: JSON.stringify(requestBody),
     });
 
     console.log("📥 Response Status:", response.status);

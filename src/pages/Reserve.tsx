@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+  useSearchParams,
+  useLocation,
+} from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -7,9 +12,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, CheckCircle, Clock, User, Calendar, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle,
+  Clock,
+  User,
+  Calendar,
+  Users,
+} from "lucide-react";
 import { prebookHotel } from "@/services/bookingapi";
-import { getHotelDetails } from "@/services/hotelApi";
+import { getHotelDetails, searchHotels } from "@/services/hotelApi";
+import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
 
 const Reserve = () => {
   const { id } = useParams();
@@ -34,8 +47,6 @@ const Reserve = () => {
       const response = await getHotelDetails(hotelCode);
       setHotelDetails(response.HotelDetails);
     } catch (error) {
-      console.error("Error fetching hotel details:", error);
-      // Provide mock data if API fails
       setHotelDetails({
         HotelCode: hotelCode,
         HotelName: "Sample Hotel",
@@ -43,7 +54,8 @@ const Reserve = () => {
         CityName: "Sample City",
         CountryName: "Sample Country",
         HotelRating: "4.5",
-        FrontImage: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop"
+        FrontImage:
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop",
       });
     } finally {
       setIsLoading(false);
@@ -54,19 +66,59 @@ const Reserve = () => {
     try {
       setPrebookLoading(true);
       setError(null);
-      console.log("🔒 Starting prebook process...");
 
-      // Generate a booking code for testing
-      const bookingCode = `room-${id}-${Date.now()}`;
+      let bookingCode = null;
+      try {
+        const searchParamsObj = {
+          CheckIn: checkIn || getCurrentDate(),
+          CheckOut: checkOut || getDateFromNow(1),
+          HotelCodes: id || "",
+          GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
+          PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
+          PaxRooms: Array.from(
+            { length: parseInt(rooms) || APP_CONFIG.DEFAULT_ROOMS },
+            () => ({
+              Adults: parseInt(guests) || APP_CONFIG.DEFAULT_GUESTS,
+              Children: APP_CONFIG.DEFAULT_CHILDREN,
+              ChildrenAges: [],
+            })
+          ),
+          IsDetailResponse: true,
+          ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME,
+        };
+        const searchResponse = await searchHotels(searchParamsObj);
+
+        if (searchResponse?.HotelResult) {
+          const hotel = searchResponse.HotelResult;
+          if (Array.isArray(hotel)) {
+            const foundHotel = hotel.find((h) => h.HotelCode === id);
+            if (
+              foundHotel?.Rooms &&
+              Array.isArray(foundHotel.Rooms) &&
+              foundHotel.Rooms.length > 0
+            ) {
+              bookingCode = foundHotel.Rooms[0].BookingCode;
+            }
+          } else if (
+            hotel.HotelCode === id &&
+            hotel.Rooms &&
+            hotel.Rooms.BookingCode
+          ) {
+            bookingCode = hotel.Rooms.BookingCode;
+          }
+        }
+      } catch (searchError) {}
+
+      if (!bookingCode) {
+        setError("No booking code available. Please try searching again.");
+        return;
+      }
 
       const prebookResponse = await prebookHotel({
         BookingCode: bookingCode,
         PaymentMode: "Limit",
       });
 
-      console.log("✅ Prebook successful:", prebookResponse);
-
-      // Check if prebook was successful
       if (prebookResponse.Status && prebookResponse.Status.Code === "200") {
         setPrebookData({
           ...prebookResponse,
@@ -76,7 +128,6 @@ const Reserve = () => {
         setError(prebookResponse.Status?.Description || "Prebook failed");
       }
     } catch (error) {
-      console.error("Prebook error:", error);
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setPrebookLoading(false);
@@ -84,12 +135,9 @@ const Reserve = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      fetchHotelDetails(id);
-    }
+    if (id) fetchHotelDetails(id);
   }, [id]);
 
-  // Check if we have prebook data from navigation state
   useEffect(() => {
     if (location.state?.prebookData) {
       setPrebookData(location.state.prebookData);
@@ -98,14 +146,12 @@ const Reserve = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading hotel details...</p>
-            </div>
+        <div className="flex-1 container mx-auto px-2 py-8 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading hotel details...</p>
           </div>
         </div>
         <Footer />
@@ -114,51 +160,49 @@ const Reserve = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      
-      <div className="container mx-auto px-4 py-8">
+      <div className="flex-1 container mx-auto px-2 sm:px-4 py-4 sm:py-8 w-full">
         {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2"
+          className="mb-4 sm:mb-6 flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Hotel Details
+          <span className="hidden sm:inline">Back to Hotel Details</span>
         </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Hotel Information */}
-          <div className="lg:col-span-2">
-            <Card>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+          {/* Main Details */}
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            <Card className="w-full">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold">
+                <CardTitle className="text-xl sm:text-2xl font-bold">
                   {hotelDetails?.HotelName || "Hotel Name"}
                 </CardTitle>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-sm sm:text-base">
                   {hotelDetails?.Address || "Hotel Address"}
                 </p>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="space-y-2 sm:space-y-4">
+                  <div className="flex flex-col xs:flex-row xs:items-center xs:gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       <span>Check-in: {checkIn || "N/A"}</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2 xs:mt-0">
                       <Calendar className="h-4 w-4" />
                       <span>Check-out: {checkOut || "N/A"}</span>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex flex-col xs:flex-row xs:items-center xs:gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4" />
                       <span>{guests || "N/A"} guests</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2 xs:mt-0">
                       <User className="h-4 w-4" />
                       <span>{rooms || "N/A"} rooms</span>
                     </div>
@@ -166,10 +210,9 @@ const Reserve = () => {
                 </div>
               </CardContent>
             </Card>
-
             {/* Prebook Status */}
             {prebookData ? (
-              <Card className="mt-6">
+              <Card className="w-full mt-4">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-green-600">
                     <CheckCircle className="h-5 w-5" />
@@ -177,21 +220,32 @@ const Reserve = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-2 sm:space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-sm">
                       <div>
-                        <Label className="text-muted-foreground">Booking Reference</Label>
-                        <p className="font-medium">{prebookData.BookingReference || "N/A"}</p>
-                      </div>
-                      <div>
-                        <Label className="text-muted-foreground">Total Amount</Label>
+                        <Label className="text-muted-foreground">
+                          Booking Reference
+                        </Label>
                         <p className="font-medium">
-                          {prebookData.Currency} {prebookData.TotalAmount || "N/A"}
+                          {prebookData.BookingReference || "N/A"}
                         </p>
                       </div>
                       <div>
-                        <Label className="text-muted-foreground">Expiry Time</Label>
-                        <p className="font-medium">{prebookData.ExpiryTime || "N/A"}</p>
+                        <Label className="text-muted-foreground">
+                          Total Amount
+                        </Label>
+                        <p className="font-medium">
+                          {prebookData.Currency}{" "}
+                          {prebookData.TotalAmount || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-muted-foreground">
+                          Expiry Time
+                        </Label>
+                        <p className="font-medium">
+                          {prebookData.ExpiryTime || "N/A"}
+                        </p>
                       </div>
                       <div>
                         <Label className="text-muted-foreground">Status</Label>
@@ -200,32 +254,31 @@ const Reserve = () => {
                         </p>
                       </div>
                     </div>
-                    
                     <Alert className="mt-4">
                       <Clock className="h-4 w-4" />
                       <AlertDescription>
-                        Your reservation is confirmed! You can complete the booking by providing payment details.
+                        Your reservation is confirmed! You can complete the
+                        booking by providing payment details.
                       </AlertDescription>
                     </Alert>
                   </div>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="mt-6">
+              <Card className="w-full mt-4">
                 <CardHeader>
                   <CardTitle>Reserve Your Room</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Click the button below to reserve your room. This will hold your reservation for a limited time.
+                    Click the button below to reserve your room. This will hold
+                    your reservation for a limited time.
                   </p>
-                  
                   {error && (
                     <Alert variant="destructive" className="mb-4">
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
                   )}
-                  
                   <Button
                     onClick={handlePrebook}
                     disabled={prebookLoading}
@@ -238,47 +291,55 @@ const Reserve = () => {
               </Card>
             )}
           </div>
-
           {/* Booking Summary */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-4">
+            <Card className="sticky top-4 w-full mt-4 lg:mt-0">
               <CardHeader>
                 <CardTitle>Booking Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
+                <div className="space-y-2 sm:space-y-4">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Hotel</span>
-                    <span className="font-medium">{hotelDetails?.HotelName || "N/A"}</span>
+                    <span className="font-medium text-right">
+                      {hotelDetails?.HotelName || "N/A"}
+                    </span>
                   </div>
-                  
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Check-in</span>
-                    <span className="font-medium">{checkIn || "N/A"}</span>
+                    <span className="font-medium text-right">
+                      {checkIn || "N/A"}
+                    </span>
                   </div>
-                  
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Check-out</span>
-                    <span className="font-medium">{checkOut || "N/A"}</span>
+                    <span className="font-medium text-right">
+                      {checkOut || "N/A"}
+                    </span>
                   </div>
-                  
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Guests</span>
-                    <span className="font-medium">{guests || "N/A"}</span>
+                    <span className="font-medium text-right">
+                      {guests || "N/A"}
+                    </span>
                   </div>
-                  
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Rooms</span>
-                    <span className="font-medium">{rooms || "N/A"}</span>
+                    <span className="font-medium text-right">
+                      {rooms || "N/A"}
+                    </span>
                   </div>
-                  
+
                   {prebookData && (
                     <>
                       <hr />
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Total Amount</span>
-                        <span className="font-bold text-lg">
-                          {prebookData.Currency} {prebookData.TotalAmount || "N/A"}
+                      <div className="flex justify-between text-base">
+                        <span className="text-muted-foreground">
+                          Total Amount
+                        </span>
+                        <span className="font-bold text-lg text-right">
+                          {prebookData.Currency}{" "}
+                          {prebookData.TotalAmount || "N/A"}
                         </span>
                       </div>
                     </>
@@ -289,7 +350,6 @@ const Reserve = () => {
           </div>
         </div>
       </div>
-      
       <Footer />
     </div>
   );

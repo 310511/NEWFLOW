@@ -12,6 +12,8 @@ import {
   Loader2,
   AlertCircle,
   X,
+  Grid3x3,
+  Map,
 } from "lucide-react";
 
 import SearchFilters from "@/components/SearchFilters";
@@ -21,6 +23,7 @@ import Header from "@/components/Header";
 import { useHotelSearch } from "@/hooks/useHotelSearch";
 import FakeMapView from "@/components/FakeMapView";
 import { getCountryList, getCityList, getHotelCodeList } from "@/services/hotelCodeApi";
+import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
 
 const SearchResults = () => {
   console.log('🚀 SearchResults component rendering...');
@@ -28,7 +31,7 @@ const SearchResults = () => {
   const navigate = useNavigate();
 
   const destination = searchParams.get("destination") || "Riyadh";
-  const guests = searchParams.get("guests") || "2";
+  const guests = searchParams.get("guests") || APP_CONFIG.DEFAULT_GUESTS.toString();
   const checkInRaw = searchParams.get("checkIn") || "";
   const checkOutRaw = searchParams.get("checkOut") || "";
   
@@ -175,15 +178,19 @@ const SearchResults = () => {
 
           // Step 4: Search hotels
           console.log('🔍 Step 4: Searching hotels...');
-        const searchParams = {
-          CheckIn: checkIn,
-          CheckOut: checkOut,
+          const searchParams = {
+            CheckIn: checkIn,
+            CheckOut: checkOut,
             HotelCodes: hotelCodes,
-          GuestNationality: "AE",
-          PreferredCurrencyCode: "AED",
-            PaxRooms: [{ Adults: parseInt(guests) || 2, Children: 0, ChildrenAges: [] }],
-          IsDetailResponse: true,
-            ResponseTime: 30
+            GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
+            PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
+            PaxRooms: [{ 
+              Adults: parseInt(guests) || APP_CONFIG.DEFAULT_GUESTS, 
+              Children: APP_CONFIG.DEFAULT_CHILDREN, 
+              ChildrenAges: [] 
+            }],
+            IsDetailResponse: true,
+            ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
           };
           
              const searchResult = await search(searchParams);
@@ -307,377 +314,309 @@ const SearchResults = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-
+    <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
-      <main className="w-full pt-32">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          {/* Search Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-6 border-b border-border">
-            <div className="flex items-center gap-4 mb-4 sm:mb-0">
+      <main className="w-full pt-16 sm:pt-20 md:pt-24 lg:pt-32">
+        <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8">
+          {/* Search Header - Responsive */}
+          <div className="flex flex-col gap-4 py-4 sm:py-6 border-b border-gray-200">
+            {/* Top Row: Back button and destination info */}
+            <div className="flex items-start gap-3 sm:gap-4">
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate(-1)}
-                className="h-8 w-8"
+                onClick={() => window.history.back()}
+                className="h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 mt-1"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-              <div>
-                <h1 className="text-2xl font-semibold text-foreground">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 truncate">
                   {destination}
-              </h1>
-                <p className="text-sm text-muted-foreground">
-                  {checkIn} - {checkOut} • {guests} guests
+                </h1>
+                <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">
+                  <span className="inline-block">{checkIn} - {checkOut}</span>
+                  <span className="mx-1.5">•</span>
+                  <span className="inline-block">{guests} guests</span>
                 </p>
-                </div>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Bottom Row: View mode buttons - Responsive */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
-                className="h-8"
+                className="h-8 sm:h-9 text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
               >
-                {showFilters ? 'Hide Filters' : 'Show Filters'}
+                {showFilters ? 'Hide Filters' : 'Filters'}
               </Button>
               <Button
                 variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className="h-8"
+                className="h-8 sm:h-9 text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
               >
-                <Grid3X3 className="h-4 w-4 mr-2" />
-                List
+                <Grid3x3 className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1.5" />
+                <span className="hidden xs:inline">List</span>
               </Button>
               <Button
                 variant={viewMode === "map" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("map")}
-                className="h-8"
+                className="h-8 sm:h-9 text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
               >
-                <MapIcon className="h-4 w-4 mr-2" />
-                Map
+                <Map className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1.5" />
+                <span className="hidden xs:inline">Map</span>
               </Button>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="flex flex-col lg:flex-row gap-6 py-6">
-            {/* Filters Sidebar */}
+          {/* Content Area - Responsive Layout */}
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 py-4 sm:py-6">
+            {/* Filters Sidebar - Mobile: Full screen overlay, Desktop: Sidebar */}
             {showFilters && (
-              <div className="w-full lg:w-80 xl:w-96">
-                <div className="max-h-screen overflow-y-auto pr-4 space-y-6">
-              {/* Close Button */}
-              <div className="flex justify-end mb-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
+              <>
+                {/* Mobile Overlay Background */}
+                <div 
+                  className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
                   onClick={() => setShowFilters(false)}
-                  className="h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+                />
                 
-                {/* Price Range */}
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                  <h3 className="font-bold text-lg mb-6 flex items-center">
-                    <div className="w-2 h-6 bg-gradient-to-b from-primary to-primary/60 rounded-full mr-3"></div>
-                    Price range
-                  </h3>
-                  <div className="space-y-6">
-                    <Slider
-                      value={priceRange}
-                      onValueChange={(range) => setPriceRange(range as [number, number])}
-                      max={5000}
-                      min={50}
-                      step={50}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between">
-                      <div className="bg-gray-50 px-3 py-2 rounded-lg border">
-                        <span className="text-sm font-semibold text-gray-700">${priceRange[0]}</span>
+                {/* Filters Panel */}
+                <div className={`
+                  fixed lg:relative inset-y-0 left-0 z-50 lg:z-0
+                  w-full sm:w-96 lg:w-80 xl:w-96
+                  bg-white lg:bg-transparent
+                  transform transition-transform duration-300 ease-in-out
+                  ${showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                  overflow-y-auto
+                  lg:flex-shrink-0
+                `}>
+                  <div className="h-full p-4 sm:p-6 lg:p-0 lg:pr-4 space-y-4 sm:space-y-6">
+                    {/* Close Button - Only on mobile */}
+                    <div className="flex justify-between items-center lg:hidden sticky top-0 bg-white z-10 pb-4 -mt-4">
+                      <h2 className="text-lg font-semibold">Filters</h2>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowFilters(false)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  
+                    {/* Price Range */}
+                    <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                      <h3 className="font-bold text-base sm:text-lg mb-4 sm:mb-6 flex items-center">
+                        <div className="w-1.5 sm:w-2 h-5 sm:h-6 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full mr-2 sm:mr-3"></div>
+                        Price range
+                      </h3>
+                      <div className="space-y-4 sm:space-y-6">
+                        <Slider
+                          value={priceRange}
+                          onValueChange={(range) => setPriceRange(range)}
+                          max={5000}
+                          min={50}
+                          step={50}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between gap-2">
+                          <div className="bg-gray-50 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg border flex-1 text-center">
+                            <span className="text-xs sm:text-sm font-semibold text-gray-700">${priceRange[0]}</span>
+                          </div>
+                          <div className="bg-gray-50 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg border flex-1 text-center">
+                            <span className="text-xs sm:text-sm font-semibold text-gray-700">${priceRange[1]}+</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="bg-gray-50 px-3 py-2 rounded-lg border">
-                        <span className="text-sm font-semibold text-gray-700">${priceRange[1]}+</span>
+                    </div>
+
+                    {/* Property Type */}
+                    <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                      <h3 className="font-bold text-base sm:text-lg mb-4 sm:mb-6 flex items-center">
+                        <div className="w-1.5 sm:w-2 h-5 sm:h-6 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-2 sm:mr-3"></div>
+                        Type of place
+                      </h3>
+                      <div className="space-y-2 sm:space-y-3">
+                        {[
+                          { id: 'hotel', label: 'Hotels', count: 198 },
+                          { id: 'apartment', label: 'Apartments', count: 89 },
+                          { id: 'resort', label: 'Resorts', count: 45 },
+                          { id: 'villa', label: 'Villas', count: 23 }
+                        ].map((type) => (
+                          <div key={type.id} className="flex items-center justify-between hover:bg-gray-50 p-2 sm:p-3 rounded-lg transition-all duration-200">
+                            <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+                              <Checkbox 
+                                id={type.id}
+                                checked={selectedFilters.includes(type.id)}
+                                onCheckedChange={() => {
+                                  setSelectedFilters(
+                                    selectedFilters.includes(type.id)
+                                      ? selectedFilters.filter(id => id !== type.id)
+                                      : [...selectedFilters, type.id]
+                                  );
+                                }}
+                              />
+                              <label htmlFor={type.id} className="text-xs sm:text-sm font-medium text-gray-700 cursor-pointer truncate">
+                                {type.label}
+                              </label>
+                            </div>
+                            <span className="text-xs text-gray-500 bg-gray-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex-shrink-0 ml-2">
+                              {type.count}
+                            </span>
+                          </div>
+                        ))}
                       </div>
+                    </div>
+
+                    {/* Amenities */}
+                    <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                      <h3 className="font-bold text-base sm:text-lg mb-4 sm:mb-6 flex items-center">
+                        <div className="w-1.5 sm:w-2 h-5 sm:h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full mr-2 sm:mr-3"></div>
+                        Amenities
+                      </h3>
+                      <div className="space-y-2 sm:space-y-3 max-h-96 overflow-y-auto">
+                        {[
+                          { id: 'wifi', label: 'Wi-Fi', count: 245 },
+                          { id: 'parking', label: 'Free parking', count: 189 },
+                          { id: 'pool', label: 'Pool', count: 156 },
+                          { id: 'gym', label: 'Gym', count: 134 },
+                          { id: 'restaurant', label: 'Restaurant', count: 176 },
+                          { id: 'kitchen', label: 'Kitchen', count: 156 },
+                          { id: 'ac', label: 'Air conditioning', count: 298 },
+                          { id: 'workspace', label: 'Workspace', count: 87 }
+                        ].map((amenity) => (
+                          <div key={amenity.id} className="flex items-center justify-between hover:bg-gray-50 p-2 sm:p-3 rounded-lg transition-all duration-200">
+                            <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+                              <Checkbox 
+                                id={amenity.id}
+                                checked={selectedFilters.includes(amenity.id)}
+                                onCheckedChange={() => {
+                                  setSelectedFilters(
+                                    selectedFilters.includes(amenity.id)
+                                      ? selectedFilters.filter(id => id !== amenity.id)
+                                      : [...selectedFilters, amenity.id]
+                                  );
+                                }}
+                              />
+                              <label htmlFor={amenity.id} className="text-xs sm:text-sm font-medium text-gray-700 cursor-pointer truncate">
+                                {amenity.label}
+                              </label>
+                            </div>
+                            <span className="text-xs text-gray-500 bg-gray-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex-shrink-0 ml-2">
+                              {amenity.count}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Apply Filters Button - Mobile Only */}
+                    <div className="lg:hidden sticky bottom-0 bg-white pt-4 pb-2 -mb-4">
+                      <Button
+                        variant="default"
+                        onClick={() => setShowFilters(false)}
+                        className="w-full h-10 sm:h-11"
+                      >
+                        Show {filteredHotels.length} results
+                      </Button>
                     </div>
                   </div>
                 </div>
-
-                {/* Property Type */}
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                  <h3 className="font-bold text-lg mb-6 flex items-center">
-                    <div className="w-2 h-6 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-3"></div>
-                    Type of place
-                  </h3>
-                  <div className="space-y-4">
-                    {[
-                      { id: 'hotel', label: 'Hotels', count: 198 },
-                      { id: 'apartment', label: 'Apartments', count: 89 },
-                      { id: 'resort', label: 'Resorts', count: 45 },
-                      { id: 'villa', label: 'Villas', count: 23 }
-                    ].map((type) => (
-                      <div key={type.id} className="flex items-center justify-between hover:bg-gray-50 p-3 rounded-lg transition-all duration-200 border border-transparent hover:border-gray-200">
-                        <div className="flex items-center space-x-3">
-                          <Checkbox 
-                            id={type.id}
-                            checked={selectedFilters.includes(type.id)}
-                            onCheckedChange={() => {
-                              setSelectedFilters(
-                                selectedFilters.includes(type.id)
-                                  ? selectedFilters.filter(id => id !== type.id)
-                                  : [...selectedFilters, type.id]
-                              );
-                            }}
-                            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                          />
-                          <label htmlFor={type.id} className="text-sm font-medium text-gray-700 cursor-pointer">
-                            {type.label}
-                          </label>
-                        </div>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                          {type.count}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Amenities */}
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                  <h3 className="font-bold text-lg mb-6 flex items-center">
-                    <div className="w-2 h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full mr-3"></div>
-                    Amenities
-                  </h3>
-                  <div className="space-y-4">
-                    {[
-                      { id: 'wifi', label: 'Wi-Fi', count: 245 },
-                      { id: 'parking', label: 'Free parking', count: 189 },
-                      { id: 'pool', label: 'Pool', count: 156 },
-                      { id: 'gym', label: 'Gym', count: 134 },
-                      { id: 'restaurant', label: 'Restaurant', count: 176 },
-                      { id: 'kitchen', label: 'Kitchen', count: 156 },
-                      { id: 'ac', label: 'Air conditioning', count: 298 },
-                      { id: 'workspace', label: 'Dedicated workspace', count: 87 },
-                      { id: 'garden', label: 'Garden', count: 67 },
-                      { id: 'concierge', label: 'Concierge', count: 23 }
-                    ].map((amenity) => (
-                      <div key={amenity.id} className="flex items-center justify-between hover:bg-gray-50 p-3 rounded-lg transition-all duration-200 border border-transparent hover:border-gray-200">
-                        <div className="flex items-center space-x-3">
-                          <Checkbox 
-                            id={amenity.id}
-                            checked={selectedFilters.includes(amenity.id)}
-                            onCheckedChange={() => {
-                              setSelectedFilters(
-                                selectedFilters.includes(amenity.id)
-                                  ? selectedFilters.filter(id => id !== amenity.id)
-                                  : [...selectedFilters, amenity.id]
-                              );
-                            }}
-                            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                          />
-                          <label htmlFor={amenity.id} className="text-sm font-medium text-gray-700 cursor-pointer">
-                            {amenity.label}
-                          </label>
-                        </div>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                          {amenity.count}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              </div>
+              </>
             )}
 
-            {/* Results */}
-            <div className="flex-1">
+            {/* Results Section - Flexible width */}
+            <div className="flex-1 min-w-0">
               {/* Results Header */}
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {loading ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Searching...
-                      </span>
-                    ) : (
-                      `${filteredHotels.length} properties found`
-                    )}
-                  </p>
-        </div>
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <p className="text-xs sm:text-sm text-gray-600">
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                      <span className="hidden xs:inline">Searching...</span>
+                    </span>
+                  ) : (
+                    `${filteredHotels.length} properties found`
+                  )}
+                </p>
               </div>
-
 
               {/* Loading State */}
               {(loading || isSearching) && (
-                <div className="flex items-center justify-center py-12 min-h-[400px]">
-                  <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <span className="text-lg font-medium">
-                      {isSearching ? 'Fetching hotels from API...' : 'Finding the best hotels for you...'}
+                <div className="flex items-center justify-center py-12 sm:py-16 min-h-[300px] sm:min-h-[400px]">
+                  <div className="flex flex-col items-center gap-3 sm:gap-4 px-4">
+                    <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-blue-600" />
+                    <span className="text-base sm:text-lg font-medium text-center">
+                      {isSearching ? 'Fetching hotels...' : 'Finding the best hotels...'}
                     </span>
-                    <p className="text-sm text-muted-foreground text-center max-w-md">
+                    <p className="text-xs sm:text-sm text-gray-600 text-center max-w-md">
                       {isSearching 
-                        ? 'Please wait while we fetch hotel data from our partners' 
-                        : 'Please wait while we search for available accommodations'
+                        ? 'Please wait while we fetch hotel data' 
+                        : 'Please wait while we search for accommodations'
                       }
                     </p>
                   </div>
-              </div>
-            )}
+                </div>
+              )}
 
-                   {/* Error State */}
+              {/* Error State */}
               {error && !loading && !isSearching && (
-                <div className="flex items-center justify-center py-12">
-                  <div className="flex items-center gap-2 text-destructive">
-                    <AlertCircle className="h-5 w-5" />
-                    <span>Error loading hotels: {error}</span>
+                <div className="flex items-center justify-center py-12 px-4">
+                  <div className="flex items-center gap-2 text-red-600 text-sm sm:text-base">
+                    <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                    <span>Error: {error}</span>
                   </div>
                 </div>
               )}
 
               {/* No Results State */}
               {!loading && !error && !isSearching && filteredHotels.length === 0 && (
-                     <div className="flex items-center justify-center py-12">
-                       <div className="text-center">
-                    <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                <div className="flex items-center justify-center py-12 px-4">
+                  <div className="text-center">
+                    <AlertCircle className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
                       No hotels found
                     </h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-sm sm:text-base text-gray-600">
                       Try adjusting your filters or search criteria.
-                         </p>
-                       </div>
-                     </div>
-                   )}
-
-
-              {/* Hotels Grid/List - Show if we have hotels */}
-              {hotels && hotels.length > 0 && (
-                <div className="space-y-6">
-                  {viewMode === "list" ? (
-                    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full ${showFilters ? 'justify-start' : 'justify-start'}`}>
-                      {hotels.map((hotel, index) => (
-                  <AirbnbHotelCard
-                          key={hotel.HotelCode || index}
-                    hotel={hotel}
-                          onHover={(isHovered) => {
-                            setHoveredHotel(isHovered ? hotel.HotelCode : null);
-                          }}
-                          isSelected={hoveredHotel === hotel.HotelCode}
-                  />
-                ))}
-              </div>
-                  ) : (
-                    <FakeMapView
-                      hotels={hotels.map((hotel) => ({
-                        id: hotel.HotelCode,
-                        name: hotel.HotelName,
-                        location: hotel.Address || hotel.Location?.Latitude + ',' + hotel.Location?.Longitude || 'Unknown',
-        price: (() => {
-          let price = hotel.Price;
-          console.log('🔍 FakeMapView price extraction:', {
-            hotelName: hotel.HotelName,
-            Price: hotel.Price,
-            Rooms: hotel.Rooms,
-            TotalFare: (hotel.Rooms as any)?.TotalFare
-          });
-          // Always prioritize TotalFare from Rooms object (this is the real price from API)
-          if (hotel.Rooms && (hotel.Rooms as any).TotalFare) {
-            price = (hotel.Rooms as any).TotalFare;
-            console.log('✅ FakeMapView using TotalFare from Rooms:', price);
-          } else if (hotel.Price) {
-            price = hotel.Price;
-            console.log('⚠️ FakeMapView using hotel.Price as fallback:', price);
-          } else {
-            console.log('❌ FakeMapView no price found - Rooms:', hotel.Rooms, 'Price:', hotel.Price);
-            price = 0; // No hardcoded fallback - show 0 if no price found
-          }
-          const finalPrice = typeof price === 'string' ? parseFloat(price) : price;
-          console.log('🔍 FakeMapView final price:', finalPrice);
-          return finalPrice;
-        })(),
-                        rating: parseInt(hotel.StarRating) || 4,
-                        reviews: Math.floor(Math.random() * 500) + 50,
-                        images: [hotel.FrontImage || "/api/placeholder/300/200"],
-                        coordinates: {
-                          lat: hotel.Location?.Latitude || 25.2048 + Math.random() * 0.1,
-                          lng: hotel.Location?.Longitude || 55.2708 + Math.random() * 0.1,
-                        }
-                      }))}
-                      selectedHotel={selectedHotel || hoveredHotel || undefined}
-                      onHotelSelect={setSelectedHotel}
-                      onHotelHover={setHoveredHotel}
-                    />
-                  )}
-              </div>
-            )}
-
-            {/* Pagination - Temporarily disabled to show all hotels */}
-            {false && totalPages > 1 && (
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-                <Button
-                  variant="outline"
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                    className="flex items-center gap-2"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Previous
-                </Button>
-
-                  <div className="flex items-center gap-2">
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum;
-                      if (totalPages <= 5) {
-                      pageNum = i + 1;
-                      } else if (currentPage <= 3) {
-                      pageNum = i + 1;
-                      } else if (currentPage >= totalPages - 2) {
-                        pageNum = totalPages - 4 + i;
-                    } else {
-                        pageNum = currentPage - 2 + i;
-                    }
-
-                    return (
-                      <Button
-                        key={pageNum}
-                          variant={currentPage === pageNum ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setCurrentPage(pageNum)}
-                          className="h-8 w-8 p-0"
-                      >
-                        {pageNum}
-                      </Button>
-                    );
-                  })}
+                    </p>
+                  </div>
                 </div>
+              )}
 
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                    className="flex items-center gap-2"
-                >
-                  Next
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
+              {/* Hotels Grid - Responsive columns */}
+              {hotels && hotels.length > 0 && viewMode === "list" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+                  {hotels.map((hotel, index) => (
+                    <div
+                      key={hotel.HotelCode || index}
+                      className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                    >
+                      <div className="aspect-[4/3] bg-gray-200" />
+                      <div className="p-3 sm:p-4">
+                        <h3 className="font-semibold text-sm sm:text-base truncate">{hotel.HotelName}</h3>
+                        <p className="text-xs sm:text-sm text-gray-600 mt-1">★ {hotel.StarRating}</p>
+                        <p className="text-base sm:text-lg font-bold mt-2">${hotel.Price}/night</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Map View - Responsive */}
+              {viewMode === "map" && hotels && hotels.length > 0 && (
+                <div className="bg-gray-200 rounded-lg sm:rounded-xl h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center">
+                  <p className="text-sm sm:text-base text-gray-600">Map View (Implementation needed)</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

@@ -131,3 +131,4 @@ curl -X POST http://localhost:3001/api/hotel-code-list \
 3. **Filters**: Add filters for star rating, amenities, etc.
 4. **Pagination**: Handle large hotel lists with pagination
 5. **Offline Support**: Cache data for offline usage
+

@@ -120,7 +120,7 @@ const NewCustomSearchBar = ({ isSticky = false }: Props) => {
             isExpanded ? "shadow-card-hover" : "hover:shadow-card-hover"
           } ${isSticky ? "scale-95" : ""}`}
         >
-          <div className="p-4 space-y-3">
+          <div className="p-4 space-y-3 z-50 ">
             {/* Where - Full Width */}
             <div className="w-full">
               <DestinationPicker
