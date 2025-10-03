@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import {
+  useParams,
+  Link,
+  useNavigate,
+  useSearchParams,
+  useLocation,
+} from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FakeMapView from "@/components/FakeMapView";
@@ -28,56 +34,56 @@ import {
   Shirt,
 } from "lucide-react";
 import Loader from "@/components/ui/Loader";
-import { getHotelDetails } from "@/services/hotelApi";
 import HotelRoomDetails from "@/components/HotelRoomDetails";
-import BookingModal from "@/components/BookingModal";
 import { prebookHotel } from "@/services/bookingapi";
-import { searchHotels } from "@/services/hotelApi";
+import { searchHotels, getHotelDetails } from "@/services/hotelApi";
 import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
 
-  const HotelDetails = () => {
-    const { id } = useParams();
-  
+const HotelDetails = () => {
+  const { id } = useParams();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
-  // Extract search parameters
-  const rooms = parseInt(searchParams.get("rooms") || "1");
-  const guests = parseInt(searchParams.get("guests") || "1");
-  
+
+  // Extract search parameters (will be redefined below)
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [hotelDetails, setHotelDetails] = useState<any>(null);
   const [loading, setIsLoading] = useState(false);
   const [showRoomDetails, setShowRoomDetails] = useState(false);
-  const [selectedBookingCode, setSelectedBookingCode] = useState<string | null>(null);
+  const [selectedBookingCode, setSelectedBookingCode] = useState<string | null>(
+    null
+  );
   const [prebookLoading, setPrebookLoading] = useState(false);
   const [bookingCode, setBookingCode] = useState<string | null>(null);
   const [searchingForBookingCode, setSearchingForBookingCode] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
-  const [showBookingModal, setShowBookingModal] = useState(false);
+
+  // Extract search parameters at component level
+  const checkIn = searchParams.get("checkIn");
+  const checkOut = searchParams.get("checkOut");
+  const guests = searchParams.get("guests");
+  const rooms = searchParams.get("rooms");
 
   // Handle ESC key to close modals
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         if (showRoomDetails) {
           handleCloseRoomDetails();
-        } else if (showBookingModal) {
-          handleCloseBookingModal();
         }
       }
     };
 
-    if (showRoomDetails || showBookingModal) {
-      document.addEventListener('keydown', handleEscKey);
+    if (showRoomDetails) {
+      document.addEventListener("keydown", handleEscKey);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscKey);
+      document.removeEventListener("keydown", handleEscKey);
     };
-  }, [showRoomDetails, showBookingModal]);
-
+  }, [showRoomDetails]);
 
   const fetchHotelDetails = async (hotelCode: string) => {
     setIsLoading(true);
@@ -92,72 +98,126 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
   };
 
   const fetchBookingCode = async () => {
+    console.log("🔍 fetchBookingCode called with id:", id);
+    console.log(
+      "🔍 Current state - searchingForBookingCode:",
+      searchingForBookingCode
+    );
+
     if (!id) {
+      console.log("❌ No id provided");
       return;
     }
-    
+
+    // Prevent multiple simultaneous calls
+    if (searchingForBookingCode) {
+      console.log("⏳ Already searching for booking code, skipping...");
+      return;
+    }
+
     setSearchingForBookingCode(true);
+    console.log("🚀 Starting booking code fetch...");
     try {
-      // Get search parameters from URL
-      let checkIn = searchParams.get("checkIn");
-      let checkOut = searchParams.get("checkOut");
-      const guests = searchParams.get("guests");
-      const rooms = searchParams.get("rooms");
-      
       // Parse ISO dates to YYYY-MM-DD format
-      if (checkIn && checkIn.includes('T')) {
+      console.log("📅 Raw checkIn:", checkIn);
+      console.log("📅 Raw checkOut:", checkOut);
+      console.log("👥 Raw guests:", guests);
+      console.log("🏠 Raw rooms:", rooms);
+
+      let parsedCheckIn = checkIn;
+      let parsedCheckOut = checkOut;
+
+      if (checkIn && checkIn.includes("T")) {
         try {
-          checkIn = new Date(checkIn).toISOString().split('T')[0];
+          parsedCheckIn = new Date(checkIn).toISOString().split("T")[0];
+          console.log("📅 Parsed checkIn:", parsedCheckIn);
         } catch (error) {
-          console.error('Error parsing checkIn date:', checkIn, error);
+          console.error("Error parsing checkIn date:", checkIn, error);
         }
       }
-      
-      if (checkOut && checkOut.includes('T')) {
+
+      if (checkOut && checkOut.includes("T")) {
         try {
-          checkOut = new Date(checkOut).toISOString().split('T')[0];
+          parsedCheckOut = new Date(checkOut).toISOString().split("T")[0];
+          console.log("📅 Parsed checkOut:", parsedCheckOut);
         } catch (error) {
-          console.error('Error parsing checkOut date:', checkOut, error);
+          console.error("Error parsing checkOut date:", checkOut, error);
         }
       }
-      
-        if (checkIn && checkOut && guests) {
+
+      if (checkIn && checkOut && guests) {
+        console.log(
+          "✅ All required parameters available, proceeding with search..."
+        );
         // Use rooms parameter if available, otherwise default to 1
         const roomsCount = rooms ? parseInt(rooms) : 1;
         const guestsCount = parseInt(guests);
-        
+
+        console.log("🏠 roomsCount:", roomsCount);
+        console.log("👥 guestsCount:", guestsCount);
+
         // Validate that parsing was successful
         if (isNaN(roomsCount) || isNaN(guestsCount)) {
+          console.log("❌ Invalid room or guest count");
           setBookingCode(null);
           return;
         }
-        
+
         const searchParams = {
-          CheckIn: checkIn,
-          CheckOut: checkOut,
+          CheckIn: parsedCheckIn,
+          CheckOut: parsedCheckOut,
           HotelCodes: id,
           GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
           PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
           PaxRooms: Array.from({ length: roomsCount }, () => ({
             Adults: guestsCount,
             Children: APP_CONFIG.DEFAULT_CHILDREN,
-            ChildrenAges: []
+            ChildrenAges: [],
           })),
           IsDetailResponse: true,
-          ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
+          ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME,
         };
-        
-        const searchResponse = await searchHotels(searchParams);
-        
+
+        // Try to get booking code from hotel details first (faster)
+        console.log("🚀 Trying to get booking code from hotel details...");
+        try {
+          const hotelDetailsResponse = await getHotelDetails(id);
+          if (hotelDetailsResponse?.Rooms?.BookingCode) {
+            console.log(
+              "✅ Found booking code from hotel details:",
+              hotelDetailsResponse.Rooms.BookingCode
+            );
+            setBookingCode(hotelDetailsResponse.Rooms.BookingCode);
+            return;
+          }
+        } catch (error) {
+          console.log("⚠️ Hotel details approach failed, trying search API...");
+        }
+
+        // Fallback to search API with timeout
+        const searchResponse = await Promise.race([
+          searchHotels(searchParams),
+          new Promise((_, reject) =>
+            setTimeout(
+              () =>
+                reject(new Error("Search request timeout after 30 seconds")),
+              30000
+            )
+          ),
+        ]);
+
         if (searchResponse?.HotelResult) {
           const hotel = searchResponse.HotelResult;
-          
+
           // Handle both array and object structures
           if (Array.isArray(hotel)) {
-            const foundHotel = hotel.find(h => h.HotelCode === id);
-            
+            const foundHotel = hotel.find((h) => h.HotelCode === id);
+
             if (foundHotel?.Rooms) {
-              if (Array.isArray(foundHotel.Rooms) && foundHotel.Rooms.length > 0) {
+              if (
+                Array.isArray(foundHotel.Rooms) &&
+                foundHotel.Rooms.length > 0
+              ) {
                 const foundBookingCode = foundHotel.Rooms[0].BookingCode;
                 setBookingCode(foundBookingCode);
                 return;
@@ -168,7 +228,11 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
                 return;
               }
             }
-          } else if (hotel.HotelCode && hotel.Rooms && hotel.Rooms.BookingCode) {
+          } else if (
+            hotel.HotelCode &&
+            hotel.Rooms &&
+            hotel.Rooms.BookingCode
+          ) {
             // Handle object structure where Rooms is an object
             if (hotel.HotelCode === id || hotel.HotelCode === String(id)) {
               const foundBookingCode = hotel.Rooms.BookingCode;
@@ -178,7 +242,7 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
           }
         }
       }
-      
+
       // If no search parameters available, try with default values
       if (!checkIn || !checkOut || !guests) {
         const defaultSearchParams = {
@@ -187,28 +251,50 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
           HotelCodes: id,
           GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
           PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
-          PaxRooms: [{ 
-            Adults: APP_CONFIG.DEFAULT_GUESTS, 
-            Children: APP_CONFIG.DEFAULT_CHILDREN, 
-            ChildrenAges: [] 
-          }],
+          PaxRooms: [
+            {
+              Adults: APP_CONFIG.DEFAULT_GUESTS,
+              Children: APP_CONFIG.DEFAULT_CHILDREN,
+              ChildrenAges: [],
+            },
+          ],
           IsDetailResponse: true,
-          ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME
+          ResponseTime: APP_CONFIG.DEFAULT_RESPONSE_TIME,
         };
-        
-        const defaultSearchResponse = await searchHotels(defaultSearchParams);
-        
+
+        // Add timeout to prevent hanging requests (increased to 30 seconds)
+        const defaultSearchResponse = await Promise.race([
+          searchHotels(defaultSearchParams),
+          new Promise((_, reject) =>
+            setTimeout(
+              () =>
+                reject(
+                  new Error("Default search request timeout after 30 seconds")
+                ),
+              30000
+            )
+          ),
+        ]);
+
         if (defaultSearchResponse?.HotelResult) {
           const hotel = defaultSearchResponse.HotelResult;
-          
+
           if (Array.isArray(hotel)) {
-            const foundHotel = hotel.find(h => h.HotelCode === id);
-            if (foundHotel?.Rooms && Array.isArray(foundHotel.Rooms) && foundHotel.Rooms.length > 0) {
+            const foundHotel = hotel.find((h) => h.HotelCode === id);
+            if (
+              foundHotel?.Rooms &&
+              Array.isArray(foundHotel.Rooms) &&
+              foundHotel.Rooms.length > 0
+            ) {
               const foundBookingCode = foundHotel.Rooms[0].BookingCode;
               setBookingCode(foundBookingCode);
               return;
             }
-          } else if (hotel.HotelCode && hotel.Rooms && hotel.Rooms.BookingCode) {
+          } else if (
+            hotel.HotelCode &&
+            hotel.Rooms &&
+            hotel.Rooms.BookingCode
+          ) {
             if (hotel.HotelCode === id || hotel.HotelCode === String(id)) {
               const foundBookingCode = hotel.Rooms.BookingCode;
               setBookingCode(foundBookingCode);
@@ -217,10 +303,9 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
           }
         }
       }
-      
+
       // If no booking code found from search, show error
       setBookingCode(null);
-      
     } catch (error) {
       console.error("Error fetching booking code:", error);
       // Set booking code to null if search fails
@@ -246,15 +331,12 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
     console.log("Selected room:", room);
   };
 
-  const handleBookingClick = () => {
-    setShowBookingModal(true);
-  };
-
-  const handleCloseBookingModal = () => {
-    setShowBookingModal(false);
-  };
-
   const handleReserveClick = async () => {
+    console.log("🔍 Debug - checkIn:", checkIn);
+    console.log("🔍 Debug - checkOut:", checkOut);
+    console.log("🔍 Debug - guests:", guests);
+    console.log("🔍 Debug - rooms:", rooms);
+
     if (!bookingCode) {
       console.error("No booking code available, trying to fetch again...");
       // Try to fetch booking code again
@@ -267,7 +349,10 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
 
     setPrebookLoading(true);
     try {
-      console.log("🔒 Starting prebook process with booking code:", bookingCode);
+      console.log(
+        "🔒 Starting prebook process with booking code:",
+        bookingCode
+      );
 
       const prebookResponse = await prebookHotel({
         BookingCode: bookingCode,
@@ -284,6 +369,10 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
             prebookData: prebookResponse,
             bookingCode: bookingCode,
             hotelDetails: hotelDetails,
+            checkIn: checkIn,
+            checkOut: checkOut,
+            guests: guests,
+            rooms: rooms,
           },
         });
       } else {
@@ -307,13 +396,12 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
     }
   };
 
-
   useEffect(() => {
     if (id) {
       fetchHotelDetails(id);
       fetchBookingCode();
     }
-  }, [id]);
+  }, [id, searchParams]);
 
   if (loading) {
     return <Loader />;
@@ -341,14 +429,14 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
   // Helper function to decode HTML entities
   const decodeHtmlEntities = (html: string) => {
     return html
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
       .replace(/&quot;/g, '"')
       .replace(/&#39;/g, "'")
-      .replace(/andlt;/g, '<')
-      .replace(/andgt;/g, '>')
-      .replace(/andamp;/g, '&')
+      .replace(/andlt;/g, "<")
+      .replace(/andgt;/g, ">")
+      .replace(/andamp;/g, "&")
       .replace(/andquot;/g, '"')
       .replace(/and#39;/g, "'");
   };
@@ -357,17 +445,17 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
   const extractSections = (description: string) => {
     const decoded = decodeHtmlEntities(description);
     const sections: { [key: string]: string } = {};
-    
+
     // Extract different sections using regex
     const sectionRegex = /<b>([^<]+)<\/b><br\s*\/?>(.*?)(?=<b>|$)/gs;
     let match;
-    
+
     while ((match = sectionRegex.exec(decoded)) !== null) {
       const sectionName = match[1].trim();
       const sectionContent = match[2].trim();
       sections[sectionName] = sectionContent;
     }
-    
+
     return sections;
   };
 
@@ -408,213 +496,481 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40 px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" className="flex items-center space-x-2">
-            <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Back to search</span>
-          </Button>
-          <h1 className="text-lg sm:text-xl font-bold truncate mx-4">
-            Hotel Details
-          </h1>
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm" className="p-2">
-              <Share className="h-4 w-4" />
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main
+        className="w-full px-6 lg:px-8 py-8 pt-header-plus-25"
+        style={{
+          paddingTop: "calc(var(--header-height-default) + 41px + 19px)",
+        }}
+      >
+        {/* Back Button */}
+        <div className="mb-6">
+          <Link to="/search">
+            <Button variant="ghost" className="flex items-center space-x-2">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to search</span>
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsFavorite(!isFavorite)}
-              className="p-2"
-            >
-              <Heart
-                className={`h-4 w-4 ${
-                  isFavorite ? "fill-red-500 text-red-500" : ""
-                }`}
-              />
-            </Button>
-          </div>
+          </Link>
         </div>
-      </header>
 
-      <main className="px-4 py-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        {/* Hotel Images - Responsive Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-6 lg:mb-8">
-          {/* Image Section */}
+        {/* Hotel Images */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div className="space-y-4">
-            <div className="aspect-[16/10] sm:aspect-[4/3] relative overflow-hidden rounded-xl">
+            <div className="aspect-[4/3] relative overflow-hidden rounded-xl">
               <img
-                src={hotelDetails.FrontImage}
+                src={
+                  hotelDetails.Images?.[0] ||
+                  hotelDetails.FrontImage ||
+                  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop"
+                }
                 alt={hotelDetails.HotelName}
                 className="w-full h-full object-cover"
               />
             </div>
-            {/* Thumbnail images - hidden on mobile, shown on tablet+ */}
-            <div className="hidden sm:grid grid-cols-2 gap-2">
-              {hotelDetails.Images.slice(0, 2).map((img, idx) => (
-                <div
-                  key={idx}
-                  className="aspect-video relative overflow-hidden rounded-lg"
-                >
-                  <img
-                    src={img}
-                    alt={`View ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Hotel Details Section */}
-          <div className="space-y-4 lg:space-y-6">
+          {/* Hotel Details */}
+          <div className="space-y-6">
             {/* Header */}
             <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center space-x-2">
+                  {/* API does not provide isNew; can skip */}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button variant="ghost" size="icon">
+                    <Share className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsFavorite(!isFavorite)}
+                  >
+                    <Heart
+                      className={`h-4 w-4 ${
+                        isFavorite ? "fill-red-500 text-red-500" : ""
+                      }`}
+                    />
+                  </Button>
+                </div>
+              </div>
+
+              <h1 className="text-3xl font-bold text-foreground mb-2">
                 {hotelDetails.HotelName}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm sm:text-base text-gray-600">
+              <div className="flex items-center space-x-4 text-muted-foreground">
                 <div className="flex items-center space-x-1">
                   <Star className="h-4 w-4 fill-black text-black" />
                   <span className="font-medium">
-                    {hotelDetails.HotelRating}
+                    {hotelDetails.HotelRating
+                      ? hotelDetails.HotelRating
+                      : "N/A"}
                   </span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <MapPin className="h-4 w-4 flex-shrink-0" />
-                  <span className="truncate">
-                    {hotelDetails.Address}, {hotelDetails.CityName}
+                  <MapPin className="h-4 w-4" />
+                  <span>
+                    {hotelDetails.Address}, {hotelDetails.CityName},{" "}
+                    {hotelDetails.CountryName}
                   </span>
                 </div>
               </div>
 
-              {/* Selected Room - Responsive */}
+              {/* Selected Room Information */}
               {selectedRoom && (
-                <div className="mt-4 lg:mt-6 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <h4 className="font-semibold text-base sm:text-lg mb-2">
-                    Selected Room
-                  </h4>
-                  <div className="flex flex-col sm:flex-row justify-between gap-3">
+                <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                  <h4 className="font-semibold text-lg mb-2">Selected Room</h4>
+                  <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <p className="font-medium text-sm sm:text-base">
-                        {selectedRoom.Name}
-                      </p>
-                      <p className="text-xs sm:text-sm text-gray-600">
+                      <p className="font-medium">{selectedRoom.Name}</p>
+                      <p className="text-sm text-muted-foreground">
                         {selectedRoom.MealType}
                       </p>
-                      <div className="flex flex-wrap items-center gap-2 mt-2">
-                        <Badge variant="default">Refundable</Badge>
-                        <Badge variant="outline">With Transfers</Badge>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge
+                          variant={
+                            selectedRoom.IsRefundable === "true"
+                              ? "default"
+                              : "destructive"
+                          }
+                        >
+                          {selectedRoom.IsRefundable === "true"
+                            ? "Refundable"
+                            : "Non-Refundable"}
+                        </Badge>
+                        {selectedRoom.WithTransfers === "true" && (
+                          <Badge variant="outline">With Transfers</Badge>
+                        )}
                       </div>
                     </div>
-                    <div className="text-left sm:text-right">
-                      <div className="text-xl sm:text-2xl font-bold text-blue-600">
-                        {hotelDetails.Currency} {selectedRoom.TotalFare}
+                    <div className="text-right ml-4">
+                      <div className="text-xl font-bold text-primary">
+                        {hotelDetails.Currency || "USD"}{" "}
+                        {selectedRoom.TotalFare}
                       </div>
-                      <p className="text-xs sm:text-sm text-gray-600">
-                        Including taxes
-                      </p>
+                      {selectedRoom.TotalTax !== "0" && (
+                        <p className="text-sm text-muted-foreground">
+                          Tax: {hotelDetails.Currency || "USD"}{" "}
+                          {selectedRoom.TotalTax}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Action Buttons - Responsive */}
-              <div className="flex flex-col sm:flex-row gap-3 mt-4 lg:mt-6">
+              {/* Reserve Button */}
+              <div className="flex gap-3 mt-6">
                 <Button
                   size="lg"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto"
-                  onClick={() => alert("Reserve clicked")}
+                  className="w-full bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  onClick={handleReserveClick}
+                  disabled={
+                    prebookLoading || !bookingCode || searchingForBookingCode
+                  }
                 >
-                  Reserve
-                </Button>
-                <Button
-                  size="lg"
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
-                  onClick={() => setShowBookingModal(true)}
-                >
-                  Book Now
+                  {searchingForBookingCode
+                    ? "Finding booking code..."
+                    : prebookLoading
+                    ? "Processing..."
+                    : "Reserve"}
                 </Button>
               </div>
 
-              <p className="text-center text-xs sm:text-sm text-gray-600 mt-2 sm:mt-3">
+              {!bookingCode && !searchingForBookingCode && (
+                <div className="text-center text-sm text-red-500 mt-2">
+                  <p>Booking code not available. Please try again.</p>
+                  <button
+                    onClick={fetchBookingCode}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Retry Fetch Booking Code
+                  </button>
+                </div>
+              )}
+
+              <p className="text-center text-sm text-muted-foreground mt-3">
                 You won't be charged yet
               </p>
 
-              {/* Available Rooms Section - Responsive */}
-              <div className="mt-6 lg:mt-8">
-                <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-                  Available Rooms
-                </h3>
-                <div className="border rounded-lg p-3 sm:p-4 hover:bg-gray-50 transition-colors">
-                  <div className="flex flex-col sm:flex-row justify-between gap-3">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-sm sm:text-base">
-                        Room Options Available
-                      </h4>
-                      <p className="text-xs sm:text-sm text-gray-600">
-                        Multiple room types available
-                      </p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <Badge variant="outline">Various Options</Badge>
-                        <Badge variant="outline">Different Meals</Badge>
+              {/* Available Rooms Section */}
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold mb-4">Available Rooms</h3>
+                <div className="space-y-4">
+                  <p className="text-muted-foreground">
+                    Click on a room to view detailed information including
+                    amenities, pricing, and booking details.
+                  </p>
+                  <div className="grid gap-4">
+                    {/* Show selected room if available, otherwise show default room */}
+                    {selectedRoom ? (
+                      <div className="border border-primary rounded-lg p-4 bg-primary/5">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-semibold">
+                              {selectedRoom.Name}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {selectedRoom.MealType}
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge
+                                variant={
+                                  selectedRoom.IsRefundable === "true"
+                                    ? "default"
+                                    : "destructive"
+                                }
+                              >
+                                {selectedRoom.IsRefundable === "true"
+                                  ? "Refundable"
+                                  : "Non-Refundable"}
+                              </Badge>
+                              {selectedRoom.WithTransfers === "true" && (
+                                <Badge variant="outline">With Transfers</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-primary">
+                              {hotelDetails.Currency || "USD"}{" "}
+                              {selectedRoom.TotalFare}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              total
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <Button
+                            onClick={() =>
+                              handleViewRoomDetails(
+                                bookingCode || "no-booking-code"
+                              )
+                            }
+                            variant="outline"
+                            className="w-full"
+                          >
+                            Change Room Selection
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-left sm:text-right">
-                      <div className="text-lg sm:text-xl font-bold">
-                        From ${hotelDetails.Price}
+                    ) : (
+                      <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-semibold">
+                              Room Options Available
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              Multiple room types and meal plans available
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge variant="outline">Various Options</Badge>
+                              <Badge variant="outline">
+                                Different Meal Plans
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold">From $200</div>
+                            <div className="text-sm text-muted-foreground">
+                              per night
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <Button
+                            onClick={() =>
+                              handleViewRoomDetails(
+                                bookingCode || "no-booking-code"
+                              )
+                            }
+                            variant="outline"
+                            className="w-full"
+                          >
+                            View Room Options
+                          </Button>
+                        </div>
                       </div>
-                      <div className="text-xs sm:text-sm text-gray-600">
-                        per night
-                      </div>
-                    </div>
+                    )}
                   </div>
-                  <Button
-                    onClick={() => setShowRoomDetails(true)}
-                    variant="outline"
-                    className="w-full mt-3 sm:mt-4"
-                  >
-                    View Room Options
-                  </Button>
                 </div>
               </div>
             </div>
 
-            {/* Amenities - Responsive Grid */}
+            {/* Amenities */}
             <div>
-              <h3 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4">
+              <h3 className="font-semibold text-foreground mb-4">
                 What this place offers
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3">
-                {hotelDetails.HotelFacilities.map((amenity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-2 py-2 px-3 rounded-lg bg-gray-100 text-sm"
-                  >
-                    <Wifi className="h-4 w-4 flex-shrink-0" />
-                    <span className="truncate">{amenity}</span>
-                  </div>
-                ))}
+              <div className="flex flex-wrap gap-3">
+                {hotelDetails.HotelFacilities &&
+                  hotelDetails.HotelFacilities.map(
+                    (amenity: string, index: number) => (
+                      <div
+                        key={`${amenity}-${index}`}
+                        className="flex items-center space-x-2 py-1 px-2 rounded-full bg-muted/50"
+                      >
+                        <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                          {getAmenityIcon(amenity)}
+                        </div>
+                        <span className="text-sm font-medium">{amenity}</span>
+                      </div>
+                    )
+                  )}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Map Section - Responsive */}
-        <Card className="mb-6 lg:mb-8">
-          <CardContent className="p-4 sm:p-6">
-            <h3 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4">
+        {/* Description and Hotel Information */}
+        {hotelDetails.Description &&
+          (() => {
+            const sections = extractSections(hotelDetails.Description);
+            return (
+              <div className="space-y-6 mb-8">
+                {/* About this place */}
+                {(sections["Amenities"] ||
+                  sections["Dining"] ||
+                  sections["Business Amenities"] ||
+                  sections["Rooms"]) && (
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-foreground mb-4">
+                        About this place
+                      </h3>
+                      <div className="space-y-4">
+                        {sections["Amenities"] && (
+                          <div>
+                            <h4 className="font-semibold text-foreground mb-2">
+                              Amenities
+                            </h4>
+                            <div
+                              className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{
+                                __html: sections["Amenities"],
+                              }}
+                            />
+                          </div>
+                        )}
+                        {sections["Dining"] && (
+                          <div>
+                            <h4 className="font-semibold text-foreground mb-2">
+                              Dining
+                            </h4>
+                            <div
+                              className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{
+                                __html: sections["Dining"],
+                              }}
+                            />
+                          </div>
+                        )}
+                        {sections["Business Amenities"] && (
+                          <div>
+                            <h4 className="font-semibold text-foreground mb-2">
+                              Business Amenities
+                            </h4>
+                            <div
+                              className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{
+                                __html: sections["Business Amenities"],
+                              }}
+                            />
+                          </div>
+                        )}
+                        {sections["Rooms"] && (
+                          <div>
+                            <h4 className="font-semibold text-foreground mb-2">
+                              Rooms
+                            </h4>
+                            <div
+                              className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{
+                                __html: sections["Rooms"],
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Attractions */}
+                {sections["Attractions"] && (
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-foreground mb-4">
+                        Nearby Attractions
+                      </h3>
+                      <div
+                        className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: sections["Attractions"],
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Location */}
+                {sections["Location"] && (
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-foreground mb-4">
+                        Location
+                      </h3>
+                      <div
+                        className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: sections["Location"],
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Check In Instructions */}
+                {sections["Check In Instructions"] && (
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-foreground mb-4">
+                        Check In Information
+                      </h3>
+                      <div
+                        className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: sections["Check In Instructions"],
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Fees */}
+                {sections["Fees"] && (
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-foreground mb-4">
+                        Fees & Charges
+                      </h3>
+                      <div
+                        className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: sections["Fees"] }}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Policies */}
+                {sections["Policies"] && (
+                  <Card>
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-foreground mb-4">
+                        Policies
+                      </h3>
+                      <div
+                        className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: sections["Policies"],
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            );
+          })()}
+
+        {/* Location */}
+        <Card className="mb-8">
+          <CardContent className="p-6">
+            <h3 className="font-semibold text-foreground mb-4">
               Where you'll be
             </h3>
-            <div className="h-64 sm:h-80 lg:h-96 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
-              <FakeMapView hotelDetails={hotelDetails} />
+            <div className="h-80 rounded-lg overflow-hidden">
+              <FakeMapView
+                hotels={[
+                  {
+                    id: hotelDetails.HotelCode,
+                    name: hotelDetails.HotelName,
+                    location: hotelDetails.Address,
+                    images: hotelDetails.Images || [hotelDetails.FrontImage],
+                    rating: hotelDetails.HotelRating,
+                    price: hotelDetails.Price || 200,
+                    reviews: 0,
+                  },
+                ]}
+                selectedHotel={hotelDetails.HotelCode}
+                onHotelSelect={() => {}}
+              />
             </div>
-            <div className="mt-3 sm:mt-4 flex items-start space-x-2 text-sm sm:text-base text-gray-600">
-              <MapPin className="h-4 w-4 mt-1 flex-shrink-0" />
-              <span className="break-words">
+            <div className="mt-4 flex items-center space-x-2 text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>
                 {hotelDetails.Address}, {hotelDetails.CityName},{" "}
                 {hotelDetails.CountryName}
               </span>
@@ -622,58 +978,49 @@ import { APP_CONFIG, getCurrentDate, getDateFromNow } from "@/config/constants";
           </CardContent>
         </Card>
 
-        {/* Reviews - Responsive */}
+        {/* Reviews Preview */}
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-4 mb-6">
               <Star className="h-5 w-5 fill-black text-black" />
-              <span className="text-lg sm:text-xl font-semibold">
-                {hotelDetails.HotelRating} · Guest Reviews
+              <span className="text-xl font-semibold">
+                {hotelDetails.HotelRating ? hotelDetails.HotelRating : "N/A"} ·
+                Guest Reviews
               </span>
             </div>
-            <div className="text-center py-6 sm:py-8">
-              <p className="text-sm sm:text-base text-gray-600">
-                Guest reviews are not available at this time.
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                Guest reviews are not available through the API at this time.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                This hotel has a {hotelDetails.HotelRating || "N/A"} star
+                rating.
               </p>
             </div>
           </CardContent>
         </Card>
-      </main>
 
-      {/* Room Details Modal - Responsive */}
-      {showRoomDetails && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
-          <div className="bg-white rounded-t-2xl sm:rounded-lg w-full sm:max-w-2xl lg:max-w-4xl max-h-[90vh] overflow-y-auto">
-            <HotelRoomDetailsResponsive
-              onClose={() => setShowRoomDetails(false)}
-              onRoomSelect={(room) => {
-                setSelectedRoom(room);
-                setShowRoomDetails(false);
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Booking Modal - Responsive */}
-      {showBookingModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
-          <div className="bg-white rounded-t-2xl sm:rounded-lg w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold">Complete Booking</h3>
-                <button
-                  onClick={() => setShowBookingModal(false)}
-                  className="p-2"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              <p className="text-gray-600">Booking form would go here...</p>
+        {/* Room Details Modal */}
+        {showRoomDetails && selectedBookingCode && (
+          <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
+            onClick={handleCloseRoomDetails}
+          >
+            <div
+              className="bg-background rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <HotelRoomDetails
+                bookingCode={selectedBookingCode}
+                onClose={handleCloseRoomDetails}
+                onRoomSelect={handleRoomSelect}
+                selectedRoom={selectedRoom}
+              />
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </main>
+      <Footer />
     </div>
   );
 };

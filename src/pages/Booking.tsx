@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowLeft, CheckCircle, Clock, User, Calendar, Users } from "lucide-react";
+import BookingModal from "@/components/BookingModal";
+import CancelModal from "@/components/CancelModal";
 
 const Booking = () => {
   
@@ -14,6 +16,8 @@ const Booking = () => {
   const location = useLocation();
   const [prebookData, setPrebookData] = useState<any>(null);
   const [hotelDetails, setHotelDetails] = useState<any>(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   useEffect(() => {
     if (location.state?.prebookData) {
@@ -75,11 +79,11 @@ const Booking = () => {
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      <span>Check-in: {prebookData.CheckIn || "N/A"}</span>
+                      <span>Check-in: {location.state?.checkIn || "N/A"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      <span>Check-out: {prebookData.CheckOut || "N/A"}</span>
+                      <span>Check-out: {location.state?.checkOut || "N/A"}</span>
                     </div>
                   </div>
                 </div>
@@ -99,17 +103,17 @@ const Booking = () => {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">Booking Reference</p>
-                      <p className="font-medium">{prebookData.BookingReference || "N/A"}</p>
+                      <p className="font-medium">{location.state?.bookingCode || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Total Amount</p>
                       <p className="font-medium">
-                        {prebookData.Currency} {prebookData.TotalAmount || "N/A"}
+                        {prebookData.HotelResult?.Currency} {prebookData.HotelResult?.Rooms?.TotalFare || "N/A"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Expiry Time</p>
-                      <p className="font-medium">{prebookData.ExpiryTime || "N/A"}</p>
+                      <p className="text-muted-foreground">Room Type</p>
+                      <p className="font-medium">{prebookData.HotelResult?.Rooms?.Name || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Status</p>
@@ -145,20 +149,49 @@ const Booking = () => {
                   
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Check-in</span>
-                    <span className="font-medium">{prebookData.CheckIn || "N/A"}</span>
+                    <span className="font-medium">{location.state?.checkIn || "N/A"}</span>
                   </div>
                   
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Check-out</span>
-                    <span className="font-medium">{prebookData.CheckOut || "N/A"}</span>
+                    <span className="font-medium">{location.state?.checkOut || "N/A"}</span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Room Type</span>
+                    <span className="font-medium">{prebookData.HotelResult?.Rooms?.Name || "N/A"}</span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Meal Type</span>
+                    <span className="font-medium">{prebookData.HotelResult?.Rooms?.MealType || "N/A"}</span>
                   </div>
                   
                   <hr />
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Total Amount</span>
                     <span className="font-bold text-lg">
-                      {prebookData.Currency} {prebookData.TotalAmount || "N/A"}
+                      {prebookData.HotelResult?.Currency} {prebookData.HotelResult?.Rooms?.TotalFare || "N/A"}
                     </span>
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 mt-4">
+                    <Button 
+                      size="lg" 
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                      onClick={() => setShowBookingModal(true)}
+                    >
+                      Book Now
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline"
+                      className="flex-1 border-red-500 text-red-600 hover:bg-red-50 hover:border-red-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                      onClick={() => setShowCancelModal(true)}
+                    >
+                      Cancel Booking
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -168,6 +201,46 @@ const Booking = () => {
       </div>
       
       <Footer />
+      
+      {/* Booking Modal */}
+      {showBookingModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
+          onClick={() => setShowBookingModal(false)}
+        >
+          <div 
+            className="bg-background rounded-lg max-w-md w-full animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <BookingModal 
+              hotelDetails={hotelDetails}
+              selectedRoom={prebookData?.HotelResult?.Rooms}
+              rooms={location.state?.rooms}
+              guests={location.state?.guests}
+              onClose={() => setShowBookingModal(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Modal */}
+      {showCancelModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
+          onClick={() => setShowCancelModal(false)}
+        >
+          <div 
+            className="bg-background rounded-lg max-w-md w-full animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <CancelModal 
+              hotelName={hotelDetails?.HotelName}
+              bookingReference={location.state?.bookingCode}
+              onClose={() => setShowCancelModal(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

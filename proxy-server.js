@@ -478,10 +478,59 @@ app.post('/api/hotel-book', async (req, res) => {
   }
 });
 
+// Cancel booking endpoint
+app.post('/api/hotel-cancel', async (req, res) => {
+  try {
+    console.log('🚫 Hotel cancel request received');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const apiUrl = process.env.API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
+    const username = process.env.API_USERNAME || "MS|GenX";
+    const password = process.env.API_PASSWORD || "GenX@123";
+    
+    console.log('🔐 Using credentials:', username, '***');
+    console.log('🌐 API URL:', `${apiUrl}/Cancel`);
+    
+    const authHeader = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
+    console.log('🔐 Auth header:', authHeader);
+    
+    const response = await fetch(`${apiUrl}/Cancel`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader,
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    console.log('📥 Travzilla cancel response status:', response.status);
+    console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Travzilla cancel API error:', errorText);
+      throw new Error(`Travzilla Cancel API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ Travzilla cancel response:', data);
+    
+    res.json(data);
+  } catch (error) {
+    console.error('❌ Hotel cancel proxy error:', error);
+    res.status(500).json({ 
+      error: 'Hotel cancel proxy error', 
+      message: error.message 
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Proxy server running on http://localhost:${PORT}`);
   console.log(`📡 Proxying Travzilla API calls...`);
   console.log(`👤 Proxying Customer API calls...`);
   console.log(`📋 Proxying Booking API calls...`);
   console.log(`🏨 Proxying Hotel Booking API calls...`);
+  console.log(`🚫 Proxying Hotel Cancel API calls...`);
 });

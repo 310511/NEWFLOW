@@ -5,8 +5,8 @@ export const APP_CONFIG = {
   DEFAULT_CURRENCY: "AED",
   
   // Default dates (fallback when no search parameters available)
-  DEFAULT_CHECK_IN: "2025-10-01",
-  DEFAULT_CHECK_OUT: "2025-10-02",
+  DEFAULT_CHECK_IN: "2025-01-15",
+  DEFAULT_CHECK_OUT: "2025-01-18",
   
   // API settings
   DEFAULT_RESPONSE_TIME: 30,

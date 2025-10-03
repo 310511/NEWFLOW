@@ -14,8 +14,16 @@ interface Props {
 const NewCustomSearchBar = ({ isSticky = false }: Props) => {
   const navigate = useNavigate();
   const [destination, setDestination] = useState("");
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  
+  // Set default dates to reasonable values (1 week from now, 3 days stay)
+  const defaultStartDate = new Date();
+  defaultStartDate.setDate(defaultStartDate.getDate() + 7); // 1 week from now
+  
+  const defaultEndDate = new Date();
+  defaultEndDate.setDate(defaultEndDate.getDate() + 10); // 3 days later
+  
+  const [startDate, setStartDate] = useState<Date | undefined>(defaultStartDate);
+  const [endDate, setEndDate] = useState<Date | undefined>(defaultEndDate);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);

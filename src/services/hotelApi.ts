@@ -67,12 +67,12 @@ export interface HotelSearchResponse {
   HotelResult: HotelResult[] | HotelResult;
 }
 
-// Search hotels using Travzilla API
+// Search hotels using Travzilla API - NO MOCK DATA
 export const searchHotels = async (params: HotelSearchParams): Promise<HotelSearchResponse> => {
   try {
     console.log('🔍 Calling Travzilla API with params:', params);
 
-    // Always use real Travzilla API - no fallback to mock data for testing
+    // Always use real Travzilla API - no fallback to mock data
     return await searchHotelsTravzilla(params);
   } catch (error) {
     console.error('💥 Hotel search error:', error);
@@ -178,117 +178,6 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
   }
 };
 
-// Mock data for development/fallback (NOT CURRENTLY USED - FOR TESTING PURPOSES ONLY)
-const searchHotelsMock = async (params: HotelSearchParams): Promise<HotelSearchResponse> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // Return realistic API response structure with real hotel data
-  return {
-    Status: {
-      Code: "200",
-      Description: "Successful"
-    },
-    HotelResult: [
-        {
-          HotelCode: "263678",
-          HotelName: "Burj Al Arab",
-          Address: "Jumeirah Beach, Dubai",
-          StarRating: "5",
-          FrontImage: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop",
-          Price: 2500,
-          Currency: APP_CONFIG.DEFAULT_CURRENCY,
-          RoomType: "Deluxe Suite",
-          MealType: "All Inclusive",
-          Refundable: true,
-          CancellationPolicy: "Free cancellation until 24 hours before check-in",
-          Amenities: ["WiFi", "Pool", "Gym", "Restaurant", "Spa", "Beach Access", "Concierge"],
-          Description: "Iconic luxury hotel with stunning architecture and world-class service",
-          Location: {
-            Latitude: 25.1413,
-            Longitude: 55.1853
-          }
-        },
-        {
-          HotelCode: "91920",
-          HotelName: "Atlantis The Palm",
-          Address: "Palm Jumeirah, Dubai",
-          StarRating: "5",
-          FrontImage: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop",
-          Price: 1800,
-          Currency: APP_CONFIG.DEFAULT_CURRENCY,
-          RoomType: "Ocean View Room",
-          MealType: "Breakfast Included",
-          Refundable: true,
-          CancellationPolicy: "Free cancellation until 48 hours before check-in",
-          Amenities: ["WiFi", "Pool", "Gym", "Restaurant", "Aquarium", "Water Park", "Beach Access"],
-          Description: "Luxury resort with underwater suites and world-class entertainment",
-          Location: {
-            Latitude: 25.1127,
-            Longitude: 55.1167
-          }
-        },
-        {
-          HotelCode: "414792",
-          HotelName: "JW Marriott Marquis Dubai",
-          Address: "Business Bay, Dubai",
-          StarRating: "5",
-          FrontImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
-          Price: 1200,
-          Currency: APP_CONFIG.DEFAULT_CURRENCY,
-          RoomType: "Executive Suite",
-          MealType: "Room Only",
-          Refundable: true,
-          CancellationPolicy: "Free cancellation until 24 hours before check-in",
-          Amenities: ["WiFi", "Pool", "Gym", "Restaurant", "Business Center", "Spa"],
-          Description: "Modern luxury hotel in the heart of Dubai's business district",
-          Location: {
-            Latitude: 25.1972,
-            Longitude: 55.2744
-          }
-        },
-        {
-          HotelCode: "123456",
-          HotelName: "Raffles Dubai",
-          Address: "Wafi City, Dubai",
-          StarRating: "5",
-          FrontImage: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=300&fit=crop",
-          Price: 1500,
-          Currency: APP_CONFIG.DEFAULT_CURRENCY,
-          RoomType: "Deluxe Room",
-          MealType: "Breakfast Included",
-          Refundable: true,
-          CancellationPolicy: "Free cancellation until 24 hours before check-in",
-          Amenities: ["WiFi", "Pool", "Gym", "Restaurant", "Spa", "Shopping Mall Access"],
-          Description: "Elegant hotel with pyramid architecture and luxury amenities",
-          Location: {
-            Latitude: 25.2048,
-            Longitude: 55.2708
-          }
-        },
-        {
-          HotelCode: "789012",
-          HotelName: "Armani Hotel Dubai",
-          Address: "Burj Khalifa, Downtown Dubai",
-          StarRating: "5",
-          FrontImage: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop",
-          Price: 3000,
-          Currency: APP_CONFIG.DEFAULT_CURRENCY,
-          RoomType: "Armani Suite",
-          MealType: "All Inclusive",
-          Refundable: true,
-          CancellationPolicy: "Free cancellation until 48 hours before check-in",
-          Amenities: ["WiFi", "Pool", "Gym", "Restaurant", "Spa", "Designer Boutique", "Sky Lounge"],
-          Description: "Luxury hotel designed by Giorgio Armani in the world's tallest building",
-          Location: {
-            Latitude: 25.1972,
-            Longitude: 55.2744
-          }
-        }
-      ]
-    };
-  };
-
 // Get hotel details by code using proxy server
 export const getHotelDetails = async (hotelCode: string): Promise<any> => {
   try {
@@ -300,79 +189,82 @@ export const getHotelDetails = async (hotelCode: string): Promise<any> => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ 
-        Hotelcodes: hotelCode,
-        Language: "en"
-      }),
+      body: JSON.stringify({ HotelCode: hotelCode }),
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ Hotel details error:', errorText);
+      throw new Error(`Hotel details error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
     console.log('✅ Hotel details response:', data);
     return data;
   } catch (error) {
-    console.error('Error getting hotel details:', error);
+    console.error('💥 Hotel details error:', error);
     throw error;
   }
 };
 
 // Get room availability
-export const getRoomAvailability = async (hotelCode: string, checkIn: string, checkOut: string) => {
+export const getRoomAvailability = async (hotelCode: string, checkIn: string, checkOut: string): Promise<any> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/RoomAvailability`, {
+    console.log('🔍 Getting room availability for:', hotelCode);
+    
+    const response = await fetch(`${PROXY_SERVER_URL}/room-availability`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${authHeader}`,
         'Accept': 'application/json',
       },
-      body: JSON.stringify({
+      body: JSON.stringify({ 
         HotelCode: hotelCode,
         CheckIn: checkIn,
-        CheckOut: checkOut,
+        CheckOut: checkOut
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ Room availability error:', errorText);
+      throw new Error(`Room availability error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log('✅ Room availability response:', data);
     return data;
   } catch (error) {
-    console.error('Error getting room availability:', error);
+    console.error('💥 Room availability error:', error);
     throw error;
   }
 };
 
 // Get hotel room details using booking code
-export const getHotelRoom = async (bookingCode: string) => {
+export const getHotelRoomDetails = async (bookingCode: string): Promise<any> => {
   try {
-    console.log('🏨 Getting hotel room details for booking code:', bookingCode);
+    console.log('🔍 Getting room details for booking code:', bookingCode);
     
-    const response = await fetch(`${PROXY_SERVER_URL}/hotel-room`, {
+    const response = await fetch(`${PROXY_SERVER_URL}/room-details`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({
-        BookingCode: bookingCode
-      }),
+      body: JSON.stringify({ BookingCode: bookingCode }),
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ Room details error:', errorText);
+      throw new Error(`Room details error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('✅ Hotel room response:', data);
+    console.log('✅ Room details response:', data);
     return data;
   } catch (error) {
-    console.error('Error getting hotel room details:', error);
+    console.error('💥 Room details error:', error);
     throw error;
   }
 };

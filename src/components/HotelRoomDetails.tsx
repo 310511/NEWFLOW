@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/ui/Loader";
-import { getHotelRoom } from "@/services/hotelApi";
+import { getHotelRoomDetails } from "@/services/hotelApi";
 import {
   Bed,
   Wifi,
@@ -41,12 +41,24 @@ interface HotelRoomResponse {
   Rooms: RoomOption[];
 }
 
-const HotelRoomDetails: React.FC<HotelRoomDetailsProps> = ({
-  bookingCode,
-  onClose,
-  onRoomSelect,
-  selectedRoom,
-}) => {
+interface RoomDetails {
+  HotelCode: string;
+  HotelName: string;
+  RoomType: string;
+  Price: number;
+  Currency: string;
+  Amenities: string[];
+  Description?: string;
+  CancellationPolicy?: string;
+  MealType?: string;
+  Refundable?: boolean;
+  CheckIn?: string;
+  CheckOut?: string;
+  TotalFare?: string;
+  TotalTax?: string;
+}
+
+const HotelRoomDetails: React.FC<HotelRoomDetailsProps> = ({ bookingCode, onClose, onRoomSelect, selectedRoom }) => {
   const [hotelData, setHotelData] = useState<HotelRoomResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -182,70 +194,57 @@ const HotelRoomDetails: React.FC<HotelRoomDetailsProps> = ({
         {/* Room Options List */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Room Types & Meal Plans</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid gap-4">
             {hotelData.Rooms.map((room, index) => {
               const isSelected = selectedRoom?.BookingCode === room.BookingCode;
               return (
-                <div
-                  key={index}
-                  className={`border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer flex flex-col justify-between h-full ${
-                    isSelected ? "border-primary bg-primary/10" : ""
+                <div 
+                  key={index} 
+                  className={`border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer ${
+                    isSelected ? 'border-primary bg-primary/5' : ''
                   }`}
                   onClick={() => onRoomSelect?.(room)}
                 >
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-lg">{room.Name}</h4>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {room.MealType}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <Badge
-                        variant={
-                          room.IsRefundable === "true"
-                            ? "default"
-                            : "destructive"
-                        }
-                      >
-                        {room.IsRefundable === "true"
-                          ? "Refundable"
-                          : "Non-Refundable"}
-                      </Badge>
-                      {room.WithTransfers === "true" && (
-                        <Badge variant="outline">With Transfers</Badge>
-                      )}
-                      {isSelected && (
-                        <Badge variant="default" className="bg-primary">
-                          Selected
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-lg">{room.Name}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{room.MealType}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant={room.IsRefundable === "true" ? "default" : "destructive"}>
+                          {room.IsRefundable === "true" ? "Refundable" : "Non-Refundable"}
                         </Badge>
+                        {room.WithTransfers === "true" && (
+                          <Badge variant="outline">With Transfers</Badge>
+                        )}
+                        {isSelected && (
+                          <Badge variant="default" className="bg-primary">Selected</Badge>
+                        )}
+                      </div>
+                      {room.Inclusion && (
+                        <p className="text-sm text-muted-foreground">{room.Inclusion}</p>
                       )}
                     </div>
-                    {room.Inclusion && (
-                      <p className="text-xs text-muted-foreground">
-                        {room.Inclusion}
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-right mt-4 sm:mt-0">
-                    <div className="text-xl font-bold text-primary">
-                      {hotelData.Currency} {room.TotalFare}
-                    </div>
-                    {room.TotalTax !== "0" && (
-                      <p className="text-xs text-muted-foreground">
-                        Tax: {hotelData.Currency} {room.TotalTax}
-                      </p>
-                    )}
-                    <div className="mt-2">
-                      <Button
-                        size="sm"
-                        variant={isSelected ? "default" : "outline"}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onRoomSelect?.(room);
-                        }}
-                        className="w-full sm:w-auto"
-                      >
-                        {isSelected ? "Selected" : "Select Room"}
-                      </Button>
+                    <div className="text-right ml-4">
+                      <div className="text-xl font-bold text-primary">
+                        {hotelData.Currency} {room.TotalFare}
+                      </div>
+                      {room.TotalTax !== "0" && (
+                        <p className="text-sm text-muted-foreground">
+                          Tax: {hotelData.Currency} {room.TotalTax}
+                        </p>
+                      )}
+                      <div className="mt-2">
+                        <Button 
+                          size="sm" 
+                          variant={isSelected ? "default" : "outline"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onRoomSelect?.(room);
+                          }}
+                        >
+                          {isSelected ? "Selected" : "Select Room"}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
