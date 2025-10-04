@@ -953,6 +953,7 @@ const SearchResults = () => {
             CityCode: cityCode, // Use city code instead of specific hotel codes
             GuestNationality: APP_CONFIG.DEFAULT_GUEST_NATIONALITY,
             PreferredCurrencyCode: APP_CONFIG.DEFAULT_CURRENCY,
+            HotelCodes: hotelCodes,
             PaxRooms: [{ 
               Adults: parseInt(guests) || APP_CONFIG.DEFAULT_GUESTS, 
               Children: APP_CONFIG.DEFAULT_CHILDREN, 
@@ -1323,7 +1324,7 @@ const SearchResults = () => {
                   <div className="flex flex-col items-center gap-4">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     <span className="text-lg font-medium">
-                      {isSearching ? 'Fetching hotels from API...' : 'Finding the best hotels for you...'}
+                      {isSearching ? 'Fetching hotels ...' : 'Finding the best hotels for you...'}
                     </span>
                     <p className="text-sm text-muted-foreground text-center max-w-md">
                       {isSearching 

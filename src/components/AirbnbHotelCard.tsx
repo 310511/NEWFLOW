@@ -113,7 +113,7 @@ const AirbnbHotelCard = ({ hotel, onHover, isSelected, variant = 'list' }: Airbn
   if (variant === 'map') {
     return (
       <div 
-        className={`bg-background rounded-xl overflow-hidden cursor-pointer transition-all duration-300 shadow-3d hover:shadow-3d-hover hover:scale-[1.02] ${
+        className={`bg-background rounded-xl overflow-y-auto cursor-pointer transition-all duration-300 shadow-3d hover:shadow-3d-hover hover:scale-[1.02] ${
           isSelected ? 'ring-2 ring-primary shadow-3d-hover scale-[1.02]' : ''
         }`}
         onClick={handleClick}

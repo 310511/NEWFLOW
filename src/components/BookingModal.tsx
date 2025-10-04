@@ -230,6 +230,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ hotelDetails, selectedRoom,
 
       if (result.success) {
         setSuccessMessage(`Booking completed successfully! Confirmation: ${result.confirmationNumber || 'N/A'}`);
+        // onClose()
         console.log('Booking completed:', result);
       } else {
         setErrorMessage(result.message || 'Booking failed. Please try again.');

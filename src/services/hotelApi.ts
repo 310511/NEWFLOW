@@ -189,7 +189,7 @@ export const getHotelDetails = async (hotelCode: string): Promise<any> => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ HotelCode: hotelCode }),
+      body: JSON.stringify({ Hotelcodes: Number(hotelCode) , Language: "en" }),
     });
 
     if (!response.ok) {

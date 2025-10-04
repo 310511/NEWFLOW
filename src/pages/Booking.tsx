@@ -218,6 +218,9 @@ const Booking = () => {
               rooms={location.state?.rooms}
               guests={location.state?.guests}
               onClose={() => setShowBookingModal(false)}
+              // showBookingModal
+              // setShowBookingModal
+
             />
           </div>
         </div>
