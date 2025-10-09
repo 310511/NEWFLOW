@@ -1,9 +1,12 @@
-import { APP_CONFIG } from '@/config/constants';
+import { APP_CONFIG } from "@/config/constants";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://api.travzillapro.com/HotelServiceRest';
-const PROXY_SERVER_URL = import.meta.env.VITE_PROXY_SERVER_URL || 'http://localhost:3001/api';
-const API_USERNAME = import.meta.env.VITE_API_USERNAME || '';
-const API_PASSWORD = import.meta.env.VITE_API_PASSWORD || '';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "http://api.travzillapro.com/HotelServiceRest";
+const PROXY_SERVER_URL =
+  import.meta.env.VITE_PROXY_SERVER_URL || "http://localhost:3001/api";
+const API_USERNAME = import.meta.env.VITE_API_USERNAME || "";
+const API_PASSWORD = import.meta.env.VITE_API_PASSWORD || "";
 
 const getApiUrl = (endpoint: string) => {
   return `${PROXY_SERVER_URL}${endpoint}`;
@@ -68,59 +71,65 @@ export interface HotelSearchResponse {
 }
 
 // Search hotels using Travzilla API - NO MOCK DATA
-export const searchHotels = async (params: HotelSearchParams): Promise<HotelSearchResponse> => {
+export const searchHotels = async (
+  params: HotelSearchParams
+): Promise<HotelSearchResponse> => {
   try {
-    console.log('🔍 Calling Travzilla API with params:', params);
+    console.log("🔍 Calling Travzilla API with params:", params);
 
     // Always use real Travzilla API - no fallback to mock data
     return await searchHotelsTravzilla(params);
   } catch (error) {
-    console.error('💥 Hotel search error:', error);
+    console.error("💥 Hotel search error:", error);
     throw error;
   }
 };
 
 // Real API integration with Travzilla via local proxy
-const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSearchResponse> => {
+const searchHotelsTravzilla = async (
+  params: HotelSearchParams
+): Promise<HotelSearchResponse> => {
   try {
-    console.log('🌐 Calling Travzilla API via local proxy...');
-    console.log('🌐 searchHotelsTravzilla called with params:', params);
-    const proxyUrl = getApiUrl('/hotel-search');
-    console.log('📍 Proxy URL:', proxyUrl);
-    console.log('📤 Request Body:', JSON.stringify(params, null, 2));
-    console.log('🔍 Environment check - PROXY_SERVER_URL:', PROXY_SERVER_URL);
-    
+    console.log("🌐 Calling Travzilla API via local proxy...");
+    console.log("🌐 searchHotelsTravzilla called with params:", params);
+    const proxyUrl = getApiUrl("/hotel-search");
+    console.log("📍 Proxy URL:", proxyUrl);
+    console.log("📤 Request Body:", JSON.stringify(params, null, 2));
+    console.log("🔍 Environment check - PROXY_SERVER_URL:", PROXY_SERVER_URL);
+
     const response = await fetch(proxyUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify(params),
     });
-    
-    console.log('📥 Response Status:', response.status);
-    
+
+    console.log("📥 Response Status:", response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Proxy response error:', errorText);
-      throw new Error(`Proxy server error: ${response.status} ${response.statusText}`);
+      console.error("❌ Proxy response error:", errorText);
+      throw new Error(
+        `Proxy server error: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = await response.json();
-    console.log('✅ Travzilla API response:', data);
-    console.log('✅ Travzilla API response type:', typeof data);
-    console.log('✅ Travzilla API response keys:', Object.keys(data || {}));
+    console.log("✅ Travzilla API response:", data);
+    console.log("✅ Travzilla API response type:", typeof data);
+    console.log("✅ Travzilla API response keys:", Object.keys(data || {}));
 
     // Handle null response (no hotels found)
     if (data === null || data === undefined) {
-      console.log('📭 No hotels found for this search');
+      console.log("📭 No hotels found for this search");
       return {
         Status: {
           Code: "204",
-          Description: "No results found for the requested search"
+          Description: "No results found for the requested search",
         },
-        HotelResult: []
+        HotelResult: [],
       };
     }
 
@@ -129,15 +138,18 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
       // Ensure HotelResult is an array
       let hotelResults = data.HotelResult;
       if (!Array.isArray(hotelResults)) {
-        console.log("📋 HotelResult is not an array, converting...", typeof hotelResults);
-        if (typeof hotelResults === 'object' && hotelResults !== null) {
+        console.log(
+          "📋 HotelResult is not an array, converting...",
+          typeof hotelResults
+        );
+        if (typeof hotelResults === "object" && hotelResults !== null) {
           // Convert single hotel object to array
           hotelResults = [hotelResults];
         } else {
           hotelResults = [];
         }
       }
-      
+
       // Process hotel results to extract room data and booking codes
       const processedHotels = hotelResults.map((hotel: any) => {
         if (hotel.Rooms) {
@@ -151,120 +163,173 @@ const searchHotelsTravzilla = async (params: HotelSearchParams): Promise<HotelSe
         }
         return hotel;
       });
-      
+
       return {
         ...data,
-        HotelResult: processedHotels
+        HotelResult: processedHotels,
       };
     } else {
       // Transform response if needed
       return {
         Status: {
           Code: "200",
-          Description: "Successful"
+          Description: "Successful",
         },
-        HotelResult: Array.isArray(data.HotelResult) ? data.HotelResult : (data.hotels || [])
+        HotelResult: Array.isArray(data.HotelResult)
+          ? data.HotelResult
+          : data.hotels || [],
       };
     }
-
   } catch (error) {
-    console.error('💥 Proxy API error:', error);
-    console.error('💥 Error details:', {
+    console.error("💥 Proxy API error:", error);
+    console.error("💥 Error details:", {
       message: error.message,
       stack: error.stack,
-      name: error.name
+      name: error.name,
     });
-    throw new Error(`Travzilla API failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Travzilla API failed: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
   }
 };
 
 // Get hotel details by code using proxy server
-export const getHotelDetails = async (hotelCode: string): Promise<any> => {
+// export const getHotelDetails = async (hotelCode: string): Promise<any> => {
+//   try {
+//     console.log('🔍 Fetching hotel details for:', hotelCode);
+
+//     const response = await fetch(`${PROXY_SERVER_URL}/hotel-details`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Accept': 'application/json',
+//       },
+//       body: JSON.stringify({ HotelCode: Number(hotelCode) ,Language : 'EN'}),
+//     });
+
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.error('❌ Hotel details error:', errorText);
+//       throw new Error(`Hotel details error: ${response.status} ${response.statusText}`);
+//     }
+
+//     const data = await response.json();
+//     console.log('✅ Hotel details response:', data);
+//     return data;
+//   } catch (error) {
+//     console.error('💥 Hotel details error:', error);
+//     throw error;
+//   }
+// };
+
+export const getHotelDetails = async (hotelCode: string) => {
   try {
-    console.log('🔍 Fetching hotel details for:', hotelCode);
-    
+    console.log("🔍 Fetching hotel details for:", hotelCode);
+    console.log("🔗 API URL:", `${PROXY_SERVER_URL}/hotel-details`);
+
     const response = await fetch(`${PROXY_SERVER_URL}/hotel-details`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({ HotelCode: hotelCode }),
     });
 
+    console.log("📥 Response status:", response.status);
+
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ Hotel details error:', errorText);
-      throw new Error(`Hotel details error: ${response.status} ${response.statusText}`);
+      let errorMessage = `Hotel details error: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        console.error("❌ Error response:", errorData);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        const errorText = await response.text();
+        console.error("❌ Error text:", errorText);
+      }
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
-    console.log('✅ Hotel details response:', data);
+    console.log("✅ Hotel details response:", data);
     return data;
   } catch (error) {
-    console.error('💥 Hotel details error:', error);
+    console.error("💥 Hotel details error:", error);
     throw error;
   }
 };
 
 // Get room availability
-export const getRoomAvailability = async (hotelCode: string, checkIn: string, checkOut: string): Promise<any> => {
+export const getRoomAvailability = async (
+  hotelCode: string,
+  checkIn: string,
+  checkOut: string
+): Promise<any> => {
   try {
-    console.log('🔍 Getting room availability for:', hotelCode);
-    
+    console.log("🔍 Getting room availability for:", hotelCode);
+
     const response = await fetch(`${PROXY_SERVER_URL}/room-availability`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         HotelCode: hotelCode,
         CheckIn: checkIn,
-        CheckOut: checkOut
+        CheckOut: checkOut,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Room availability error:', errorText);
-      throw new Error(`Room availability error: ${response.status} ${response.statusText}`);
+      console.error("❌ Room availability error:", errorText);
+      throw new Error(
+        `Room availability error: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = await response.json();
-    console.log('✅ Room availability response:', data);
+    console.log("✅ Room availability response:", data);
     return data;
   } catch (error) {
-    console.error('💥 Room availability error:', error);
+    console.error("💥 Room availability error:", error);
     throw error;
   }
 };
 
 // Get hotel room details using booking code
-export const getHotelRoomDetails = async (bookingCode: string): Promise<any> => {
+export const getHotelRoomDetails = async (
+  bookingCode: string
+): Promise<any> => {
   try {
-    console.log('🔍 Getting room details for booking code:', bookingCode);
-    
+    console.log("🔍 Getting room details for booking code:", bookingCode);
+
     const response = await fetch(`${PROXY_SERVER_URL}/room-details`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({ BookingCode: bookingCode }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Room details error:', errorText);
-      throw new Error(`Room details error: ${response.status} ${response.statusText}`);
+      console.error("❌ Room details error:", errorText);
+      throw new Error(
+        `Room details error: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = await response.json();
-    console.log('✅ Room details response:', data);
+    console.log("✅ Room details response:", data);
     return data;
   } catch (error) {
-    console.error('💥 Room details error:', error);
+    console.error("💥 Room details error:", error);
     throw error;
   }
 };

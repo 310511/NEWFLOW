@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Loader from '@/components/ui/Loader';
-import { getHotelRoom } from '@/services/hotelApi';
+import { getHotelRoomDetails  } from '@/services/hotelApi';
 import { 
   Bed, 
   Wifi, 
@@ -76,7 +76,7 @@ const HotelRoomDetails: React.FC<HotelRoomDetailsProps> = ({ bookingCode, onClos
     setLoading(true);
     setError(null);
     try {
-      const response = await getHotelRoom(bookingCode);
+      const response = await getHotelRoomDetails (bookingCode);
       console.log('🏨 Room details response:', response);
       
       // Process the response based on the actual API structure

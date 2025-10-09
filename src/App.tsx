@@ -18,6 +18,8 @@ import NotFound from "./pages/NotFound";
 import HotelCodeTester from "./components/HotelCodeTester";
 import ApiTest from "./components/ApiTest";
 import "./App.css";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AppLayout from "./components/AppLayout";
 
 const queryClient = new QueryClient();
 
@@ -47,11 +49,17 @@ const App = () => (
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/destinations" element={<Destinations />} />
-          <Route path="/destination/:destination" element={<DestinationDynamic />} />
+          <Route
+            path="/destination/:destination"
+            element={<DestinationDynamic />}
+          />
           <Route path="/deals" element={<Deals />} />
           <Route path="/test-hotel-codes" element={<HotelCodeTester />} />
           <Route path="/api-test" element={<ApiTest />} />
           <Route path="*" element={<NotFound />} />
+          <Route element={<AppLayout />}>
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

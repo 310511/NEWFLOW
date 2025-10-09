@@ -51,6 +51,8 @@ const HotelDetails = () => {
   const [bookingCode, setBookingCode] = useState<string | null>(null);
   const [searchingForBookingCode, setSearchingForBookingCode] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
+  // console.log(HotelDetails , " details")
+  console.log(id ,'id')
   
   // Extract search parameters at component level
   const checkIn = searchParams.get("checkIn");
@@ -77,18 +79,40 @@ const HotelDetails = () => {
     };
   }, [showRoomDetails]);
 
+   const fetchHotelDetails = async (hotelCode: string) => {
+     setIsLoading(true);
+     setError(null);
 
-  const fetchHotelDetails = async (hotelCode: string) => {
-    setIsLoading(true);
-    try {
-      const response = await getHotelDetails(hotelCode);
-      setHotelDetails(response.HotelDetails);
-    } catch (error) {
-      console.error("Error fetching hotel details:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+     try {
+       console.log("🎯 Starting hotel details fetch for:", hotelCode);
+       const response = await getHotelDetails(hotelCode);
+
+       console.log("📦 Received response:", response);
+       setHotelDetails(response.HotelDetails);
+     } catch (error) {
+       console.error("❌ Error fetching hotel details:", error);
+       setError(
+         error instanceof Error
+           ? error.message
+           : "Failed to fetch hotel details"
+       );
+     } finally {
+       setIsLoading(false);
+     }
+   };
+
+
+  // const fetchHotelDetails = async (hotelCode: string) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await getHotelDetails(hotelCode);
+  //     setHotelDetails(response.HotelDetails);
+  //   } catch (error) {
+  //     console.error("Error fetching hotel details:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const fetchBookingCode = async () => {
     console.log('🔍 fetchBookingCode called with id:', id);
@@ -364,6 +388,8 @@ const HotelDetails = () => {
   if (loading) {
     return <Loader />;
   }
+
+  console.log(HotelDetails , " details")
 
   if (!hotelDetails) {
     return (
