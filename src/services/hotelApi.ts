@@ -224,10 +224,9 @@ const searchHotelsTravzilla = async (
 //   }
 // };
 
-export const getHotelDetails = async (hotelCode: string) => {
+export const getHotelDetails = async (hotelCode: string): Promise<any> => {
   try {
     console.log("🔍 Fetching hotel details for:", hotelCode);
-    console.log("🔗 API URL:", `${PROXY_SERVER_URL}/hotel-details`);
 
     const response = await fetch(`${PROXY_SERVER_URL}/hotel-details`, {
       method: "POST",
@@ -235,22 +234,15 @@ export const getHotelDetails = async (hotelCode: string) => {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ HotelCode: hotelCode }),
+      body: JSON.stringify({ Hotelcodes: Number(hotelCode), Language: "en" }),
     });
 
-    console.log("📥 Response status:", response.status);
-
     if (!response.ok) {
-      let errorMessage = `Hotel details error: ${response.status} ${response.statusText}`;
-      try {
-        const errorData = await response.json();
-        console.error("❌ Error response:", errorData);
-        errorMessage = errorData.message || errorMessage;
-      } catch (e) {
-        const errorText = await response.text();
-        console.error("❌ Error text:", errorText);
-      }
-      throw new Error(errorMessage);
+      const errorText = await response.text();
+      console.error("❌ Hotel details error:", errorText);
+      throw new Error(
+        `Hotel details error: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = await response.json();

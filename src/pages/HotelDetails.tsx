@@ -80,26 +80,17 @@ const HotelDetails = () => {
   }, [showRoomDetails]);
 
    const fetchHotelDetails = async (hotelCode: string) => {
-     setIsLoading(true);
-     setError(null);
+    setIsLoading(true);
+    try {
+      const response = await getHotelDetails(hotelCode);
+      setHotelDetails(response.HotelDetails);
+    } catch (error) {
+      console.error("Error fetching hotel details:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-     try {
-       console.log("🎯 Starting hotel details fetch for:", hotelCode);
-       const response = await getHotelDetails(hotelCode);
-
-       console.log("📦 Received response:", response);
-       setHotelDetails(response.HotelDetails);
-     } catch (error) {
-       console.error("❌ Error fetching hotel details:", error);
-       setError(
-         error instanceof Error
-           ? error.message
-           : "Failed to fetch hotel details"
-       );
-     } finally {
-       setIsLoading(false);
-     }
-   };
 
 
   // const fetchHotelDetails = async (hotelCode: string) => {
